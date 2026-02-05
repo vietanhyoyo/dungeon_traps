@@ -1,0 +1,36 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+
+# Godot-specific
+.import/
+.export/
+.export_presets.cfg
+.override.cfg
+
+# Mono / C#
+.mono/
+.vscode/
+.idea/
+*.csproj
+*.sln
+*.user
+*.userprefs
+
+# Build outputs
+bin/
+obj/
+build/
+dist/
+release/
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+
+# Backup files
+*~
+*.bak
+*.old
