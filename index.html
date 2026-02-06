@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Play Game</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+    }
+
+    button {
+      padding: 15px 40px;
+      font-size: 20px;
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      background: #4CAF50;
+      color: white;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #45a049;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <h1>🎮 Chào mừng đến với game</h1>
+  <button onclick="playGame()">Play Game</button>
+
+  <script>
+    function playGame() {
+      window.location.href = "export_html/GodotGame.html";
+    }
+  </script>
+</body>
+</html>
