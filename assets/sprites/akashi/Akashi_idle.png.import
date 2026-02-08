@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dvh8g7frx75c4"
-path="res://.godot/imported/GodotGame.icon.png-91f16c0fac854ee797783ede83c31e0b.ctex"
+uid="uid://ii3bgl4vbdex"
+path="res://.godot/imported/Akashi_idle.png-fe0a42996fd47b50dcd8a52d9a1d9084.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://export_html/GodotGame.icon.png"
-dest_files=["res://.godot/imported/GodotGame.icon.png-91f16c0fac854ee797783ede83c31e0b.ctex"]
+source_file="res://assets/sprites/akashi/Akashi_idle.png"
+dest_files=["res://.godot/imported/Akashi_idle.png-fe0a42996fd47b50dcd8a52d9a1d9084.ctex"]
 
 [params]
 
