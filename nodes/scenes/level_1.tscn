@@ -1,54 +1,7 @@
 [gd_scene format=3 uid="uid://l1dhtqji1d6x"]
 
-[ext_resource type="Texture2D" uid="uid://dxk03w1k647an" path="res://assets/sprites/mapp.png" id="2_15vna"]
 [ext_resource type="PackedScene" uid="uid://cwgqa60xyqnyj" path="res://nodes/characters/akashi.tscn" id="2_flbgy"]
 [ext_resource type="Texture2D" uid="uid://bcxnn1f6qiuev" path="res://assets/sprites/mapp32.png" id="3_15vna"]
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_8pcmo"]
-texture = ExtResource("2_15vna")
-texture_region_size = Vector2i(64, 64)
-0:2/0 = 0
-0:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
-0:3/0 = 0
-0:3/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
-0:4/0 = 0
-0:4/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
-0:5/0 = 0
-0:5/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
-1:5/0 = 0
-1:5/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
-2:5/0 = 0
-2:5/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
-1:2/0 = 0
-1:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
-1:3/0 = 0
-1:3/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
-1:4/0 = 0
-1:4/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
-2:1/0 = 0
-2:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
-2:2/0 = 0
-2:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
-2:3/0 = 0
-2:3/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
-2:4/0 = 0
-2:4/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
-2:0/0 = 0
-2:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
-1:1/0 = 0
-1:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
-0:1/0 = 0
-0:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
-1:0/0 = 0
-1:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
-0:0/0 = 0
-0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
-
-[sub_resource type="TileSet" id="TileSet_m4axl"]
-tile_size = Vector2i(64, 64)
-physics_layer_0/collision_layer = 1
-physics_layer_0/collision_mask = 2
-sources/0 = SubResource("TileSetAtlasSource_8pcmo")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_m4axl"]
 texture = ExtResource("3_15vna")
@@ -106,13 +59,6 @@ position = Vector2(-1, 5)
 zoom = Vector2(2, 2)
 limit_bottom = 100
 position_smoothing_enabled = true
-
-[node name="TileMap64" type="TileMap" parent="." unique_id=1478053632]
-position = Vector2(-769, -11)
-tile_set = SubResource("TileSet_m4axl")
-rendering_quadrant_size = 64
-format = 2
-layer_0/tile_data = PackedInt32Array(65528, 65536, 0, 65529, 65536, 0, 65530, 65536, 0, 65531, 65536, 0, 65532, 65536, 0, 65533, 65536, 0, 65534, 65536, 0, 65535, 65536, 0, 0, 65536, 0, 1, 65536, 0, 2, 65536, 0, 65527, 0, 5, -9, 131072, 1, -65545, 131072, 1, -131081, 131072, 1, -196617, 0, 3, -196616, 65536, 2, -196615, 65536, 2, -196614, 65536, 2, -196613, 131072, 2, -262149, 0, 3, -262148, 65536, 2, -262147, 65536, 2, -262146, 65536, 2, -262145, 65536, 2, -327680, 65536, 2, -327679, 65536, 2, -327678, 65536, 2, -327677, 65536, 2, -327676, 65536, 2, 3, 131072, 5, -65532, 65536, 5, -65531, 65536, 5, -327675, 131072, 3, -262139, 0, 2, -262138, 131072, 3, -65530, 131072, 5, -131066, 0, 1, -196602, 0, 1, -65533, 0, 0)
 
 [node name="TileMap32" type="TileMap" parent="." unique_id=1011523559]
 tile_set = SubResource("TileSet_jsomn")
