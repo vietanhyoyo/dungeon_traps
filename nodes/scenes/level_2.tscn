@@ -1,0 +1,72 @@
+[gd_scene format=3 uid="uid://cewhigiq4447u"]
+
+[ext_resource type="PackedScene" uid="uid://cwgqa60xyqnyj" path="res://nodes/characters/akashi.tscn" id="1_r7por"]
+[ext_resource type="Texture2D" uid="uid://bcxnn1f6qiuev" path="res://assets/sprites/mapp32.png" id="2_w5vvd"]
+[ext_resource type="PackedScene" uid="uid://c4jvx4glbgl2" path="res://nodes/door.tscn" id="3_r7por"]
+[ext_resource type="PackedScene" uid="uid://l1dhtqji1d6x" path="res://nodes/scenes/level_1.tscn" id="4_w5vvd"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_m4axl"]
+texture = ExtResource("2_w5vvd")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+1:0/0 = 0
+1:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+2:0/0 = 0
+2:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+3:0/0 = 0
+3:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+4:0/0 = 0
+4:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+5:0/0 = 0
+5:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+0:1/0 = 0
+0:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+1:1/0 = 0
+1:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+2:1/0 = 0
+2:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+3:1/0 = 0
+3:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+4:1/0 = 0
+4:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+5:1/0 = 0
+5:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+0:2/0 = 0
+0:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+1:2/0 = 0
+1:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+2:2/0 = 0
+2:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+3:2/0 = 0
+3:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+4:2/0 = 0
+4:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+5:2/0 = 0
+5:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+
+[sub_resource type="TileSet" id="TileSet_jsomn"]
+tile_size = Vector2i(32, 32)
+physics_layer_0/collision_layer = 1
+sources/0 = SubResource("TileSetAtlasSource_m4axl")
+
+[node name="Level1" type="Node2D" unique_id=46945069]
+
+[node name="Akashi" parent="." unique_id=1107660582 instance=ExtResource("1_r7por")]
+z_index = 5
+position = Vector2(-35, -121)
+
+[node name="Camera2D" type="Camera2D" parent="Akashi" unique_id=1676138689]
+position = Vector2(-1, 5)
+zoom = Vector2(2, 2)
+limit_bottom = 100
+position_smoothing_enabled = true
+
+[node name="TileMap32" type="TileMap" parent="." unique_id=1011523559]
+tile_set = SubResource("TileSet_jsomn")
+format = 2
+layer_0/tile_data = PackedInt32Array(65529, 65536, 0, 65530, 65536, 0, 65531, 65536, 0, 65532, 65536, 0, 65533, 65536, 0, 65534, 65536, 0, 65535, 65536, 0, 0, 65536, 0, 1, 65536, 0, 2, 65536, 0, 3, 65536, 0, 4, 65536, 0, 5, 65536, 0, 65528, 196608, 2, -8, 131072, 1, -65544, 131072, 1, -131080, 131072, 1, -196616, 131072, 1, -262152, 131072, 1, -327688, 131072, 1, -393224, 131072, 1, -458760, 196608, 0, -458759, 262144, 0, -458758, 262144, 0, -458757, 262144, 0, -458756, 262144, 0, -458755, 262144, 0, -458754, 262144, 0, -458753, 262144, 0, -524288, 262144, 0, -524287, 262144, 0, -524286, 262144, 0, -524285, 262144, 0, -524284, 327680, 0, -458748, 327680, 1, -393212, 327680, 1, -327676, 0, 2, -327675, 65536, 2, -327674, 65536, 2, -327673, 65536, 2, 8, 327680, 2, 6, 262144, 2, 7, 262144, 2, -65528, 0, 0, -65527, 65536, 0, -65526, 65536, 0, -65525, 65536, 0, -65524, 65536, 0, -65523, 65536, 0, -65522, 65536, 0, -65521, 65536, 0, -327672, 131072, 2, -393208, 131072, 1, -458744, 196608, 0, -458743, 65536, 2, -458742, 65536, 2, -458741, 65536, 2, -65520, 327680, 2, -131056, 0, 0, -131055, 65536, 0, -131054, 65536, 0, -131053, 65536, 0, -131052, 65536, 0, -131051, 65536, 0, -131050, 327680, 2, -196586, 0, 0, -196585, 65536, 0, -196584, 327680, 2, -262120, 0, 0, -262119, 65536, 0, -262118, 65536, 0, -262117, 65536, 0, -262116, 131072, 0, -196580, 131072, 1, -131044, 131072, 1, -65508, 196608, 2, -65507, 65536, 0, -65506, 65536, 0, -65505, 65536, 0, -65504, 65536, 0, -65503, 65536, 0, -65502, 65536, 0, -65501, 65536, 0, -65500, 65536, 0, -65499, 65536, 0, -65498, 65536, 0, -458740, 131072, 2, -524276, 196608, 1, -589812, 196608, 1, -655348, 196608, 0, -655347, 262144, 0, -655346, 262144, 0, -655345, 262144, 0, -655344, 262144, 0, -655343, 262144, 0, -655342, 262144, 0, -655341, 262144, 0, -655340, 262144, 0, -655339, 262144, 0, -655338, 262144, 0, -655337, 262144, 0, -655336, 262144, 0, -655335, 262144, 0, -655334, 262144, 0, -655333, 262144, 0, -655332, 262144, 0, -655331, 262144, 0, -655330, 262144, 0, -655329, 262144, 0, -655328, 262144, 0, -655327, 262144, 0, -655326, 262144, 0, -655325, 262144, 0, -655324, 262144, 0, -655323, 262144, 0, -655322, 262144, 0, -655321, 262144, 0, -655320, 262144, 0, -655319, 262144, 0, -655318, 262144, 0, -589781, 327680, 1, -524245, 327680, 1, -458709, 327680, 1, -393173, 327680, 1, -327637, 327680, 1, -262101, 327680, 1, -196565, 327680, 1, -131029, 327680, 1, -655317, 327680, 0, -65493, 327680, 2, -65494, 262144, 2, -65495, 262144, 2, -65496, 262144, 2, -65497, 262144, 2)
+
+[node name="Door" parent="." unique_id=265049239 instance=ExtResource("3_r7por")]
+position = Vector2(1314, -80)
+next_scene = ExtResource("4_w5vvd")

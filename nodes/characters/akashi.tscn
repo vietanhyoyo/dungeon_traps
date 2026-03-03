@@ -186,10 +186,10 @@ animations = [{
 radius = 17.0
 height = 62.0
 
-[node name="Akashi" type="CharacterBody2D" unique_id=1107660582]
+[node name="Akashi" type="CharacterBody2D" unique_id=1107660582 groups=["player"]]
 script = ExtResource("3_tby2x")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=260658179]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=260658179 groups=["player"]]
 sprite_frames = SubResource("SpriteFrames_hugui")
 animation = &"attack"
 autoplay = "idle"
