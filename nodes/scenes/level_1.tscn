@@ -3,7 +3,6 @@
 [ext_resource type="PackedScene" uid="uid://cwgqa60xyqnyj" path="res://nodes/characters/akashi.tscn" id="2_flbgy"]
 [ext_resource type="PackedScene" uid="uid://c4jvx4glbgl2" path="res://nodes/door.tscn" id="3_8pcmo"]
 [ext_resource type="Texture2D" uid="uid://bcxnn1f6qiuev" path="res://assets/sprites/mapp32.png" id="3_15vna"]
-[ext_resource type="PackedScene" uid="uid://cewhigiq4447u" path="res://nodes/scenes/level_2.tscn" id="4_8pcmo"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_m4axl"]
 texture = ExtResource("3_15vna")
@@ -70,4 +69,3 @@ layer_1/tile_data = PackedInt32Array(3, 65536, 0, 4, 65536, 0, 5, 65536, 0, -524
 
 [node name="Door" parent="." unique_id=265049239 instance=ExtResource("3_8pcmo")]
 position = Vector2(636, -112)
-next_scene = ExtResource("4_8pcmo")
