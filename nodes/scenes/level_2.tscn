@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cewhigiq4447u"]
 
-[ext_resource type="PackedScene" uid="uid://cwgqa60xyqnyj" path="res://nodes/characters/akashi.tscn" id="1_r7por"]
+[ext_resource type="PackedScene" uid="uid://cwgqa60xyqnyj" path="res://nodes/characters/asura.tscn" id="1_r7por"]
 [ext_resource type="Texture2D" uid="uid://bcxnn1f6qiuev" path="res://assets/sprites/mapp32.png" id="2_w5vvd"]
 [ext_resource type="PackedScene" uid="uid://c4jvx4glbgl2" path="res://nodes/door.tscn" id="3_r7por"]
 

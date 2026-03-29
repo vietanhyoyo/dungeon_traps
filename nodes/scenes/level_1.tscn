@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://l1dhtqji1d6x"]
 
-[ext_resource type="PackedScene" uid="uid://cwgqa60xyqnyj" path="res://nodes/characters/akashi.tscn" id="2_flbgy"]
+[ext_resource type="Texture2D" uid="uid://5swh26vnirh2" path="res://assets/sprites/background1.png" id="2_8pcmo"]
+[ext_resource type="PackedScene" uid="uid://cwgqa60xyqnyj" path="res://nodes/characters/asura.tscn" id="2_flbgy"]
 [ext_resource type="PackedScene" uid="uid://c4jvx4glbgl2" path="res://nodes/door.tscn" id="3_8pcmo"]
 [ext_resource type="Texture2D" uid="uid://bcxnn1f6qiuev" path="res://assets/sprites/mapp32.png" id="3_15vna"]
 
@@ -58,6 +59,11 @@ position = Vector2(-1, 5)
 zoom = Vector2(2, 2)
 limit_bottom = 100
 position_smoothing_enabled = true
+
+[node name="Background1" type="Sprite2D" parent="." unique_id=2020991592]
+position = Vector2(-26.25, -209.49998)
+scale = Vector2(0.4228516, 0.4228516)
+texture = ExtResource("2_8pcmo")
 
 [node name="TileMap32" type="TileMap" parent="." unique_id=1011523559]
 tile_set = SubResource("TileSet_jsomn")
