@@ -1,0 +1,114 @@
+[gd_scene format=3 uid="uid://bx16n4demckja"]
+
+[ext_resource type="Texture2D" uid="uid://bjdy5h5uyxm6m" path="res://assets/sprites/torch.png" id="1_r5pxk"]
+[ext_resource type="Texture2D" uid="uid://d28tluf6jm21n" path="res://assets/sprites/background5.png" id="1_v62ra"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v62ra"]
+atlas = ExtResource("1_r5pxk")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w1spy"]
+atlas = ExtResource("1_r5pxk")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u1633"]
+atlas = ExtResource("1_r5pxk")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1vvpf"]
+atlas = ExtResource("1_r5pxk")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_7r45f"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v62ra")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w1spy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u1633")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1vvpf")
+}],
+"loop": true,
+"name": &"default",
+"speed": 10.0
+}]
+
+[sub_resource type="Gradient" id="Gradient_r5pxk"]
+offsets = PackedFloat32Array(0, 0.26953125, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.734375, 0.734375, 0.734375, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_v62ra"]
+gradient = SubResource("Gradient_r5pxk")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="Animation" id="Animation_v62ra"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PointLight2D:texture_scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [2.63]
+}
+
+[sub_resource type="Animation" id="Animation_w1spy"]
+resource_name = "flicker"
+length = 5.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PointLight2D:texture_scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1.0333333, 2.0333333, 3, 3.9666667),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [2.63, 3.88, 4.33, 3.16, 2.15]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_u1633"]
+_data = {
+&"RESET": SubResource("Animation_v62ra"),
+&"flicker": SubResource("Animation_w1spy")
+}
+
+[node name="Torch" type="Node2D" unique_id=467234160]
+modulate = Color(0.43904907, 0.43904915, 0.43904895, 1)
+
+[node name="Background5" type="Sprite2D" parent="." unique_id=1183703866]
+visible = false
+position = Vector2(2, 55)
+texture = ExtResource("1_v62ra")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=697879531]
+sprite_frames = SubResource("SpriteFrames_7r45f")
+autoplay = "default"
+frame_progress = 0.953481
+
+[node name="PointLight2D" type="PointLight2D" parent="." unique_id=1352267954]
+color = Color(0.92654854, 0.82248145, 0.09917266, 1)
+energy = 1.08
+shadow_enabled = true
+shadow_filter = 2
+shadow_filter_smooth = 10.0
+texture = SubResource("GradientTexture2D_v62ra")
+texture_scale = 2.63
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1429984381]
+libraries/ = SubResource("AnimationLibrary_u1633")
+autoplay = &"flicker"
