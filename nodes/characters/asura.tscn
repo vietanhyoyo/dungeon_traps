@@ -209,7 +209,7 @@ script = ExtResource("3_tby2x")
 sprite_frames = SubResource("SpriteFrames_hugui")
 animation = &"jump_down"
 autoplay = "idle"
-frame_progress = 0.0476711
+frame_progress = 0.011779968
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=103448317]
 position = Vector2(0, 1)

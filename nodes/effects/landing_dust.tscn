@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://sxf4f30h7vf7"]
+
+[ext_resource type="Script" uid="uid://q0m6wqm761ad" path="res://scripts/landing_dust.gd" id="1_e4qu1"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_o2bka"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 1.0
+direction = Vector3(0, -1, 0)
+spread = 50.0
+initial_velocity_min = 20.0
+initial_velocity_max = 45.0
+gravity = Vector3(0, 180, 0)
+scale_max = 2.0
+
+[node name="GPUParticles2D" type="GPUParticles2D" unique_id=392237460]
+z_index = 10
+emitting = false
+amount = 6
+lifetime = 0.25
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_o2bka")
+script = ExtResource("1_e4qu1")

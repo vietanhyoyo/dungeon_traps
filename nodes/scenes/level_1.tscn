@@ -166,10 +166,16 @@ next_scene_path = "res://nodes/scenes/level_2.tscn"
 [node name="FireList" type="Node" parent="." unique_id=532938640]
 
 [node name="Fire" parent="FireList" unique_id=536643257 instance=ExtResource("6_jsomn")]
+z_index = 10
 position = Vector2(-60, -328)
 
 [node name="Fire2" parent="FireList" unique_id=451724170 instance=ExtResource("6_jsomn")]
+z_index = 10
 position = Vector2(-45, -328)
+
+[node name="Fire3" parent="FireList" unique_id=1225879783 instance=ExtResource("6_jsomn")]
+z_index = 10
+position = Vector2(-30, -328)
 
 [node name="TorchList" type="Node" parent="." unique_id=1486217687]
 
