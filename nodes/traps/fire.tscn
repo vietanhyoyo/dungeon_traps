@@ -1,0 +1,71 @@
+[gd_scene format=3 uid="uid://dscr153320p4r"]
+
+[ext_resource type="Texture2D" uid="uid://cbkso31ndo3ne" path="res://assets/sprites/traps/fire.png" id="1_mq3ff"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qkpo1"]
+atlas = ExtResource("1_mq3ff")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_la8q6"]
+atlas = ExtResource("1_mq3ff")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_khl36"]
+atlas = ExtResource("1_mq3ff")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_akfln"]
+atlas = ExtResource("1_mq3ff")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ev5qe"]
+atlas = ExtResource("1_mq3ff")
+region = Rect2(64, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_fu5av"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qkpo1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_la8q6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_khl36")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_akfln")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ev5qe")
+}],
+"loop": true,
+"name": &"default",
+"speed": 10.0
+}]
+
+[sub_resource type="Gradient" id="Gradient_ydewp"]
+offsets = PackedFloat32Array(0, 0.21602787, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.55078125, 0.55078125, 0.55078125, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_1p7gh"]
+gradient = SubResource("Gradient_ydewp")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[node name="Fire" type="Node2D" unique_id=536643257]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=954811269]
+modulate = Color(0.43134022, 0.43134025, 0.43134025, 1)
+sprite_frames = SubResource("SpriteFrames_fu5av")
+autoplay = "default"
+frame_progress = 0.77043754
+
+[node name="PointLight2D" type="PointLight2D" parent="AnimatedSprite2D" unique_id=1008525416]
+position = Vector2(0, 3)
+color = Color(0.67648125, 0.00012254089, 0.59396565, 1)
+energy = 1.42
+shadow_enabled = true
+texture = SubResource("GradientTexture2D_1p7gh")
