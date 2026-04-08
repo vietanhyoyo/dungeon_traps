@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://b7ymrpl5ng6wt" path="res://scripts/akashi.gd" id="3_tby2x"]
 [ext_resource type="Texture2D" uid="uid://8ebp0s6qx3f3" path="res://assets/sprites/shinn_asura/Shinn-Asura-idle.png" id="3_u1ow0"]
 [ext_resource type="Texture2D" uid="uid://bkprs2akf857h" path="res://assets/sprites/shinn_asura/Shinn-Asura-run.png" id="5_cv6pu"]
+[ext_resource type="Texture2D" uid="uid://mt13ehvoet3d" path="res://assets/sprites/shinn_asura/Shinn-Asura-jump.png" id="5_i2l0f"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_e082f"]
 atlas = ExtResource("2_u1ow0")
@@ -52,6 +53,22 @@ region = Rect2(256, 0, 64, 64)
 [sub_resource type="AtlasTexture" id="AtlasTexture_rls3k"]
 atlas = ExtResource("5_cv6pu")
 region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1bcgc"]
+atlas = ExtResource("5_i2l0f")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dhu25"]
+atlas = ExtResource("5_i2l0f")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_341xe"]
+atlas = ExtResource("5_i2l0f")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l3did"]
+atlas = ExtResource("5_i2l0f")
+region = Rect2(64, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hugui"]
 atlas = ExtResource("5_cv6pu")
@@ -137,6 +154,28 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_1bcgc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dhu25")
+}],
+"loop": true,
+"name": &"jump_down",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_341xe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l3did")
+}],
+"loop": true,
+"name": &"jump_up",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_hugui")
 }, {
 "duration": 1.0,
@@ -168,8 +207,9 @@ script = ExtResource("3_tby2x")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=260658179 groups=["player"]]
 sprite_frames = SubResource("SpriteFrames_hugui")
-animation = &"attack2"
+animation = &"jump_down"
 autoplay = "idle"
+frame_progress = 0.0476711
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=103448317]
 position = Vector2(0, 1)

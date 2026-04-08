@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bhkmuceyx1mk1"
-path="res://.godot/imported/GodotGame.apple-touch-icon.png-d4b183614009d041475b317fa74c055b.ctex"
+uid="uid://mt13ehvoet3d"
+path="res://.godot/imported/Shinn-Asura-jump.png-148e986daf02c6f6289f3bd2f07aa71d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://export_html/GodotGame.apple-touch-icon.png"
-dest_files=["res://.godot/imported/GodotGame.apple-touch-icon.png-d4b183614009d041475b317fa74c055b.ctex"]
+source_file="res://assets/sprites/shinn_asura/Shinn-Asura-jump.png"
+dest_files=["res://.godot/imported/Shinn-Asura-jump.png-148e986daf02c6f6289f3bd2f07aa71d.ctex"]
 
 [params]
 
