@@ -3,15 +3,81 @@
 [ext_resource type="Script" uid="uid://ce2ev6d43ylvg" path="res://scripts/door.gd" id="1_847em"]
 [ext_resource type="Texture2D" uid="uid://cvqd6g3ewotno" path="res://assets/sprites/door.png" id="1_nmmve"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_nmmve"]
-size = Vector2(54, 80)
+[sub_resource type="AtlasTexture" id="AtlasTexture_847em"]
+atlas = ExtResource("1_nmmve")
+region = Rect2(0, 0, 96, 96)
 
-[node name="Door" type="Area2D" unique_id=303089781]
+[sub_resource type="AtlasTexture" id="AtlasTexture_1nagr"]
+atlas = ExtResource("1_nmmve")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lfe66"]
+atlas = ExtResource("1_nmmve")
+region = Rect2(96, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s5vg7"]
+atlas = ExtResource("1_nmmve")
+region = Rect2(192, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cjhvo"]
+atlas = ExtResource("1_nmmve")
+region = Rect2(288, 0, 96, 96)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_t3j60"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_847em")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1nagr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lfe66")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s5vg7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cjhvo")
+}],
+"loop": false,
+"name": &"open",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_open"]
+size = Vector2(120, 83)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nmmve"]
+size = Vector2(52, 83)
+
+[node name="Door" type="Node2D" unique_id=303089781]
 script = ExtResource("1_847em")
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1154114331]
-texture = ExtResource("1_nmmve")
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1448342110]
+light_mask = 0
+sprite_frames = SubResource("SpriteFrames_t3j60")
+animation = &"open"
+autoplay = "default"
+frame = 3
+frame_progress = 1.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=647339349]
-position = Vector2(0, 5)
+[node name="OpenArea" type="Area2D" parent="." unique_id=330242460]
+collision_mask = 3
+
+[node name="OpenCollisionShape2D" type="CollisionShape2D" parent="OpenArea" unique_id=96687228]
+position = Vector2(0, 6)
+shape = SubResource("RectangleShape2D_open")
+
+[node name="PassArea" type="Area2D" parent="." unique_id=352664870]
+collision_mask = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PassArea" unique_id=647339349]
+position = Vector2(0, 6.5)
 shape = SubResource("RectangleShape2D_nmmve")

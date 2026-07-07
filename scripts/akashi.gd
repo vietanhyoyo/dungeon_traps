@@ -3,16 +3,23 @@ extends CharacterBody2D
 const SPEED = 180.0
 const JUMP_VELOCITY = -320.0
 const LANDING_DUST_MIN_SPEED = 180.0
+const DEATH_JUMP_VELOCITY = -420.0
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var dust_scene = preload("res://nodes/effects/landing_dust.tscn")
 
 var is_attacking = false
+var is_dead = false
 var use_attack_1 = true
 var was_on_floor = false
 var last_fall_speed = 0.0
 
 func _physics_process(delta: float) -> void:
+	if is_dead:
+		velocity += get_gravity() * delta
+		position += velocity * delta
+		return
+
 	# Add the gravity.
 	if not is_on_floor():
 		velocity += get_gravity() * delta
@@ -93,6 +100,26 @@ func spawn_landing_dust() -> void:
 		var dust = dust_scene.instantiate()
 		get_parent().add_child(dust)
 		dust.global_position = global_position + Vector2(offset_x, 32)
+
+
+func die() -> void:
+	if is_dead:
+		return
+
+	is_dead = true
+	is_attacking = false
+	velocity = Vector2(0.0, DEATH_JUMP_VELOCITY)
+	collision_layer = 0
+	collision_mask = 0
+
+	var collision_shape := get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if collision_shape:
+		collision_shape.set_deferred("disabled", true)
+
+	if animated_sprite.sprite_frames.has_animation("death"):
+		animated_sprite.play("death")
+	else:
+		animated_sprite.play("jump_up")
 
 
 func _on_animated_sprite_2d_animation_finished():
