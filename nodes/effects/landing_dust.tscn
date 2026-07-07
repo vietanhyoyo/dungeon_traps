@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://sxf4f30h7vf7"]
 
-[ext_resource type="Script" uid="uid://q0m6wqm761ad" path="res://scripts/landing_dust.gd" id="1_e4qu1"]
+[ext_resource type="Script" path="res://scripts/landing_dust.gd" id="1_e4qu1"]
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_o2bka"]
 particle_flag_disable_z = true

@@ -10,6 +10,7 @@ enum State {
 }
 
 const LEVEL_1_PATH := "res://nodes/scenes/level_1.tscn"
+const COUNTDOWN_FONT := preload("res://assets/fonts/PixelOperator8-Bold.ttf")
 const RESTART_DELAY_SECONDS := 5
 
 var state: State = State.PLAYING
@@ -81,6 +82,7 @@ func _show_countdown(seconds_left: int) -> void:
 	_countdown_label = Label.new()
 	_countdown_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_countdown_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_countdown_label.add_theme_font_override("font", COUNTDOWN_FONT)
 	_countdown_label.add_theme_font_size_override("font_size", 22)
 	_countdown_label.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0))
 	_countdown_label.anchor_left = 0.5

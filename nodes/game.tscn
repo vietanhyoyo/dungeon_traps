@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://elst0xn32iil"]
 
-[ext_resource type="Script" path="res://assets/sprites/game_manager.gd" id="1_gee14"]
-[ext_resource type="PackedScene" uid="uid://be8qbmt0fe144" path="res://nodes/characters/player.tscn" id="1_uwrxv"]
+[ext_resource type="Script" uid="uid://byavfdrl5mtfi" path="res://scripts/ui/game_manager.gd" id="1_gee14"]
+[ext_resource type="PackedScene" uid="uid://cwgqa60xyqnyj" path="res://nodes/characters/asura.tscn" id="1_uwrxv"]
 [ext_resource type="FontFile" uid="uid://dm58qjkkxqjox" path="res://assets/fonts/PixelOperator8-Bold.ttf" id="2_0tnpc"]
 [ext_resource type="Texture2D" uid="uid://ckwm7iqr41hap" path="res://assets/sprites/world_tileset.png" id="2_yqjtg"]
 [ext_resource type="PackedScene" uid="uid://cgqpg3bl07ghk" path="res://nodes/platform.tscn" id="3_lnu2h"]
@@ -237,11 +237,11 @@ text = "You collected X coins"
 horizontal_alignment = 1
 autowrap_mode = 2
 
-[node name="Player" parent="." unique_id=1507577087 instance=ExtResource("1_uwrxv")]
+[node name="Asura" parent="." unique_id=1507577087 instance=ExtResource("1_uwrxv")]
 z_index = 5
 position = Vector2(-94, -66)
 
-[node name="Camera2D" type="Camera2D" parent="Player" unique_id=1230487999]
+[node name="Camera2D" type="Camera2D" parent="Asura" unique_id=1230487999]
 position = Vector2(-1, 5)
 zoom = Vector2(4, 4)
 limit_bottom = 100
@@ -343,5 +343,3 @@ position = Vector2(-62, -12)
 
 [node name="Slime2" parent="Slimes" unique_id=1259199269 instance=ExtResource("6_p57ef")]
 position = Vector2(84, 37)
-
-[connection signal="body_entered" from="Coins/Coin2" to="Player" method="_on_coin_2_body_entered"]

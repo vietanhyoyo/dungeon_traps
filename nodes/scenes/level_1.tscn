@@ -1,10 +1,11 @@
 [gd_scene format=3 uid="uid://l1dhtqji1d6x"]
 
+[ext_resource type="FontFile" uid="uid://njydc2e50off" path="res://assets/fonts/PixelOperator8.ttf" id="1_qkpo1"]
 [ext_resource type="Texture2D" uid="uid://d28tluf6jm21n" path="res://assets/sprites/background5.png" id="2_8pcmo"]
 [ext_resource type="PackedScene" uid="uid://cwgqa60xyqnyj" path="res://nodes/characters/asura.tscn" id="2_flbgy"]
 [ext_resource type="PackedScene" uid="uid://c4jvx4glbgl2" path="res://nodes/door.tscn" id="3_8pcmo"]
-[ext_resource type="PackedScene" uid="uid://b3smmvaulqe1" path="res://nodes/tile_map_32.tscn" id="3_m4axl"]
-[ext_resource type="PackedScene" uid="uid://bx16n4demckja" path="res://nodes/torch.tscn" id="5_jsomn"]
+[ext_resource type="PackedScene" path="res://nodes/tile_map_32.tscn" id="3_m4axl"]
+[ext_resource type="PackedScene" path="res://nodes/torch.tscn" id="5_jsomn"]
 [ext_resource type="PackedScene" uid="uid://dscr153320p4r" path="res://nodes/traps/fire.tscn" id="6_jsomn"]
 
 [sub_resource type="Gradient" id="Gradient_8pcmo"]
@@ -128,18 +129,29 @@ sources/1 = SubResource("TileSetAtlasSource_jsomn")
 
 [node name="Level1" type="Node2D" unique_id=46945069]
 
-[node name="Akashi" parent="." unique_id=1107660582 instance=ExtResource("2_flbgy")]
+[node name="Label" type="Label" parent="." unique_id=27351563]
+z_index = 1
+offset_left = -124.0
+offset_top = -428.0
+offset_right = 242.0
+offset_bottom = -396.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("1_qkpo1")
+theme_override_font_sizes/font_size = 10
+text = "Purple flames are very dangerous"
+
+[node name="Asura" parent="." unique_id=1107660582 instance=ExtResource("2_flbgy")]
 modulate = Color(0.5449743, 0.54497427, 0.54497427, 1)
 z_index = 5
 position = Vector2(-268, -367)
 
-[node name="Camera2D" type="Camera2D" parent="Akashi" unique_id=1676138689]
+[node name="Camera2D" type="Camera2D" parent="Asura" unique_id=1676138689]
 position = Vector2(-1, 5)
 zoom = Vector2(2, 2)
 limit_bottom = 100
 position_smoothing_enabled = true
 
-[node name="PointLight2D" type="PointLight2D" parent="Akashi" unique_id=1077569544]
+[node name="PointLight2D" type="PointLight2D" parent="Asura" unique_id=1077569544]
 color = Color(0.84454954, 0.8480106, 0.5679862, 1)
 energy = 0.78
 shadow_enabled = true

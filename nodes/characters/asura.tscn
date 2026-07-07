@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://cwgqa60xyqnyj"]
 
 [ext_resource type="Texture2D" uid="uid://4evgm5d4y7un" path="res://assets/sprites/shinn_asura/Shinn-Asura-attack.png" id="2_u1ow0"]
-[ext_resource type="Script" uid="uid://b7ymrpl5ng6wt" path="res://scripts/akashi.gd" id="3_tby2x"]
+[ext_resource type="Script" uid="uid://b7ymrpl5ng6wt" path="res://scripts/actors/asura_controller.gd" id="3_tby2x"]
 [ext_resource type="Texture2D" uid="uid://8ebp0s6qx3f3" path="res://assets/sprites/shinn_asura/Shinn-Asura-idle.png" id="3_u1ow0"]
 [ext_resource type="Texture2D" uid="uid://bkprs2akf857h" path="res://assets/sprites/shinn_asura/Shinn-Asura-run.png" id="5_cv6pu"]
 [ext_resource type="Texture2D" uid="uid://mt13ehvoet3d" path="res://assets/sprites/shinn_asura/Shinn-Asura-jump.png" id="5_i2l0f"]
@@ -30,6 +30,14 @@ region = Rect2(376, 0, 94, 94)
 [sub_resource type="AtlasTexture" id="AtlasTexture_sjxfn"]
 atlas = ExtResource("2_u1ow0")
 region = Rect2(470, 0, 94, 94)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death_0"]
+atlas = ExtResource("6_death")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death_1"]
+atlas = ExtResource("6_death")
+region = Rect2(64, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cv6pu"]
 atlas = ExtResource("3_u1ow0")
@@ -95,14 +103,6 @@ region = Rect2(256, 0, 64, 64)
 atlas = ExtResource("5_cv6pu")
 region = Rect2(320, 0, 64, 64)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_death_0"]
-atlas = ExtResource("6_death")
-region = Rect2(0, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_death_1"]
-atlas = ExtResource("6_death")
-region = Rect2(64, 0, 64, 64)
-
 [sub_resource type="SpriteFrames" id="SpriteFrames_hugui"]
 animations = [{
 "frames": [{
@@ -140,7 +140,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_death_1")
 }],
-"loop": false,
+"loop": true,
 "name": &"death",
 "speed": 8.0
 }, {
@@ -223,13 +223,15 @@ radius = 17.0
 height = 62.0
 
 [node name="Asura" type="CharacterBody2D" unique_id=1107660582 groups=["player"]]
+collision_layer = 2
+collision_mask = 1
 script = ExtResource("3_tby2x")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=260658179 groups=["player"]]
 sprite_frames = SubResource("SpriteFrames_hugui")
-animation = &"jump_down"
+animation = &"death"
 autoplay = "idle"
-frame_progress = 0.011779968
+frame_progress = 0.45442367
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=103448317]
 position = Vector2(0, 1)
