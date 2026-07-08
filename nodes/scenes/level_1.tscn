@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://bx16n4demckja" path="res://nodes/torch.tscn" id="5_jsomn"]
 [ext_resource type="PackedScene" uid="uid://dscr153320p4r" path="res://nodes/traps/fire.tscn" id="6_jsomn"]
 [ext_resource type="PackedScene" path="res://nodes/traps/thorn.tscn" id="7_thorn"]
+[ext_resource type="Script" path="res://scripts/level_1_controller.gd" id="8_level_1_controller"]
 
 [sub_resource type="Gradient" id="Gradient_8pcmo"]
 interpolation_color_space = 1
@@ -129,6 +130,7 @@ tile_size = Vector2i(32, 32)
 sources/1 = SubResource("TileSetAtlasSource_jsomn")
 
 [node name="Level1" type="Node2D" unique_id=46945069]
+script = ExtResource("8_level_1_controller")
 
 [node name="Label" type="Label" parent="." unique_id=27351563]
 z_index = 1

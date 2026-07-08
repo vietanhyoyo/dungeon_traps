@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://bx16n4demckja" path="res://nodes/torch.tscn" id="6_o7dd0"]
 [ext_resource type="PackedScene" uid="uid://dscr153320p4r" path="res://nodes/traps/fire.tscn" id="7_4oyvd"]
 [ext_resource type="PackedScene" path="res://nodes/traps/thorn.tscn" id="8_4oyvd"]
+[ext_resource type="Script" path="res://scripts/level_2_controller.gd" id="9_level_2_controller"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_8pcmo"]
 polygon = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
@@ -234,6 +235,7 @@ tile_size = Vector2i(32, 32)
 sources/1 = SubResource("TileSetAtlasSource_flnyc")
 
 [node name="Level2" type="Node2D" unique_id=46945069]
+script = ExtResource("9_level_2_controller")
 
 [node name="LightReceiver" type="Polygon2D" parent="." unique_id=1707510712]
 z_index = -100
@@ -327,13 +329,13 @@ position = Vector2(105, -40)
 position = Vector2(90, -40)
 
 [node name="Fire8" parent="FireList" unique_id=464336334 instance=ExtResource("7_4oyvd")]
-position = Vector2(1135, -41)
+position = Vector2(1135, -40)
 
 [node name="Fire9" parent="FireList" unique_id=1054077375 instance=ExtResource("7_4oyvd")]
-position = Vector2(1120, -41)
+position = Vector2(1120, -40)
 
 [node name="Fire10" parent="FireList" unique_id=2126358019 instance=ExtResource("7_4oyvd")]
-position = Vector2(1105, -41)
+position = Vector2(1105, -40)
 
 [node name="ThornList" type="Node" parent="." unique_id=1216989016]
 
