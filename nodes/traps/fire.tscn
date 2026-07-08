@@ -1,7 +1,7 @@
-[gd_scene load_steps=11 format=3 uid="uid://dscr153320p4r"]
+[gd_scene format=3 uid="uid://dscr153320p4r"]
 
 [ext_resource type="Texture2D" uid="uid://cbkso31ndo3ne" path="res://assets/sprites/traps/fire.png" id="1_mq3ff"]
-[ext_resource type="Script" path="res://scripts/fire_trap.gd" id="2_jruu2"]
+[ext_resource type="Script" uid="uid://dphitwoiks6bt" path="res://scripts/fire_trap.gd" id="2_jruu2"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_qkpo1"]
 atlas = ExtResource("1_mq3ff")
@@ -57,7 +57,7 @@ fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(1, 0.5)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jruu2"]
-size = Vector2(14, 14)
+size = Vector2(14, 10)
 
 [node name="Fire" type="Area2D" unique_id=536643257]
 collision_mask = 3
@@ -77,4 +77,5 @@ shadow_enabled = true
 texture = SubResource("GradientTexture2D_1p7gh")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=155708181]
+position = Vector2(0, 2)
 shape = SubResource("RectangleShape2D_jruu2")

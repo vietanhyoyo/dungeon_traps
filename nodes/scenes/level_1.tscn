@@ -4,9 +4,10 @@
 [ext_resource type="Texture2D" uid="uid://d28tluf6jm21n" path="res://assets/sprites/background5.png" id="2_8pcmo"]
 [ext_resource type="PackedScene" uid="uid://cwgqa60xyqnyj" path="res://nodes/characters/asura.tscn" id="2_flbgy"]
 [ext_resource type="PackedScene" uid="uid://c4jvx4glbgl2" path="res://nodes/door.tscn" id="3_8pcmo"]
-[ext_resource type="PackedScene" path="res://nodes/tile_map_32.tscn" id="3_m4axl"]
-[ext_resource type="PackedScene" path="res://nodes/torch.tscn" id="5_jsomn"]
+[ext_resource type="PackedScene" uid="uid://b3smmvaulqe1" path="res://nodes/tile_map_32.tscn" id="3_m4axl"]
+[ext_resource type="PackedScene" uid="uid://bx16n4demckja" path="res://nodes/torch.tscn" id="5_jsomn"]
 [ext_resource type="PackedScene" uid="uid://dscr153320p4r" path="res://nodes/traps/fire.tscn" id="6_jsomn"]
+[ext_resource type="PackedScene" path="res://nodes/traps/thorn.tscn" id="7_thorn"]
 
 [sub_resource type="Gradient" id="Gradient_8pcmo"]
 interpolation_color_space = 1
@@ -131,10 +132,10 @@ sources/1 = SubResource("TileSetAtlasSource_jsomn")
 
 [node name="Label" type="Label" parent="." unique_id=27351563]
 z_index = 1
-offset_left = -124.0
-offset_top = -428.0
-offset_right = 242.0
-offset_bottom = -396.0
+offset_left = -316.0
+offset_top = -448.0
+offset_right = -55.0
+offset_bottom = -416.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("1_qkpo1")
 theme_override_font_sizes/font_size = 10
@@ -188,6 +189,23 @@ position = Vector2(-45, -328)
 [node name="Fire3" parent="FireList" unique_id=1225879783 instance=ExtResource("6_jsomn")]
 z_index = 10
 position = Vector2(-30, -328)
+
+[node name="ThornList" type="Node" parent="." unique_id=1095486781]
+
+[node name="Thorn" parent="ThornList" unique_id=1384229404 instance=ExtResource("7_thorn")]
+z_index = 10
+position = Vector2(200, -504)
+rotation = 3.1415927
+
+[node name="Thorn2" parent="ThornList" unique_id=2027210147 instance=ExtResource("7_thorn")]
+z_index = 10
+position = Vector2(216, -504)
+rotation = 3.1415927
+
+[node name="Thorn3" parent="ThornList" unique_id=2020494271 instance=ExtResource("7_thorn")]
+z_index = 10
+position = Vector2(232, -504)
+rotation = 3.1415927
 
 [node name="TorchList" type="Node" parent="." unique_id=1486217687]
 

@@ -9,13 +9,14 @@ enum State {
 	GAME_OVER,
 }
 
-const LEVEL_1_PATH := "res://nodes/scenes/level_1.tscn"
+const DEFAULT_RESTART_SCENE_PATH := "res://nodes/scenes/level_1.tscn"
 const COUNTDOWN_FONT := preload("res://assets/fonts/PixelOperator8-Bold.ttf")
 const RESTART_DELAY_SECONDS := 5
 
 var state: State = State.PLAYING
 
 var _is_counting_down := false
+var _restart_scene_path := DEFAULT_RESTART_SCENE_PATH
 var _countdown_layer: CanvasLayer
 var _countdown_label: Label
 
@@ -29,6 +30,7 @@ func trigger_game_over(player: Node2D) -> void:
 		return
 
 	state = State.GAME_OVER
+	_restart_scene_path = _get_current_scene_path()
 	game_over_started.emit(player)
 
 	if player and player.has_method("die"):
@@ -46,6 +48,7 @@ func is_game_over() -> bool:
 func reset_to_playing() -> void:
 	state = State.PLAYING
 	_is_counting_down = false
+	_restart_scene_path = DEFAULT_RESTART_SCENE_PATH
 	_hide_countdown()
 
 
@@ -57,11 +60,19 @@ func _run_restart_countdown() -> void:
 		restart_countdown_changed.emit(seconds_left)
 		await get_tree().create_timer(1.0).timeout
 
-	var error := get_tree().change_scene_to_file(LEVEL_1_PATH)
+	var error := get_tree().change_scene_to_file(_restart_scene_path)
 	if error != OK:
-		push_error("Could not reload level 1: %s" % error)
+		push_error("Could not reload scene %s: %s" % [_restart_scene_path, error])
 
 	reset_to_playing()
+
+
+func _get_current_scene_path() -> String:
+	var current_scene := get_tree().current_scene
+	if current_scene and not current_scene.scene_file_path.is_empty():
+		return current_scene.scene_file_path
+
+	return DEFAULT_RESTART_SCENE_PATH
 
 
 func _show_countdown(seconds_left: int) -> void:
