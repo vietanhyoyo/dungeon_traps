@@ -4,11 +4,10 @@
 [ext_resource type="Texture2D" uid="uid://d28tluf6jm21n" path="res://assets/sprites/background5.png" id="2_8pcmo"]
 [ext_resource type="PackedScene" uid="uid://cwgqa60xyqnyj" path="res://nodes/characters/asura.tscn" id="2_flbgy"]
 [ext_resource type="PackedScene" uid="uid://c4jvx4glbgl2" path="res://nodes/door.tscn" id="3_8pcmo"]
-[ext_resource type="PackedScene" uid="uid://b3smmvaulqe1" path="res://nodes/tile_map_32.tscn" id="3_m4axl"]
-[ext_resource type="PackedScene" uid="uid://bx16n4demckja" path="res://nodes/torch.tscn" id="5_jsomn"]
+[ext_resource type="PackedScene" path="res://nodes/tile_map_32.tscn" id="3_m4axl"]
+[ext_resource type="PackedScene" path="res://nodes/torch.tscn" id="5_jsomn"]
 [ext_resource type="PackedScene" uid="uid://dscr153320p4r" path="res://nodes/traps/fire.tscn" id="6_jsomn"]
 [ext_resource type="PackedScene" path="res://nodes/traps/thorn.tscn" id="7_thorn"]
-[ext_resource type="Script" path="res://scripts/level_1_controller.gd" id="8_level_1_controller"]
 
 [sub_resource type="Gradient" id="Gradient_8pcmo"]
 interpolation_color_space = 1
@@ -130,7 +129,6 @@ tile_size = Vector2i(32, 32)
 sources/1 = SubResource("TileSetAtlasSource_jsomn")
 
 [node name="Level1" type="Node2D" unique_id=46945069]
-script = ExtResource("8_level_1_controller")
 
 [node name="Label" type="Label" parent="." unique_id=27351563]
 z_index = 1
@@ -197,17 +195,23 @@ position = Vector2(-30, -328)
 [node name="Thorn" parent="ThornList" unique_id=1384229404 instance=ExtResource("7_thorn")]
 z_index = 10
 position = Vector2(200, -504)
-rotation = 3.1415927
+
+[node name="CollisionShape2D" parent="ThornList/Thorn/TriggerArea" index="0"]
+position = Vector2(0, 120)
 
 [node name="Thorn2" parent="ThornList" unique_id=2027210147 instance=ExtResource("7_thorn")]
 z_index = 10
 position = Vector2(216, -504)
-rotation = 3.1415927
+
+[node name="TriggerArea" parent="ThornList/Thorn2" index="1"]
+position = Vector2(0, 310)
 
 [node name="Thorn3" parent="ThornList" unique_id=2020494271 instance=ExtResource("7_thorn")]
 z_index = 10
 position = Vector2(232, -504)
-rotation = 3.1415927
+
+[node name="TriggerArea" parent="ThornList/Thorn3" index="1"]
+position = Vector2(0, 312)
 
 [node name="TorchList" type="Node" parent="." unique_id=1486217687]
 
@@ -219,3 +223,7 @@ position = Vector2(-181, -418)
 
 [node name="Torch3" parent="TorchList" unique_id=2124427812 instance=ExtResource("5_jsomn")]
 position = Vector2(377, -113)
+
+[editable path="ThornList/Thorn"]
+[editable path="ThornList/Thorn2"]
+[editable path="ThornList/Thorn3"]

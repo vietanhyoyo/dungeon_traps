@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Texture2D" uid="uid://oj2ayyt0otff" path="res://assets/sprites/traps/thorn.png" id="1_thorn"]
 [ext_resource type="Script" path="res://scripts/thorn_trap.gd" id="2_trap"]
@@ -6,12 +6,28 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_thorn"]
 size = Vector2(16, 16)
 
-[node name="Thorn" type="Area2D"]
-collision_mask = 3
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_trigger"]
+size = Vector2(96, 384)
+
+[node name="Thorn" type="Node2D"]
 script = ExtResource("2_trap")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Hazard" type="Area2D" parent="."]
+collision_layer = 1
+collision_mask = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="Hazard"]
+rotation = 3.1415927
 texture = ExtResource("1_thorn")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hazard"]
 shape = SubResource("RectangleShape2D_thorn")
+
+[node name="TriggerArea" type="Area2D" parent="."]
+position = Vector2(0, 192)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerArea"]
+shape = SubResource("RectangleShape2D_trigger")
