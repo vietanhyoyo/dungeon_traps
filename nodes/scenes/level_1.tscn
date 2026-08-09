@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://c4jvx4glbgl2" path="res://nodes/door.tscn" id="3_8pcmo"]
 [ext_resource type="PackedScene" path="res://nodes/tile_map_32.tscn" id="3_m4axl"]
 [ext_resource type="PackedScene" path="res://nodes/torch.tscn" id="5_jsomn"]
-[ext_resource type="PackedScene" uid="uid://dscr153320p4r" path="res://nodes/traps/fire.tscn" id="6_jsomn"]
+[ext_resource type="PackedScene" uid="uid://dscr153320p4r" path="res://nodes/traps/fire_trap.tscn" id="6_jsomn"]
 [ext_resource type="PackedScene" path="res://nodes/traps/thorn.tscn" id="7_thorn"]
 
 [sub_resource type="Gradient" id="Gradient_8pcmo"]
@@ -189,6 +189,18 @@ position = Vector2(-45, -328)
 [node name="Fire3" parent="FireList" unique_id=1225879783 instance=ExtResource("6_jsomn")]
 z_index = 10
 position = Vector2(-30, -328)
+
+[node name="Fire4" parent="FireList" unique_id=661282217 instance=ExtResource("6_jsomn")]
+z_index = 10
+position = Vector2(28, -8)
+
+[node name="Fire5" parent="FireList" unique_id=313097933 instance=ExtResource("6_jsomn")]
+z_index = 10
+position = Vector2(43, -8)
+
+[node name="Fire6" parent="FireList" unique_id=985938791 instance=ExtResource("6_jsomn")]
+z_index = 10
+position = Vector2(58, -8)
 
 [node name="ThornList" type="Node" parent="." unique_id=1095486781]
 

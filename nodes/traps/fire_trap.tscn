@@ -59,8 +59,12 @@ fill_to = Vector2(1, 0.5)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jruu2"]
 size = Vector2(14, 10)
 
-[node name="Fire" type="Area2D" unique_id=536643257]
-collision_mask = 3
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_trigger"]
+size = Vector2(96, 64)
+
+[node name="FireTrap" type="Area2D" unique_id=536643257]
+collision_mask = 2
+monitoring = false
 script = ExtResource("2_jruu2")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=954811269]
@@ -79,3 +83,13 @@ texture = SubResource("GradientTexture2D_1p7gh")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=155708181]
 position = Vector2(0, 2)
 shape = SubResource("RectangleShape2D_jruu2")
+disabled = true
+
+[node name="TriggerArea" type="Area2D" parent="."]
+position = Vector2(0, -32)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerArea"]
+shape = SubResource("RectangleShape2D_trigger")

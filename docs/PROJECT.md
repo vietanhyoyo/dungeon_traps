@@ -119,7 +119,7 @@ res://
 | `res://nodes/scenes/level_1.tscn` | Main scene hiện tại, có Asura, camera, ánh sáng, tilemap, cửa sang level 2, fire traps, torches |
 | `res://nodes/scenes/level_2.tscn` | Level thứ hai, layout dài hơn, có nhiều torches và fire traps |
 | `res://nodes/characters/asura.tscn` | Nhân vật chính, gắn script `asura_controller.gd`, thuộc group `player`, collision layer 2 |
-| `res://nodes/traps/fire.tscn` | Bẫy lửa, phát sáng, gây game over qua `GameState` |
+| `res://nodes/traps/fire_trap.tscn` | Bẫy lửa, phát sáng, gây game over qua `GameState` |
 | `res://nodes/door.tscn` | Cửa mở bằng animation và đổi scene |
 | `res://nodes/torch.tscn` | Đuốc trang trí, có animation flicker và PointLight2D |
 | `res://nodes/music.tscn` | Autoload music, autoplay nhạc nền |

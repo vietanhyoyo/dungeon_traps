@@ -16,7 +16,7 @@ flowchart TD
 
   Main --> Asura["characters/asura.tscn"]
   Main --> Door["door.tscn"]
-  Main --> Fire["traps/fire.tscn"]
+  Main --> Fire["traps/fire_trap.tscn"]
   Main --> Torch["torch.tscn"]
   Main --> TileMap["tile maps"]
 
@@ -79,7 +79,7 @@ Các scene nhỏ có thể reuse qua nhiều level.
 | Scene | Chủ sở hữu logic |
 | --- | --- |
 | `characters/asura.tscn` | `scripts/actors/asura_controller.gd` |
-| `traps/fire.tscn` | `scripts/fire_trap.gd` |
+| `traps/fire_trap.tscn` | `scripts/fire_trap.gd` |
 | `door.tscn` | `scripts/door.gd` |
 | `torch.tscn` | Animation/PointLight2D trong scene |
 | `effects/landing_dust.tscn` | `scripts/landing_dust.gd` |
@@ -181,7 +181,7 @@ Nếu cần nhiều track sau này, nên đổi từ scene audio đơn giản sa
 Hiện tại:
 
 - `asura.tscn`: group `player`, `collision_layer = 2`, `collision_mask = 1`.
-- `fire.tscn`: `collision_mask = 3`, bắt layer 1 và 2.
+- `fire_trap.tscn`: `collision_mask = 2`, bắt layer player.
 - `door.tscn`: `collision_mask = 3`, bắt layer 1 và 2.
 - `coin.tscn`: `collision_mask = 2`, bắt player.
 - `killzone.tscn`: `collision_mask = 2`, bắt player.
@@ -243,7 +243,7 @@ res://
       level_1.tscn
       level_2.tscn
     traps/
-      fire.tscn
+      fire_trap.tscn
     ui/
       hud.tscn
   scripts/
@@ -311,7 +311,7 @@ res://
 3. Move script logic ra khỏi `assets/`. Đã làm với `game_manager.gd`.
 4. Update scene references và chạy Godot headless sau mỗi nhóm move. Đã làm trong lượt refactor này.
 5. Thống nhất death flow: `killzone.gd` gọi `GameState`. Đã làm.
-6. Chuẩn hóa collision layers/masks. Đã làm với Asura; còn có thể siết `fire.tscn` và `door.tscn` từ mask 3 xuống mask 2 sau khi test đầy đủ.
+6. Chuẩn hóa collision layers/masks. Đã làm với Asura và `fire_trap.tscn`.
 7. Quyết định `nodes/game.tscn` là tutorial được giữ, hay legacy được archive/xóa.
 
 ## Checklist Khi Thêm Level Mới
@@ -358,6 +358,6 @@ res://
 - Tạo HUD scene riêng nếu score/health/timer quay lại trong luồng chính.
 - Quyết định giữ, archive hoặc xóa `nodes/game.tscn` vì main scene hiện là `nodes/scenes/level_1.tscn`.
 - Cân nhắc move `nodes/scenes/` sang `nodes/levels/` hoặc `scenes/levels/` bằng Godot editor để folder level rõ nghĩa hơn.
-- Siết collision mask của `fire.tscn` và `door.tscn` về layer player sau khi test các overlap cần thiết.
+- Siết collision mask của `door.tscn` về layer player sau khi test các overlap cần thiết.
 - Theo dõi warning cleanup `ObjectDB instances leaked/resource still in use` khi chạy headless nếu nó bắt đầu ảnh hưởng test tự động.
 - Re-export Web để `export_html/` phản ánh thay đổi gameplay mới.
