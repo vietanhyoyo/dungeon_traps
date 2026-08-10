@@ -11,6 +11,7 @@ enum State {
 
 const DEFAULT_RESTART_SCENE_PATH := "res://nodes/scenes/level_1.tscn"
 const COUNTDOWN_FONT := preload("res://assets/fonts/PixelOperator8-Bold.ttf")
+const GAME_OVER_SOUND := preload("res://assets/sounds/game_over.mp3")
 const RESTART_DELAY_SECONDS := 5
 
 var state: State = State.PLAYING
@@ -19,10 +20,17 @@ var _is_counting_down := false
 var _restart_scene_path := DEFAULT_RESTART_SCENE_PATH
 var _countdown_layer: CanvasLayer
 var _countdown_label: Label
+var _game_over_sound_player: AudioStreamPlayer
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+
+	_game_over_sound_player = AudioStreamPlayer.new()
+	_game_over_sound_player.stream = GAME_OVER_SOUND
+	_game_over_sound_player.bus = &"SFX"
+	_game_over_sound_player.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(_game_over_sound_player)
 
 
 func trigger_game_over(player: Node2D) -> void:
@@ -32,6 +40,7 @@ func trigger_game_over(player: Node2D) -> void:
 	state = State.GAME_OVER
 	_restart_scene_path = _get_current_scene_path()
 	game_over_started.emit(player)
+	_game_over_sound_player.play()
 
 	if player and player.has_method("die"):
 		player.die()

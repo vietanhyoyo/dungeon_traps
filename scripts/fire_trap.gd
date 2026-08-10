@@ -3,6 +3,7 @@ extends Area2D
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var damage_shape: CollisionShape2D = $CollisionShape2D
 @onready var trigger_area: Area2D = $TriggerArea
+@onready var appear_sound: AudioStreamPlayer2D = $AppearSound
 
 
 func _ready() -> void:
@@ -17,6 +18,7 @@ func _on_trigger_body_entered(body: Node2D) -> void:
 
 	trigger_area.set_deferred("monitoring", false)
 	animated_sprite.visible = true
+	appear_sound.play()
 	damage_shape.set_deferred("disabled", false)
 	set_deferred("monitoring", true)
 

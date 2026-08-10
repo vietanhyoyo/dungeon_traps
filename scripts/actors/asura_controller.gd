@@ -6,6 +6,8 @@ const LANDING_DUST_MIN_SPEED = 180.0
 const DEATH_JUMP_VELOCITY = -420.0
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
+@onready var running_sound: AudioStreamPlayer2D = $RunningSound
+@onready var attack_sound: AudioStreamPlayer2D = $AttackSound
 @onready var dust_scene = preload("res://nodes/effects/landing_dust.tscn")
 
 var is_attacking = false
@@ -18,6 +20,7 @@ func _physics_process(delta: float) -> void:
 	if is_dead:
 		velocity += get_gravity() * delta
 		position += velocity * delta
+		running_sound.stop()
 		return
 
 	# Add the gravity.
@@ -28,6 +31,7 @@ func _physics_process(delta: float) -> void:
 	# Attack input
 	if Input.is_action_just_pressed("attack") and not is_attacking:
 		is_attacking = true
+		attack_sound.play()
 
 		# Nếu đang trên không thì luôn dùng attack2
 		if not is_on_floor():
@@ -44,6 +48,7 @@ func _physics_process(delta: float) -> void:
 	# Trong lúc attack thì không override animation
 	if is_attacking:
 		velocity.x = 0
+		running_sound.stop()
 		move_and_slide()
 		
 		# Kiểm tra vừa chạm đất trong lúc attack
@@ -86,13 +91,17 @@ func _physics_process(delta: float) -> void:
 	if is_on_floor():
 		if direction == 0:
 			animated_sprite.play("idle")
+			running_sound.stop()
 		else:
 			animated_sprite.play("run")
+			if not running_sound.playing:
+				running_sound.play()
 	else:
 		if velocity.y < 0:
 			animated_sprite.play("jump_up")
 		else:
 			animated_sprite.play("jump_down")
+		running_sound.stop()
 
 
 func spawn_landing_dust() -> void:
@@ -108,6 +117,7 @@ func die() -> void:
 
 	is_dead = true
 	is_attacking = false
+	running_sound.stop()
 	velocity = Vector2(0.0, DEATH_JUMP_VELOCITY)
 	collision_layer = 0
 	collision_mask = 0

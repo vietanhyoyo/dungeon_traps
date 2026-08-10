@@ -6,6 +6,8 @@
 [ext_resource type="Texture2D" uid="uid://bkprs2akf857h" path="res://assets/sprites/shinn_asura/Shinn-Asura-run.png" id="5_cv6pu"]
 [ext_resource type="Texture2D" uid="uid://mt13ehvoet3d" path="res://assets/sprites/shinn_asura/Shinn-Asura-jump.png" id="5_i2l0f"]
 [ext_resource type="Texture2D" uid="uid://doeukudxrqnqn" path="res://assets/sprites/shinn_asura/Shinn-Asura-death.png" id="6_death"]
+[ext_resource type="AudioStream" uid="uid://dxg8x1n6r6y2p" path="res://assets/sounds/running.mp3" id="7_running"]
+[ext_resource type="AudioStream" uid="uid://c8f3a2b1d4e5f6a7" path="res://assets/sounds/sword_attack.mp3" id="8_attack"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_e082f"]
 atlas = ExtResource("2_u1ow0")
@@ -236,5 +238,13 @@ frame_progress = 0.45442367
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=103448317]
 position = Vector2(0, 1)
 shape = SubResource("CapsuleShape2D_2j3w5")
+
+[node name="RunningSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("7_running")
+bus = &"SFX"
+
+[node name="AttackSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("8_attack")
+bus = &"SFX"
 
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]
