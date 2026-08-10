@@ -1,20 +1,18 @@
-# Dungeon Traps - Kiến Trúc Dự Án
+# Dungeon Traps - Project Architecture
 
-Cập nhật: 2026-08-10
+Updated: 2026-08-10
 
-## Mục Tiêu Kiến Trúc
+This document describes the actual architecture and runtime behavior of the project.
 
-Kiến trúc phải giúp project dễ mở rộng level, dễ thêm trap/enemy/item mới, và giữ logic gameplay tách khỏi layout của từng map.
+## Core Principles
 
-Nền tảng hiện tại đã ổn định:
+- Level scenes only hold placement, never logic.
+- Trap/door/torch/player are self-contained reusable scenes that only know their own behavior.
+- `GameState` is the single autoload that owns the death flow and restart.
+- Every hazard goes through the same entry point: `GameState.trigger_game_over(body)`.
+- Per-level configuration is passed via `@export`, never hard-coded in scripts.
 
-- Level scene chỉ chứa placement, không chứa logic.
-- Trap/door/torch/player là reusable scene độc lập.
-- `GameState` là autoload duy nhất sở hữu death flow và restart.
-- Mọi hazard đi qua cùng một entry point `GameState.trigger_game_over(body)`.
-- Audio đã tách bus `Music` và `SFX`.
-
-## Sơ Đồ Runtime Hiện Tại
+## Runtime Diagram
 
 ```mermaid
 flowchart TD
@@ -40,302 +38,197 @@ flowchart TD
   KillzoneScript["scripts/killzone.gd"] --> GameOver
 
   GameOver --> Die["player.die()"]
-  GameOver --> Sound["game_over.mp3 (bus SFX)"]
-  GameOver --> Overlay["Overlay GAME OVER + countdown 5s"]
-  Overlay --> Reload["change_scene_to_file(scene đang chơi)"]
+  GameOver --> Sound["game_over.mp3 (SFX bus)"]
+  GameOver --> Overlay["GAME OVER overlay + 5s countdown"]
+  Overlay --> Reload["change_scene_to_file(current scene)"]
 
   DoorScript --> Level2["nodes/scenes/level_2.tscn"]
 ```
 
-## Lớp Trách Nhiệm
+## Layers Of Responsibility
 
-### 1. Project Config
+### Project Config
 
-`project.godot` định nghĩa main scene, input map, autoload, global group và render defaults. Không chứa logic gameplay.
+`project.godot` defines the main scene, input map, autoloads, global groups and render defaults. It holds no gameplay logic.
 
-Hiện tại:
-
-- Main scene: `nodes/scenes/level_1.tscn` (trỏ bằng UID `uid://l1dhtqji1d6x`).
-- Autoload `Music`: scene `nodes/music.tscn`, `AudioStreamPlayer2D` autoplay `background_music.mp3` trên bus `Music`.
+- Main scene: `nodes/scenes/level_1.tscn` (referenced by UID `uid://l1dhtqji1d6x`).
+- Autoload `Music`: scene `nodes/music.tscn`, an `AudioStreamPlayer2D` autoplaying `background_music.mp3` on the `Music` bus.
 - Autoload `GameState`: `scripts/game_state.gd`.
 - Global group: `player`.
 - Input actions: `move_left` (A/←), `move_right` (D/→), `jump` (Space), `attack` (C).
 
-`default_bus_layout.tres` định nghĩa bus `Music` (-6 dB) và `SFX` (0 dB), cả hai gửi về `Master`.
+`default_bus_layout.tres` defines the `Music` bus (-6 dB) and the `SFX` bus (0 dB), both routed to `Master`.
 
-### 2. Level Scenes
+### Level Scenes
 
-Level scene chỉ chịu trách nhiệm layout và placement.
+`nodes/scenes/level_1.tscn` (root `Level1`) and `nodes/scenes/level_2.tscn` (root `Level2`).
 
-Hiện tại: `nodes/scenes/level_1.tscn` (root `Level1`), `nodes/scenes/level_2.tscn` (root `Level2`).
+A level contains:
 
-Nên chứa:
-
-- Player instance, camera và `PointLight2D` gắn dưới player.
+- The player instance, with its camera and `PointLight2D` parented under it.
 - TileMap/background.
-- Instance của trap, door, torch, enemy, item — gom theo node nhóm (`FireList`, `ThornList`, `TorchList`).
-- Cấu hình instance-specific như `Door.next_scene_path`.
+- Trap, door and torch instances, grouped under the `FireList`, `ThornList` and `TorchList` nodes.
+- Instance-specific configuration such as `Door.next_scene_path`.
 
-Không nên chứa:
+Neither level has a script attached to its root node. Levels hold no death/restart logic, no movement logic, and no global state.
 
-- Logic death/restart riêng.
-- Logic player movement.
-- Logic global state.
+### Reusable Gameplay Scenes
 
-Ghi chú: cả hai level đều **không gắn script** vào root node. Logic level (nếu cần sau này) nên đi qua autoload hoặc script riêng, không nhét vào scene.
-
-### 3. Reusable Gameplay Scenes
-
-| Scene | Chủ sở hữu logic |
+| Scene | Owning logic |
 | --- | --- |
 | `characters/asura.tscn` | `scripts/actors/asura_controller.gd` |
 | `traps/fire_trap.tscn` | `scripts/fire_trap.gd` |
 | `traps/thorn.tscn` | `scripts/thorn_trap.gd` |
 | `door.tscn` | `scripts/door.gd` |
 | `killzone.tscn` | `scripts/killzone.gd` |
-| `torch.tscn` | Animation + `PointLight2D` trong scene, không script |
+| `torch.tscn` | Animation + `PointLight2D` in the scene, no script |
 | `effects/landing_dust.tscn` | `scripts/landing_dust.gd` |
-| `enemies/slime.tscn` | `scripts/slime.gd` (chỉ dùng trong `game.tscn` legacy) |
-| `items/coin.tscn` | `scripts/coin.gd` (chỉ dùng trong `game.tscn` legacy) |
-| `platform.tscn`, `tile_map_32.tscn` | Không script |
+| `enemies/slime.tscn` | `scripts/slime.gd` (only used by the legacy `game.tscn`) |
+| `items/coin.tscn` | `scripts/coin.gd` (only used by the legacy `game.tscn`) |
+| `platform.tscn`, `tile_map_32.tscn` | No script |
 
-Rule:
+A reusable scene that needs to change global state calls an autoload or emits a signal; it never changes the scene itself.
 
-- Một scene reusable chỉ biết về behavior của chính nó.
-- Muốn đổi state global thì gọi autoload hoặc emit signal.
-- Cần cấu hình per-level thì dùng `@export`.
+### Scripts
 
-### 4. Scripts
+Scripts live under `res://scripts/`, with `actors/` and `ui/` subgroups; the smaller gameplay scripts are currently flat in `scripts/`.
 
-Script nằm ở `res://scripts/`, có nhóm `actors/` và `ui/`; các script gameplay nhỏ hiện vẫn flat trong `scripts/`.
+Files currently not referenced by any scene: `scripts/level_1_controller.gd` and `scripts/level_2_controller.gd` (both only `extends Node2D`), and `nodes/traps/gai.tscn` (the old thorn scene, still wired to `fire_trap.gd`, superseded by `traps/thorn.tscn`).
 
-Script đang orphan, cần dọn:
+### Assets
 
-- `scripts/level_1_controller.gd` và `scripts/level_2_controller.gd`: chỉ có `extends Node2D`, không scene nào gắn.
-- `nodes/traps/gai.tscn`: scene gai bản cũ, vẫn gắn `fire_trap.gd`, đã bị `traps/thorn.tscn` thay thế và không level nào instance.
+`assets/` holds passive data only — textures, sounds, music, fonts. No gameplay scripts.
 
-### 5. Assets
+Sounds actually referenced by scenes: `running.mp3` and `sword_attack.mp3` (Asura), `fireball_whoosh.mp3` (fire trap), `coin.wav` (legacy coin), `game_over.mp3` (preloaded by `GameState`). The remaining files in `assets/sounds/` are unreferenced.
 
-Asset là dữ liệu thụ động: texture, sound, music, font. `assets/` không chứa script gameplay.
-
-Sound đang thật sự được scene sử dụng: `running.mp3`, `sword_attack.mp3` (Asura), `fireball_whoosh.mp3` (fire trap), `coin.wav` (coin legacy), `game_over.mp3` (`GameState` preload). Các file còn lại trong `assets/sounds/` hiện chưa được tham chiếu.
-
-## Luồng Chính
+## Main Flows
 
 ### Player Movement
 
-`asura.tscn` là `CharacterBody2D`, group `player`, layer 2, mask 1, script `scripts/actors/asura_controller.gd`.
+`asura.tscn` is a `CharacterBody2D` in the `player` group, on layer 2 with mask 1, driven by `scripts/actors/asura_controller.gd`.
 
-Script xử lý gravity, jump, move trái/phải, flip sprite, attack (xen kẽ `attack`/`attack2`, trên không luôn `attack2`), animation idle/run/jump_up/jump_down/death, landing dust khi tốc độ rơi vượt `LANDING_DUST_MIN_SPEED`, và `die()`.
+The script handles gravity, jumping, left/right movement, sprite flipping, attacks (alternating `attack`/`attack2`, always `attack2` while airborne), the idle/run/jump_up/jump_down/death animations, landing dust when fall speed exceeds `LANDING_DUST_MIN_SPEED`, and `die()`.
 
-Điểm cần chú ý:
+Things to be aware of:
 
-- Trong lúc attack, `velocity.x` bị set về 0.
-- Khi chết, script không dùng `move_and_slide()` mà cộng gravity rồi cộng thẳng vào `position`, tạo hiệu ứng văng lên rồi rơi.
-- `die()` tắt collision layer/mask và disable `CollisionShape2D`.
-- `die()` là contract mà `GameState` dựa vào; nhân vật mới bắt buộc phải có method này.
+- During an attack, `velocity.x` is forced to 0.
+- On death the script does not use `move_and_slide()`; it applies gravity and adds the result straight to `position`, producing the pop-up-then-fall effect.
+- `die()` clears the collision layer/mask and disables the `CollisionShape2D`.
+- `die()` is the contract `GameState` relies on — a player character must implement it.
 
 ### Game Over
 
-`fire_trap.gd`, `thorn_trap.gd` và `killzone.gd` dùng chung một death flow:
+`fire_trap.gd`, `thorn_trap.gd` and `killzone.gd` all share one death flow:
 
 ```text
 Hazard body_entered
-  -> nếu body thuộc group player
+  -> if the body is in the player group
   -> /root/GameState.trigger_game_over(body)
-  -> state = GAME_OVER, lưu scene hiện tại
-  -> phát game_over.mp3 (bus SFX)
+  -> state = GAME_OVER, remember the current scene
+  -> play game_over.mp3 (SFX bus)
   -> player.die()
-  -> overlay CanvasLayer layer 100 + countdown 5 giây
-  -> change_scene_to_file(scene đang chơi)
+  -> CanvasLayer overlay at layer 100 + 5 second countdown
+  -> change_scene_to_file(current scene)
   -> reset_to_playing()
 ```
 
-Quyết định kiến trúc: mọi hazard gây chết phải gọi `GameState.trigger_game_over(body)`, không tự reload scene.
-
-`GameState` chạy `PROCESS_MODE_ALWAYS`, và restart về **scene đang chơi** (`_get_current_scene_path()`) chứ không cố định level 1; `DEFAULT_RESTART_SCENE_PATH` chỉ là fallback.
+`GameState` runs with `PROCESS_MODE_ALWAYS` and restarts the **scene currently being played** (`_get_current_scene_path()`) rather than always level 1; `DEFAULT_RESTART_SCENE_PATH` is only a fallback. Hazards never reload the scene themselves.
 
 ### Fire Trap
 
-Bẫy lửa có hai vùng: `TriggerArea` (mask 2) và vùng damage của chính `Area2D` root (mask 2).
+The fire trap has two areas: `TriggerArea` (mask 2) and the damage area on the root `Area2D` itself (mask 2).
 
 ```text
-_ready: sprite ẩn, damage shape tắt
+_ready: sprite hidden, damage shape disabled
 TriggerArea.body_entered (player)
-  -> tắt monitoring của trigger
-  -> hiện sprite, phát AppearSound
-  -> bật damage shape và monitoring
+  -> disable the trigger's monitoring
+  -> show the sprite, play AppearSound
+  -> enable the damage shape and monitoring
 body_entered (player) -> GameState.trigger_game_over()
 ```
 
 ### Thorn Trap
 
-`traps/thorn.tscn` là `Node2D` chứa `Hazard` (Area2D) và `TriggerArea`.
+`traps/thorn.tscn` is a `Node2D` containing `Hazard` (an Area2D) and `TriggerArea`.
 
 ```text
-_ready: physics process tắt
-TriggerArea.body_entered (player) -> _is_falling = true, bật physics process
-_physics_process: raycast xuống 3 điểm (-half_width, 0, +half_width)
-  -> chạm sàn thì snap vào mặt sàn và dừng
-  -> hoặc rơi quá max_fall_distance thì dừng
+_ready: physics process disabled
+TriggerArea.body_entered (player) -> _is_falling = true, enable physics process
+_physics_process: raycast downward from 3 points (-half_width, 0, +half_width)
+  -> on hitting the floor, snap to the floor surface and stop
+  -> or stop after falling past max_fall_distance
 Hazard.body_entered (player) -> GameState.trigger_game_over()
 ```
 
-Tham số `@export`: `fall_speed`, `max_fall_distance`, `floor_collision_mask`, `thorn_half_width`, `thorn_half_height`, `floor_probe_margin`. Script tự dừng khi `GameState.is_game_over()`.
+Exported parameters: `fall_speed`, `max_fall_distance`, `floor_collision_mask`, `thorn_half_width`, `thorn_half_height`, `floor_probe_margin`. The script halts itself when `GameState.is_game_over()`.
 
 ### Door / Level Transition
 
-`door.gd` dùng hai Area2D:
+`door.gd` uses two Area2Ds:
 
-- `OpenArea`: player vào thì play animation `open`.
-- `PassArea`: player vào khi cửa đã mở thì đổi scene sau delay 0.3s.
+- `OpenArea`: entering it plays the `open` animation.
+- `PassArea`: entering it once the door is open changes the scene after a 0.3s delay.
 
-`next_scene_path` là `@export`, cấu hình trong từng level instance.
+`next_scene_path` is an `@export`, configured per level instance.
 
-- `level_1` trỏ sang `res://nodes/scenes/level_2.tscn`.
-- `level_2` chưa cấu hình `next_scene_path`, nên door cuối game hiện không đi đâu.
-- Nếu `next_scene_path` rỗng thì door không đổi scene.
+- `level_1` points to `res://nodes/scenes/level_2.tscn`.
+- `level_2` has no `next_scene_path` configured, so the final door currently leads nowhere.
+- An empty `next_scene_path` means the door does not change scenes.
+
+### Lighting
+
+The project does not use `CanvasModulate`. Darkness is faked by lowering each object's `modulate`, then `PointLight2D` adds brightness back on top.
+
+| Node | modulate |
+| --- | --- |
+| `TileMap` in `level_1` | 0.733 |
+| `Asura` instance in a level | 0.545 |
+| `torch.tscn` root | 0.439 |
+| `fire_trap.tscn/AnimatedSprite2D` | 0.431 |
+| `thorn.tscn/Hazard/Sprite2D` | 0.431 |
+
+Light sources: a `PointLight2D` under `Asura` in each level, one under the fire trap's `AnimatedSprite2D`, and one under the torch root.
+
+New gameplay sprites must lower their `modulate` in line with the table above; otherwise they stay at full brightness and appear unaffected by the lights.
 
 ### Music
 
-`Music` là autoload scene `nodes/music.tscn`, root `AudioStreamPlayer2D`, autoplay `background_music.mp3` trên bus `Music`.
+`Music` is the autoload scene `nodes/music.tscn`, whose root `AudioStreamPlayer2D` autoplays `background_music.mp3` on the `Music` bus. Every other sound effect goes through the `SFX` bus.
 
-Nếu cần nhiều track, nên đổi sang script `MusicManager` có API `play_track(path)`, `fade_to(path)`, `set_music_volume(value)`.
-
-## Collision Và Groups
-
-Thực tế hiện tại:
+## Collision And Groups
 
 | Scene | Layer | Mask |
 | --- | --- | --- |
 | `asura.tscn` | 2 | 1 |
 | `fire_trap.tscn` root | 0 | 2 |
 | `fire_trap.tscn` `TriggerArea` | 0 | 2 |
-| `thorn.tscn` `Hazard` | 1 | 2 |
+| `thorn.tscn` `Hazard` | 0 | 2 |
 | `thorn.tscn` `TriggerArea` | 0 | 2 |
 | `door.tscn` `OpenArea` / `PassArea` | 0 | 3 |
 | `killzone.tscn` | 0 | 2 |
 | `items/coin.tscn` | 0 | 2 |
 
-Convention mục tiêu:
+Layer meanings:
 
-| Layer | Ý nghĩa |
+| Layer | Meaning |
 | --- | --- |
 | 1 | World / TileMap / Platform |
 | 2 | Player |
-| 3 | Enemy |
-| 4 | Hazard |
-| 5 | Item / Pickup |
 
-Rule:
+Conventions:
 
-- Mọi player scene phải ở layer 2 và thuộc group `player`.
-- Hazard xác nhận player bằng group check, mask chỉ bắt layer 2.
-- Item chỉ bắt layer 2.
-- Enemy/hazard không được phụ thuộc vào việc player nằm layer 1.
+- Player scenes sit on layer 2 and belong to the `player` group.
+- Hazards confirm the player via `body.is_in_group("player")` and mask only layer 2.
+- Items mask only layer 2.
+- Enemies and hazards never depend on the player being on layer 1.
 
-Hai chỗ còn lệch convention:
+`door.tscn` currently uses mask 3 (catching both layer 1 and 2), the only remaining deviation from this convention.
 
-- `thorn.tscn/Hazard` đang ở layer 1 (layer world) trong khi nó là hazard.
-- `door.tscn` đang mask 3 (bắt cả layer 1 và 2), nên siết về chỉ layer 2 sau khi test overlap.
+## Responsibility Boundaries
 
-## Kiến Trúc Thư Mục Đề Xuất
-
-Project dùng `nodes/` cho scene và `scripts/` cho script. Giữ convention này cũng được, quan trọng là nhất quán — không vừa gọi `nodes` vừa gọi `scenes`.
-
-Đề xuất refactor ít rủi ro, giữ `nodes/`:
-
-```text
-res://
-  nodes/
-    autoload/     # music.tscn
-    characters/   # asura.tscn
-    enemies/      # slime.tscn
-    effects/      # landing_dust.tscn
-    gameplay/     # door.tscn, platform.tscn, killzone.tscn, tile_map_32.tscn
-    items/        # coin.tscn
-    levels/       # level_1.tscn, level_2.tscn
-    traps/        # fire_trap.tscn, thorn.tscn
-    ui/
-  scripts/
-    autoload/     # game_state.gd, music_manager.gd
-    actors/       # asura_controller.gd, slime.gd
-    effects/      # landing_dust.gd
-    gameplay/     # door.gd, platform.gd
-    hazards/      # fire_trap.gd, thorn_trap.gd, killzone.gd
-    items/        # coin.gd
-    ui/           # game_manager.gd
-```
-
-## Trạng Thái Refactor
-
-| Hạng mục | Trạng thái |
-| --- | --- |
-| Controller Asura tại `scripts/actors/asura_controller.gd` | Đã làm |
-| Score manager legacy tại `scripts/ui/game_manager.gd`, không còn nằm trong `assets/` | Đã làm |
-| `level_2.tscn` root đổi thành `Level2` | Đã làm |
-| `killzone.gd` dùng chung `GameState` death flow | Đã làm |
-| Player knight cũ đã xóa, Asura chuẩn hóa layer 2 | Đã làm |
-| Tách bus audio `Music` / `SFX` | Đã làm |
-| `GameState` restart đúng level đang chơi thay vì luôn về level 1 | Đã làm |
-| Thorn trap tách thành `thorn.tscn` + `thorn_trap.gd` | Đã làm |
-| Xóa `nodes/traps/gai.tscn` (bản gai cũ, không dùng) | Chưa làm |
-| Xóa `scripts/level_1_controller.gd`, `scripts/level_2_controller.gd` (orphan) | Chưa làm |
-| Đổi `nodes/scenes/` thành `nodes/levels/` | Chưa làm |
-| Gom script flat vào `hazards/`, `gameplay/`, `items/`, `effects/` | Chưa làm |
-| Quyết định giữ / archive / xóa `nodes/game.tscn` | Chưa quyết |
-| `thorn.tscn/Hazard` chuyển khỏi layer 1 | Chưa làm |
-| Siết `door.tscn` mask về layer player | Chưa làm |
-| `level_2` door cấu hình `next_scene_path` hoặc màn hình kết thúc | Chưa làm |
-
-## Checklist Khi Thêm Level Mới
-
-- Tạo scene level mới dưới folder levels.
-- Root node đặt đúng tên level, ví dụ `Level3`.
-- Instance `asura.tscn`, camera và light gắn dưới player.
-- TileMap có collision layer world.
-- Trap dùng reusable scene, gom vào node nhóm; không copy logic vào level.
-- Door cuối level có `next_scene_path`.
-- Không gắn script logic vào root level.
-- Test death flow từ mọi hazard (fire, thorn, killzone).
-- Test chuyển scene và restart sau game over.
-
-## Checklist Khi Thêm Trap Mới
-
-- Trap là `Area2D`, hoặc `Node2D` chứa Area2D nếu cần chuyển động như thorn.
-- Trap kiểm tra `body.is_in_group("player")`.
-- Trap gọi `GameState.trigger_game_over(body)` nếu gây chết.
-- Collision mask chỉ bắt layer player.
-- Animation, lighting và sound nằm trong scene trap; sound đi bus `SFX`.
-- Tham số tinh chỉnh dùng `@export`, không hard-code theo level.
-- Script trap không tự reload hay đổi scene.
-- Trap có chuyển động phải tự dừng khi `GameState.is_game_over()`.
-
-## Checklist Khi Thêm Nhân Vật
-
-- Root là `CharacterBody2D`.
-- Thuộc group `player` nếu là player-controlled.
-- Có method `die()` để tương thích `GameState`.
-- Collision layer 2, mask 1.
-- Animation names script gọi phải tồn tại trong SpriteFrames.
-- Script đặt trong `scripts/actors/` theo tên nhân vật hoặc vai trò.
-
-## Ranh Giới Nên Giữ
-
-- Level chỉ place object và cấu hình instance.
-- Player chỉ quản lý input, movement, animation và trạng thái chết của chính nó.
-- Trap chỉ phát hiện va chạm và báo game state.
-- Door chỉ quản lý mở cửa và chuyển scene.
-- `GameState` chỉ quản lý state global, overlay game over và restart.
-- Asset folder chỉ chứa dữ liệu visual/audio/font.
-
-## Việc Nên Làm Tiếp
-
-- Dọn orphan: `nodes/traps/gai.tscn`, `scripts/level_1_controller.gd`, `scripts/level_2_controller.gd`.
-- Quyết định giữ, archive hoặc xóa `nodes/game.tscn` cùng `coin.gd`, `slime.gd`, `game_manager.gd` đi kèm.
-- Cấu hình `next_scene_path` cho door ở `level_2`, hoặc làm màn hình kết thúc.
-- Chuẩn hóa `thorn.tscn/Hazard` và `door.tscn` theo convention layer.
-- Tạo HUD scene riêng nếu score/health/timer quay lại luồng chính.
-- Move `nodes/scenes/` sang `nodes/levels/` bằng Godot editor để giữ đúng UID.
-- Xóa hoặc sử dụng các file sound chưa được tham chiếu trong `assets/sounds/`.
-- Re-export Web sau mỗi thay đổi gameplay để `export_html/` không lệch với source.
+- A level only places objects and configures instances.
+- The player only manages its own input, movement, animation and death state.
+- A trap only detects collisions and reports to the game state.
+- A door only handles opening and scene transitions.
+- `GameState` only manages global state, the game over overlay and restarting.
+- The assets folder only holds visual/audio/font data.
