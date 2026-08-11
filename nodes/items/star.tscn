@@ -1,0 +1,150 @@
+[gd_scene format=3 uid="uid://cg8mbcubeyje8"]
+
+[ext_resource type="Texture2D" uid="uid://bwu0gnyn46do6" path="res://assets/sprites/star.png" id="1_4f4r2"]
+[ext_resource type="Script" uid="uid://bkt7pxn7yqo4j" path="res://scripts/star.gd" id="1_star_script"]
+[ext_resource type="AudioStream" uid="uid://mnm1cky7piae" path="res://assets/sounds/coin.wav" id="2_coin_sound"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ocrra"]
+atlas = ExtResource("1_4f4r2")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gmtrv"]
+atlas = ExtResource("1_4f4r2")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_13uh0"]
+atlas = ExtResource("1_4f4r2")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vvmb4"]
+atlas = ExtResource("1_4f4r2")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pcb5v"]
+atlas = ExtResource("1_4f4r2")
+region = Rect2(64, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fcrvl"]
+atlas = ExtResource("1_4f4r2")
+region = Rect2(80, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gxren"]
+atlas = ExtResource("1_4f4r2")
+region = Rect2(96, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p0i5y"]
+atlas = ExtResource("1_4f4r2")
+region = Rect2(112, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vyu1g"]
+atlas = ExtResource("1_4f4r2")
+region = Rect2(128, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mlxqs"]
+atlas = ExtResource("1_4f4r2")
+region = Rect2(144, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_i51bf"]
+atlas = ExtResource("1_4f4r2")
+region = Rect2(160, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s2blu"]
+atlas = ExtResource("1_4f4r2")
+region = Rect2(176, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m3g87"]
+atlas = ExtResource("1_4f4r2")
+region = Rect2(192, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sl6bv"]
+atlas = ExtResource("1_4f4r2")
+region = Rect2(208, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_peu8m"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ocrra")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gmtrv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_13uh0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vvmb4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pcb5v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fcrvl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gxren")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p0i5y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vyu1g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mlxqs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_i51bf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s2blu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m3g87")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sl6bv")
+}],
+"loop": true,
+"name": &"default",
+"speed": 12.0
+}]
+
+[sub_resource type="Gradient" id="Gradient_star_glow"]
+offsets = PackedFloat32Array(0, 0.21602787, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.55078125, 0.55078125, 0.55078125, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_star_glow"]
+gradient = SubResource("Gradient_star_glow")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_star"]
+radius = 6.0
+
+[node name="Star" type="Area2D" unique_id=669165112]
+collision_mask = 2
+script = ExtResource("1_star_script")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1747791208]
+modulate = Color(0.46618086, 0.4661808, 0.4661808, 1)
+sprite_frames = SubResource("SpriteFrames_peu8m")
+autoplay = "default"
+frame_progress = 0.24159855
+
+[node name="PointLight2D" type="PointLight2D" parent="AnimatedSprite2D" unique_id=674151783]
+color = Color(0.92654854, 0.82248145, 0.09917266, 1)
+energy = 1.2
+shadow_enabled = true
+texture = SubResource("GradientTexture2D_star_glow")
+texture_scale = 2.63
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1786500841]
+shape = SubResource("CircleShape2D_star")
+
+[node name="PickupSound" type="AudioStreamPlayer2D" parent="." unique_id=1359477357]
+stream = ExtResource("2_coin_sound")
+bus = &"SFX"
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

@@ -7,7 +7,10 @@
 [ext_resource type="PackedScene" path="res://nodes/tile_map_32.tscn" id="3_m4axl"]
 [ext_resource type="PackedScene" path="res://nodes/torch.tscn" id="5_jsomn"]
 [ext_resource type="PackedScene" uid="uid://dscr153320p4r" path="res://nodes/traps/fire_trap.tscn" id="6_jsomn"]
-[ext_resource type="PackedScene" path="res://nodes/traps/thorn.tscn" id="7_thorn"]
+[ext_resource type="PackedScene" uid="uid://ddq2qqo23k2o0" path="res://nodes/traps/thorn.tscn" id="7_thorn"]
+[ext_resource type="PackedScene" uid="uid://deqd3mnvbeh2d" path="res://nodes/camera.tscn" id="8_camera"]
+[ext_resource type="PackedScene" uid="uid://cg8mbcubeyje8" path="res://nodes/items/star.tscn" id="10_akfln"]
+[ext_resource type="PackedScene" path="res://nodes/star_hud.tscn" id="11_star_hud"]
 
 [sub_resource type="Gradient" id="Gradient_8pcmo"]
 interpolation_color_space = 1
@@ -146,11 +149,8 @@ modulate = Color(0.5449743, 0.54497427, 0.54497427, 1)
 z_index = 5
 position = Vector2(-268, -367)
 
-[node name="Camera2D" type="Camera2D" parent="Asura" unique_id=1676138689]
-position = Vector2(-1, 5)
-zoom = Vector2(2, 2)
+[node name="Camera2D" parent="Asura" unique_id=1525755273 instance=ExtResource("8_camera")]
 limit_bottom = 100
-position_smoothing_enabled = true
 
 [node name="PointLight2D" type="PointLight2D" parent="Asura" unique_id=1077569544]
 color = Color(0.84454954, 0.8480106, 0.5679862, 1)
@@ -208,21 +208,21 @@ position = Vector2(58, -8)
 z_index = 10
 position = Vector2(200, -504)
 
-[node name="CollisionShape2D" parent="ThornList/Thorn/TriggerArea" index="0"]
+[node name="CollisionShape2D" parent="ThornList/Thorn/TriggerArea" parent_id_path=PackedInt32Array(1384229404, 1071367287) index="0" unique_id=94025158]
 position = Vector2(0, 120)
 
 [node name="Thorn2" parent="ThornList" unique_id=2027210147 instance=ExtResource("7_thorn")]
 z_index = 10
 position = Vector2(216, -504)
 
-[node name="TriggerArea" parent="ThornList/Thorn2" index="1"]
+[node name="TriggerArea" parent="ThornList/Thorn2" index="1" unique_id=1071367287]
 position = Vector2(0, 310)
 
 [node name="Thorn3" parent="ThornList" unique_id=2020494271 instance=ExtResource("7_thorn")]
 z_index = 10
 position = Vector2(232, -504)
 
-[node name="TriggerArea" parent="ThornList/Thorn3" index="1"]
+[node name="TriggerArea" parent="ThornList/Thorn3" index="1" unique_id=1071367287]
 position = Vector2(0, 312)
 
 [node name="TorchList" type="Node" parent="." unique_id=1486217687]
@@ -235,6 +235,17 @@ position = Vector2(-181, -418)
 
 [node name="Torch3" parent="TorchList" unique_id=2124427812 instance=ExtResource("5_jsomn")]
 position = Vector2(377, -113)
+
+[node name="Star" parent="." unique_id=669165112 instance=ExtResource("10_akfln")]
+position = Vector2(-3, -338)
+
+[node name="Star2" parent="." unique_id=1792542602 instance=ExtResource("10_akfln")]
+position = Vector2(-15, -21)
+
+[node name="Star3" parent="." unique_id=460415246 instance=ExtResource("10_akfln")]
+position = Vector2(92, -24)
+
+[node name="StarHUD" parent="." instance=ExtResource("11_star_hud")]
 
 [editable path="ThornList/Thorn"]
 [editable path="ThornList/Thorn2"]
