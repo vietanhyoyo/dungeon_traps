@@ -17,6 +17,7 @@ const SPEED = 30.0
 
 var direction = 1
 var is_dead := false
+var is_attacking := false
 
 var _start_x: float = 0.0
 
@@ -31,6 +32,9 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	if Engine.is_editor_hint() or is_dead:
+		return
+	if is_attacking:
+		velocity = Vector2.ZERO
 		return
 
 	# Add the gravity.
@@ -54,7 +58,7 @@ func _physics_process(delta: float) -> void:
 	velocity.x = direction * SPEED
 	move_and_slide()
 
-# Bị nhân vật chém trúng: xẹp xuống rồi biến mất
+# Bị nhân vật chém trúng: phát animation chết rồi biến mất
 func die() -> void:
 	if is_dead:
 		return
@@ -65,12 +69,28 @@ func die() -> void:
 	collision_shape.set_deferred("disabled", true)
 	killzone.set_deferred("monitoring", false)
 
-	var tween := create_tween()
-	tween.set_parallel(true)
-	tween.tween_property(animated_sprite, "scale", Vector2(1.4, 0.2), 0.15)
-	tween.tween_property(animated_sprite, "position:y", 12.0, 0.15)
-	tween.tween_property(animated_sprite, "modulate:a", 0.0, 0.25)
-	tween.chain().tween_callback(queue_free)
+	if animated_sprite.sprite_frames.has_animation("death"):
+		animated_sprite.play("death")
+		await animated_sprite.animation_finished
+
+	queue_free()
+
+
+# Player chạm vào slime: quay mặt về player và phát animation attack.
+func on_player_touched(player: Node2D) -> void:
+	if is_dead:
+		return
+
+	var player_direction := signf(player.global_position.x - global_position.x)
+	if player_direction != 0.0:
+		direction = int(player_direction)
+		animated_sprite.flip_h = direction > 0
+
+	is_attacking = true
+	velocity = Vector2.ZERO
+	if animated_sprite.sprite_frames.has_animation("attack"):
+		animated_sprite.play("attack")
+		await animated_sprite.animation_finished
 
 
 # Vẽ vùng tuần tra trong editor cho dễ canh

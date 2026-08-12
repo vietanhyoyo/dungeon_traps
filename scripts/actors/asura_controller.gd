@@ -15,6 +15,7 @@ const DEATH_JUMP_VELOCITY = -420.0
 
 var is_attacking = false
 var is_dead = false
+var movement_locked = false
 var use_attack_1 = true
 var was_on_floor = false
 var last_fall_speed = 0.0
@@ -31,6 +32,11 @@ func _physics_process(delta: float) -> void:
 	if is_dead:
 		velocity += get_gravity() * delta
 		position += velocity * delta
+		running_sound.stop()
+		return
+
+	if movement_locked:
+		velocity = Vector2.ZERO
 		running_sound.stop()
 		return
 
@@ -188,6 +194,11 @@ func die() -> void:
 		animated_sprite.play("death")
 	else:
 		animated_sprite.play("jump_up")
+
+
+func lock_movement() -> void:
+	movement_locked = true
+	velocity = Vector2.ZERO
 
 
 func _on_animated_sprite_2d_animation_finished():
