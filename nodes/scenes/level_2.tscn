@@ -3,14 +3,15 @@
 [ext_resource type="PackedScene" uid="uid://cwgqa60xyqnyj" path="res://nodes/characters/asura.tscn" id="1_r7por"]
 [ext_resource type="Texture2D" uid="uid://bcxnn1f6qiuev" path="res://assets/sprites/mapp32.png" id="2_w5vvd"]
 [ext_resource type="PackedScene" uid="uid://c4jvx4glbgl2" path="res://nodes/door.tscn" id="3_r7por"]
-[ext_resource type="PackedScene" path="res://nodes/tile_map_32.tscn" id="3_w5vvd"]
+[ext_resource type="PackedScene" uid="uid://b3smmvaulqe1" path="res://nodes/tile_map_32.tscn" id="3_w5vvd"]
 [ext_resource type="Texture2D" uid="uid://d28tluf6jm21n" path="res://assets/sprites/background5.png" id="4_60xir"]
-[ext_resource type="PackedScene" path="res://nodes/torch.tscn" id="6_o7dd0"]
+[ext_resource type="PackedScene" uid="uid://bx16n4demckja" path="res://nodes/torch.tscn" id="6_o7dd0"]
 [ext_resource type="PackedScene" uid="uid://dscr153320p4r" path="res://nodes/traps/fire_trap.tscn" id="7_4oyvd"]
 [ext_resource type="PackedScene" uid="uid://ddq2qqo23k2o0" path="res://nodes/traps/thorn.tscn" id="8_4oyvd"]
 [ext_resource type="PackedScene" uid="uid://deqd3mnvbeh2d" path="res://nodes/camera.tscn" id="9_camera"]
 [ext_resource type="PackedScene" uid="uid://cg8mbcubeyje8" path="res://nodes/items/star.tscn" id="10_star"]
 [ext_resource type="PackedScene" path="res://nodes/star_hud.tscn" id="11_star_hud"]
+[ext_resource type="PackedScene" uid="uid://dg4n7tp4d7q1y" path="res://nodes/enemies/slime.tscn" id="12_slime"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_8pcmo"]
 polygon = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
@@ -250,7 +251,7 @@ polygon = PackedVector2Array(-1024, -768, 3072, -768, 3072, 1024, -1024, 1024)
 
 [node name="Asura" parent="." unique_id=1107660582 instance=ExtResource("1_r7por")]
 z_index = 5
-position = Vector2(-35, -121)
+position = Vector2(-165, -311)
 
 [node name="Camera2D" parent="Asura" unique_id=1738643562 instance=ExtResource("9_camera")]
 limit_bottom = 725
@@ -384,5 +385,13 @@ position = Vector2(1391, -54)
 
 [node name="Star3" parent="." unique_id=1962540787 instance=ExtResource("10_star")]
 position = Vector2(1056, -56)
+
+[node name="SlimeList" type="Node" parent="." unique_id=1204558931]
+
+[node name="Slime" parent="SlimeList" unique_id=1795330612 instance=ExtResource("12_slime")]
+z_index = 5
+position = Vector2(1368, 118)
+patrol_left = 381.0
+patrol_right = 33.0
 
 [node name="StarHUD" parent="." unique_id=1829039490 instance=ExtResource("11_star_hud")]

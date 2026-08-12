@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://mt13ehvoet3d" path="res://assets/sprites/shinn_asura/Shinn-Asura-jump.png" id="5_i2l0f"]
 [ext_resource type="Texture2D" uid="uid://doeukudxrqnqn" path="res://assets/sprites/shinn_asura/Shinn-Asura-death.png" id="6_death"]
 [ext_resource type="AudioStream" uid="uid://dxg8x1n6r6y2p" path="res://assets/sounds/running.mp3" id="7_running"]
-[ext_resource type="AudioStream" uid="uid://c8f3a2b1d4e5f6a7" path="res://assets/sounds/sword_attack.mp3" id="8_attack"]
+[ext_resource type="AudioStream" uid="uid://7ibsbwq6hqo7" path="res://assets/sounds/sword_attack.mp3" id="8_attack"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_e082f"]
 atlas = ExtResource("2_u1ow0")
@@ -224,26 +224,47 @@ animations = [{
 radius = 17.0
 height = 62.0
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_attack_high"]
+size = Vector2(40, 43)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_attack_low"]
+size = Vector2(42, 38)
+
 [node name="Asura" type="CharacterBody2D" unique_id=1107660582 groups=["player"]]
 collision_layer = 2
-collision_mask = 1
 script = ExtResource("3_tby2x")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=260658179 groups=["player"]]
 sprite_frames = SubResource("SpriteFrames_hugui")
-animation = &"death"
+animation = &"attack2"
 autoplay = "idle"
-frame_progress = 0.45442367
+frame = 2
+frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=103448317]
 position = Vector2(0, 1)
 shape = SubResource("CapsuleShape2D_2j3w5")
 
-[node name="RunningSound" type="AudioStreamPlayer2D" parent="."]
+[node name="AttackHitbox" type="Area2D" parent="." unique_id=980519005]
+collision_layer = 0
+collision_mask = 4
+monitorable = false
+
+[node name="HighShape" type="CollisionShape2D" parent="AttackHitbox" unique_id=1175297809]
+position = Vector2(27, -12.5)
+shape = SubResource("RectangleShape2D_attack_high")
+disabled = true
+
+[node name="LowShape" type="CollisionShape2D" parent="AttackHitbox" unique_id=517016674]
+position = Vector2(26, 13)
+shape = SubResource("RectangleShape2D_attack_low")
+disabled = true
+
+[node name="RunningSound" type="AudioStreamPlayer2D" parent="." unique_id=1235242696]
 stream = ExtResource("7_running")
 bus = &"SFX"
 
-[node name="AttackSound" type="AudioStreamPlayer2D" parent="."]
+[node name="AttackSound" type="AudioStreamPlayer2D" parent="." unique_id=1131988582]
 stream = ExtResource("8_attack")
 bus = &"SFX"
 

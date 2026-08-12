@@ -8,6 +8,9 @@ const DEATH_JUMP_VELOCITY = -420.0
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var running_sound: AudioStreamPlayer2D = $RunningSound
 @onready var attack_sound: AudioStreamPlayer2D = $AttackSound
+@onready var attack_hitbox: Area2D = $AttackHitbox
+@onready var attack_shape_high: CollisionShape2D = $AttackHitbox/HighShape
+@onready var attack_shape_low: CollisionShape2D = $AttackHitbox/LowShape
 @onready var dust_scene = preload("res://nodes/effects/landing_dust.tscn")
 
 var is_attacking = false
@@ -15,6 +18,14 @@ var is_dead = false
 var use_attack_1 = true
 var was_on_floor = false
 var last_fall_speed = 0.0
+
+# Vùng sát thương đang dùng cho đòn hiện tại: "attack" chém cao, "attack2" chém thấp
+var attack_shape: CollisionShape2D = null
+var hit_enemies: Array[Node] = []
+
+func _ready() -> void:
+	clear_attack_hitbox()
+
 
 func _physics_process(delta: float) -> void:
 	if is_dead:
@@ -30,27 +41,25 @@ func _physics_process(delta: float) -> void:
 		
 	# Attack input
 	if Input.is_action_just_pressed("attack") and not is_attacking:
-		is_attacking = true
-		attack_sound.play()
-
 		# Nếu đang trên không thì luôn dùng attack2
 		if not is_on_floor():
-			animated_sprite.play("attack2")
+			start_attack("attack2")
 		else:
 			# Ở dưới đất thì xen kẽ
 			if use_attack_1:
-				animated_sprite.play("attack")
+				start_attack("attack")
 			else:
-				animated_sprite.play("attack2")
-			
+				start_attack("attack2")
+
 			use_attack_1 = !use_attack_1
-		
+
 	# Trong lúc attack thì không override animation
 	if is_attacking:
 		velocity.x = 0
 		running_sound.stop()
+		update_attack_hitbox()
 		move_and_slide()
-		
+
 		# Kiểm tra vừa chạm đất trong lúc attack
 		if not was_on_floor and is_on_floor() and last_fall_speed > LANDING_DUST_MIN_SPEED:
 			spawn_landing_dust()
@@ -104,6 +113,54 @@ func _physics_process(delta: float) -> void:
 		running_sound.stop()
 
 
+func start_attack(anim: String) -> void:
+	is_attacking = true
+	attack_sound.play()
+	animated_sprite.play(anim)
+
+	hit_enemies.clear()
+	# "attack" là nhát chém ngang tầm ngực, "attack2" là nhát chém thấp xuống chân
+	attack_shape = attack_shape_low if anim == "attack2" else attack_shape_high
+
+	# Lật vùng sát thương theo hướng nhân vật đang quay. Phải đặt trước khi bật
+	# shape, vì physics server chỉ đọc transform mới ở bước kế tiếp.
+	var facing := -1.0 if animated_sprite.flip_h else 1.0
+	attack_shape.position.x = absf(attack_shape.position.x) * facing
+
+
+func update_attack_hitbox() -> void:
+	if attack_shape == null:
+		return
+
+	# Frame 0 là lúc lấy đà, chỉ gây sát thương từ frame vung kiếm trở đi
+	if animated_sprite.frame < 1:
+		return
+
+	attack_shape.disabled = false
+
+	for body in attack_hitbox.get_overlapping_bodies():
+		hit_enemy(body)
+
+
+func hit_enemy(body: Node) -> void:
+	if body in hit_enemies:
+		return
+	if not body.is_in_group("enemy"):
+		return
+
+	hit_enemies.append(body)
+	if body.has_method("die"):
+		body.die()
+
+
+func clear_attack_hitbox() -> void:
+	attack_shape = null
+	hit_enemies.clear()
+	# set_deferred vì clear có thể được gọi từ trong callback va chạm (die)
+	attack_shape_high.set_deferred("disabled", true)
+	attack_shape_low.set_deferred("disabled", true)
+
+
 func spawn_landing_dust() -> void:
 	for offset_x in [-6, 6]:
 		var dust = dust_scene.instantiate()
@@ -117,6 +174,7 @@ func die() -> void:
 
 	is_dead = true
 	is_attacking = false
+	clear_attack_hitbox()
 	running_sound.stop()
 	velocity = Vector2(0.0, DEATH_JUMP_VELOCITY)
 	collision_layer = 0
@@ -135,4 +193,5 @@ func die() -> void:
 func _on_animated_sprite_2d_animation_finished():
 	if animated_sprite.animation in ["attack", "attack2"]:
 		is_attacking = false
+		clear_attack_hitbox()
 		animated_sprite.play("idle")
