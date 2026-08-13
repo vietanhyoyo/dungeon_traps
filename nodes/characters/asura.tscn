@@ -3,6 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://4evgm5d4y7un" path="res://assets/sprites/shinn_asura/Shinn-Asura-attack.png" id="2_u1ow0"]
 [ext_resource type="Script" uid="uid://b7ymrpl5ng6wt" path="res://scripts/actors/asura_controller.gd" id="3_tby2x"]
 [ext_resource type="Texture2D" uid="uid://8ebp0s6qx3f3" path="res://assets/sprites/shinn_asura/Shinn-Asura-idle.png" id="3_u1ow0"]
+[ext_resource type="Texture2D" uid="uid://oaems1j5qg8c" path="res://assets/sprites/shinn_asura/Shinn-Asura-hust.png" id="4_sjxfn"]
 [ext_resource type="Texture2D" uid="uid://bkprs2akf857h" path="res://assets/sprites/shinn_asura/Shinn-Asura-run.png" id="5_cv6pu"]
 [ext_resource type="Texture2D" uid="uid://mt13ehvoet3d" path="res://assets/sprites/shinn_asura/Shinn-Asura-jump.png" id="5_i2l0f"]
 [ext_resource type="Texture2D" uid="uid://doeukudxrqnqn" path="res://assets/sprites/shinn_asura/Shinn-Asura-death.png" id="6_death"]
@@ -40,6 +41,10 @@ region = Rect2(0, 0, 64, 64)
 [sub_resource type="AtlasTexture" id="AtlasTexture_death_1"]
 atlas = ExtResource("6_death")
 region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_32pva"]
+atlas = ExtResource("4_sjxfn")
+region = Rect2(0, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cv6pu"]
 atlas = ExtResource("3_u1ow0")
@@ -148,6 +153,14 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_32pva")
+}],
+"loop": true,
+"name": &"hust",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_cv6pu")
 }, {
 "duration": 1.0,
@@ -236,10 +249,8 @@ script = ExtResource("3_tby2x")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=260658179 groups=["player"]]
 sprite_frames = SubResource("SpriteFrames_hugui")
-animation = &"attack2"
+animation = &"idle"
 autoplay = "idle"
-frame = 2
-frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=103448317]
 position = Vector2(0, 1)

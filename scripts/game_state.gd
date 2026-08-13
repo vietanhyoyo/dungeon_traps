@@ -42,12 +42,16 @@ func trigger_game_over(player: Node2D) -> void:
 	game_over_started.emit(player)
 	_game_over_sound_player.play()
 
-	if player and player.has_method("die"):
-		player.die()
-
 	if not _is_counting_down:
 		_is_counting_down = true
 		_run_restart_countdown()
+
+	# Cho player kịp phát animation chịu đòn rồi mới chuyển sang animation chết
+	if player and player.has_method("take_hit"):
+		await player.take_hit()
+
+	if player and player.has_method("die"):
+		player.die()
 
 
 func is_game_over() -> bool:

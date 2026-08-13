@@ -3,7 +3,9 @@ extends Area2D
 
 func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player"):
-		if body.has_method("lock_movement"):
+		if body.has_method("take_hit"):
+			body.take_hit()
+		elif body.has_method("lock_movement"):
 			body.lock_movement()
 
 		var hazard_owner := get_parent()

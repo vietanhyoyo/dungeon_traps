@@ -4,6 +4,10 @@ const SPEED = 180.0
 const JUMP_VELOCITY = -320.0
 const LANDING_DUST_MIN_SPEED = 180.0
 const DEATH_JUMP_VELOCITY = -420.0
+# Bỏ qua đoạn đầu file tiếng chém để tiếng khớp sớm hơn với lúc vung kiếm
+const ATTACK_SOUND_OFFSET = 0.2
+# Thời gian giữ animation "hust" trước khi chuyển sang animation chết
+const HURT_DURATION = 0.4
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var running_sound: AudioStreamPlayer2D = $RunningSound
@@ -14,6 +18,7 @@ const DEATH_JUMP_VELOCITY = -420.0
 @onready var dust_scene = preload("res://nodes/effects/landing_dust.tscn")
 
 var is_attacking = false
+var is_hurt = false
 var is_dead = false
 var movement_locked = false
 var use_attack_1 = true
@@ -121,7 +126,7 @@ func _physics_process(delta: float) -> void:
 
 func start_attack(anim: String) -> void:
 	is_attacking = true
-	attack_sound.play()
+	attack_sound.play(ATTACK_SOUND_OFFSET)
 	animated_sprite.play(anim)
 
 	hit_enemies.clear()
@@ -168,10 +173,33 @@ func clear_attack_hitbox() -> void:
 
 
 func spawn_landing_dust() -> void:
-	for offset_x in [-6, 6]:
-		var dust = dust_scene.instantiate()
-		get_parent().add_child(dust)
-		dust.global_position = global_position + Vector2(offset_x, 32)
+	# Một đám bụi toả ngược hướng nhân vật đang quay và đặt lệch về phía sau
+	# lưng. Sprite bụi 32x32 vẽ sát đáy ô nên tâm phải nằm cao hơn chân nhân vật
+	# đúng nửa ô (16px) thì đáy mới chạm đất.
+	var facing := -1 if animated_sprite.flip_h else 1
+	var dust: AnimatedSprite2D = dust_scene.instantiate()
+	dust.flip_h = not animated_sprite.flip_h
+	get_parent().add_child(dust)
+	dust.global_position = global_position + Vector2(-facing * 10, 16)
+
+
+# Player trúng đòn (slime, bẫy...): khoá điều khiển và giữ animation "hust"
+# một nhịp ngắn trước khi hazard xử lý tiếp (thường là game over).
+func take_hit() -> void:
+	if is_dead or is_hurt:
+		return
+
+	is_hurt = true
+	is_attacking = false
+	clear_attack_hitbox()
+	running_sound.stop()
+	movement_locked = true
+	velocity = Vector2.ZERO
+
+	if animated_sprite.sprite_frames.has_animation("hust"):
+		animated_sprite.play("hust")
+
+	await get_tree().create_timer(HURT_DURATION).timeout
 
 
 func die() -> void:

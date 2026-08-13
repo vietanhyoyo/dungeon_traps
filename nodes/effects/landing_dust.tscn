@@ -1,24 +1,54 @@
-[gd_scene format=3 uid="uid://sxf4f30h7vf7"]
+[gd_scene load_steps=9 format=3 uid="uid://sxf4f30h7vf7"]
 
 [ext_resource type="Script" path="res://scripts/landing_dust.gd" id="1_e4qu1"]
+[ext_resource type="Texture2D" uid="uid://3m77lcero44i" path="res://assets/sprites/effects/dust.png" id="2_dust"]
 
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_o2bka"]
-particle_flag_disable_z = true
-emission_shape = 1
-emission_sphere_radius = 1.0
-direction = Vector3(0, -1, 0)
-spread = 50.0
-initial_velocity_min = 20.0
-initial_velocity_max = 45.0
-gravity = Vector3(0, 180, 0)
-scale_max = 2.0
+[sub_resource type="AtlasTexture" id="AtlasTexture_dust_0"]
+atlas = ExtResource("2_dust")
+region = Rect2(0, 0, 32, 32)
 
-[node name="GPUParticles2D" type="GPUParticles2D" unique_id=392237460]
+[sub_resource type="AtlasTexture" id="AtlasTexture_dust_1"]
+atlas = ExtResource("2_dust")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dust_2"]
+atlas = ExtResource("2_dust")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dust_3"]
+atlas = ExtResource("2_dust")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dust_4"]
+atlas = ExtResource("2_dust")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_dust"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dust_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dust_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dust_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dust_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dust_4")
+}],
+"loop": false,
+"name": &"puff",
+"speed": 16.0
+}]
+
+[node name="LandingDust" type="AnimatedSprite2D"]
 z_index = 10
-emitting = false
-amount = 6
-lifetime = 0.25
-one_shot = true
-explosiveness = 1.0
-process_material = SubResource("ParticleProcessMaterial_o2bka")
+sprite_frames = SubResource("SpriteFrames_dust")
+animation = &"puff"
+autoplay = "puff"
 script = ExtResource("1_e4qu1")

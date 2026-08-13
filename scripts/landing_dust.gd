@@ -1,7 +1,5 @@
-extends GPUParticles2D
+extends AnimatedSprite2D
 
 func _ready() -> void:
-	restart()
-	emitting = true
-	await get_tree().create_timer(0.5).timeout
-	queue_free()
+	animation_finished.connect(queue_free)
+	play("puff")

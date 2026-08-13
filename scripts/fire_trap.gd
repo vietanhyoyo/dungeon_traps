@@ -1,5 +1,8 @@
 extends Area2D
 
+# Bỏ qua đoạn đầu file tiếng lửa để tiếng khớp sớm hơn với lúc bẫy hiện ra
+const APPEAR_SOUND_OFFSET = 0.2
+
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var damage_shape: CollisionShape2D = $CollisionShape2D
 @onready var trigger_area: Area2D = $TriggerArea
@@ -18,7 +21,7 @@ func _on_trigger_body_entered(body: Node2D) -> void:
 
 	trigger_area.set_deferred("monitoring", false)
 	animated_sprite.visible = true
-	appear_sound.play()
+	appear_sound.play(APPEAR_SOUND_OFFSET)
 	damage_shape.set_deferred("disabled", false)
 	set_deferred("monitoring", true)
 
