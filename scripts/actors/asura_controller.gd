@@ -2,6 +2,10 @@ extends CharacterBody2D
 
 const SPEED = 180.0
 const JUMP_VELOCITY = -320.0
+const SLIDE_SPEED = 240.0
+const SLIDE_DURATION = 0.4
+const SLIDE_COLLISION_HEIGHT = 34.0
+const AIR_SLIDE_SPRITE_OFFSET_Y = -16.0
 const LANDING_DUST_MIN_SPEED = 180.0
 const DEATH_JUMP_VELOCITY = -420.0
 # Bỏ qua đoạn đầu file tiếng chém để tiếng khớp sớm hơn với lúc vung kiếm
@@ -15,21 +19,35 @@ const HURT_DURATION = 0.4
 @onready var attack_hitbox: Area2D = $AttackHitbox
 @onready var attack_shape_high: CollisionShape2D = $AttackHitbox/HighShape
 @onready var attack_shape_low: CollisionShape2D = $AttackHitbox/LowShape
+@onready var body_collision: CollisionShape2D = $CollisionShape2D
 @onready var dust_scene = preload("res://nodes/effects/landing_dust.tscn")
 
 var is_attacking = false
+var is_sliding = false
 var is_hurt = false
 var is_dead = false
 var movement_locked = false
 var use_attack_1 = true
 var was_on_floor = false
 var last_fall_speed = 0.0
+var slide_direction = 1.0
+var slide_time_left = 0.0
+var normal_collision_height = 0.0
+var normal_collision_position = Vector2.ZERO
+var normal_sprite_position = Vector2.ZERO
 
 # Vùng sát thương đang dùng cho đòn hiện tại: "attack" chém cao, "attack2" chém thấp
 var attack_shape: CollisionShape2D = null
 var hit_enemies: Array[Node] = []
 
 func _ready() -> void:
+	# Shape là Resource nên cần bản riêng trước khi thay đổi kích thước lúc chạy.
+	body_collision.shape = body_collision.shape.duplicate()
+	var capsule := body_collision.shape as CapsuleShape2D
+	if capsule:
+		normal_collision_height = capsule.height
+	normal_collision_position = body_collision.position
+	normal_sprite_position = animated_sprite.position
 	clear_attack_hitbox()
 
 
@@ -45,10 +63,27 @@ func _physics_process(delta: float) -> void:
 		running_sound.stop()
 		return
 
+	# Khi đang lướt, giữ nguyên hướng nhìn và vận tốc cho đến hết animation.
+	if is_sliding:
+		slide_time_left -= delta
+		velocity.x = slide_direction * SLIDE_SPEED
+		# Giữ nhân vật trên cùng độ cao trong suốt cú lướt, kể cả ngoài không trung.
+		velocity.y = 0.0
+		move_and_slide()
+
+		if slide_time_left <= 0.0 or is_on_wall():
+			stop_slide()
+		return
+
 	# Add the gravity.
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 		last_fall_speed = velocity.y
+
+	# Có thể lướt cả trên mặt đất lẫn trên không; hướng lướt là hướng nhân vật đang nhìn.
+	if Input.is_action_just_pressed("slide") and not is_attacking:
+		start_slide()
+		return
 		
 	# Attack input
 	if Input.is_action_just_pressed("attack") and not is_attacking:
@@ -139,6 +174,51 @@ func start_attack(anim: String) -> void:
 	attack_shape.position.x = absf(attack_shape.position.x) * facing
 
 
+func start_slide() -> void:
+	var started_in_air := not is_on_floor()
+	is_sliding = true
+	slide_time_left = SLIDE_DURATION
+	slide_direction = -1.0 if animated_sprite.flip_h else 1.0
+	velocity = Vector2(slide_direction * SLIDE_SPEED, 0.0)
+	running_sound.stop()
+	set_slide_collision(true)
+	set_air_slide_sprite_offset(started_in_air)
+	animated_sprite.play("slide")
+	if not started_in_air:
+		spawn_landing_dust()
+
+
+func stop_slide() -> void:
+	is_sliding = false
+	slide_time_left = 0.0
+	velocity.x = 0.0
+	set_slide_collision(false)
+	set_air_slide_sprite_offset(false)
+	animated_sprite.play("idle")
+
+
+func set_slide_collision(enabled: bool) -> void:
+	var capsule := body_collision.shape as CapsuleShape2D
+	if not capsule:
+		return
+
+	if enabled:
+		capsule.height = SLIDE_COLLISION_HEIGHT
+		# Dịch tâm xuống một nửa phần chiều cao bị cắt để đáy capsule giữ nguyên.
+		body_collision.position.y = normal_collision_position.y + \
+			(normal_collision_height - SLIDE_COLLISION_HEIGHT) * 0.5
+	else:
+		capsule.height = normal_collision_height
+		body_collision.position = normal_collision_position
+
+
+func set_air_slide_sprite_offset(enabled: bool) -> void:
+	animated_sprite.position = normal_sprite_position
+	if enabled:
+		# Khung slide 96px đặt phần đầu thấp hơn khung jump 64px khoảng 12px.
+		animated_sprite.position.y += AIR_SLIDE_SPRITE_OFFSET_Y
+
+
 func update_attack_hitbox() -> void:
 	if attack_shape == null:
 		return
@@ -191,6 +271,9 @@ func take_hit() -> void:
 
 	is_hurt = true
 	is_attacking = false
+	is_sliding = false
+	set_slide_collision(false)
+	set_air_slide_sprite_offset(false)
 	clear_attack_hitbox()
 	running_sound.stop()
 	movement_locked = true
@@ -208,6 +291,9 @@ func die() -> void:
 
 	is_dead = true
 	is_attacking = false
+	is_sliding = false
+	set_slide_collision(false)
+	set_air_slide_sprite_offset(false)
 	clear_attack_hitbox()
 	running_sound.stop()
 	velocity = Vector2(0.0, DEATH_JUMP_VELOCITY)
@@ -226,6 +312,9 @@ func die() -> void:
 
 func lock_movement() -> void:
 	movement_locked = true
+	is_sliding = false
+	set_slide_collision(false)
+	set_air_slide_sprite_offset(false)
 	velocity = Vector2.ZERO
 
 

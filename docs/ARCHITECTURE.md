@@ -55,7 +55,7 @@ flowchart TD
 - Autoload `Music`: scene `nodes/music.tscn`, an `AudioStreamPlayer2D` autoplaying `background_music.mp3` on the `Music` bus.
 - Autoload `GameState`: `scripts/game_state.gd`.
 - Global group: `player`.
-- Input actions: `move_left` (A/←), `move_right` (D/→), `jump` (Space), `attack` (C).
+- Input actions: `move_left` (A/←), `move_right` (D/→), `jump` (↑), `attack` (C), `slide` (X).
 
 `default_bus_layout.tres` defines the `Music` bus (-6 dB) and the `SFX` bus (0 dB), both routed to `Master`.
 
@@ -107,7 +107,7 @@ Sounds actually referenced by scenes: `running.mp3` and `sword_attack.mp3` (Asur
 
 `asura.tscn` is a `CharacterBody2D` in the `player` group, on layer 2 with mask 1, driven by `scripts/actors/asura_controller.gd`.
 
-The script handles gravity, jumping, left/right movement, sprite flipping, attacks (alternating `attack`/`attack2`, always `attack2` while airborne), the idle/run/jump_up/jump_down/death animations, landing dust when fall speed exceeds `LANDING_DUST_MIN_SPEED`, and `die()`.
+The script handles gravity, jumping, left/right movement, ground/air sliding, sprite flipping, attacks (alternating `attack`/`attack2`, always `attack2` while airborne), the idle/run/jump_up/jump_down/slide/death animations, landing dust when fall speed exceeds `LANDING_DUST_MIN_SPEED`, and `die()`.
 
 Things to be aware of:
 

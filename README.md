@@ -55,8 +55,9 @@ python3 -m http.server 8000
 | --- | --- |
 | Sang trái | `A` hoặc `←` |
 | Sang phải | `D` hoặc `→` |
-| Nhảy | `Space` |
+| Nhảy | `↑` |
 | Tấn công | `C` |
+| Lướt | `X` |
 
 ## Gameplay
 
@@ -132,7 +133,7 @@ res://
 | Script | Vai trò |
 | --- | --- |
 | `scripts/game_state.gd` | Autoload `GameState`: state `PLAYING/GAME_OVER`, overlay, countdown restart |
-| `scripts/actors/asura_controller.gd` | Di chuyển, nhảy, attack, landing dust, `die()` |
+| `scripts/actors/asura_controller.gd` | Di chuyển, nhảy, lướt, attack, landing dust, `die()` |
 | `scripts/fire_trap.gd` | Trigger hiện lửa, gọi `GameState.trigger_game_over()` |
 | `scripts/thorn_trap.gd` | Gai rơi, raycast dò sàn, gọi `GameState.trigger_game_over()` |
 | `scripts/door.gd` | Mở cửa và chuyển scene |
@@ -149,7 +150,7 @@ File `project.godot`:
 - `run/main_scene`: `nodes/scenes/level_1.tscn` (trỏ bằng UID).
 - Autoload: `Music` (`nodes/music.tscn`), `GameState` (`scripts/game_state.gd`).
 - Global group: `player`.
-- Input actions: `move_left`, `move_right`, `jump`, `attack`.
+- Input actions: `move_left`, `move_right`, `jump`, `attack`, `slide` (`X`).
 - `textures/canvas_textures/default_texture_filter=0` để giữ nét pixel art.
 - Stretch mode: `canvas_items`.
 

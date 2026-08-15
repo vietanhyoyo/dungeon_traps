@@ -50,10 +50,11 @@ File: `res://project.godot`
   - `Music`: `res://nodes/music.tscn`
   - `GameState`: `res://scripts/game_state.gd`
 - Input actions:
-  - `jump`: Space
+  - `jump`: ↑
   - `move_left`: Left Arrow, A
   - `move_right`: Right Arrow, D
   - `attack`: C
+  - `slide`: X
 
 ## Gameplay Hiện Tại
 
@@ -130,7 +131,7 @@ res://
 | Script | Vai trò |
 | --- | --- |
 | `res://scripts/game_state.gd` | Autoload quản lý state `PLAYING/GAME_OVER`, death flow, countdown restart |
-| `res://scripts/actors/asura_controller.gd` | Controller của `asura.tscn`: di chuyển, nhảy, attack, landing dust, die |
+| `res://scripts/actors/asura_controller.gd` | Controller của `asura.tscn`: di chuyển, nhảy, lướt, attack, landing dust, die |
 | `res://scripts/fire_trap.gd` | Gọi `GameState.trigger_game_over()` khi player chạm lửa |
 | `res://scripts/door.gd` | Mở cửa, theo dõi player trong pass area, đổi scene |
 | `res://scripts/landing_dust.gd` | Particle tự phát và tự xóa |

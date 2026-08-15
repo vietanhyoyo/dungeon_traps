@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://mt13ehvoet3d" path="res://assets/sprites/shinn_asura/Shinn-Asura-jump.png" id="5_i2l0f"]
 [ext_resource type="Texture2D" uid="uid://doeukudxrqnqn" path="res://assets/sprites/shinn_asura/Shinn-Asura-death.png" id="6_death"]
 [ext_resource type="AudioStream" uid="uid://dxg8x1n6r6y2p" path="res://assets/sounds/running.mp3" id="7_running"]
+[ext_resource type="Texture2D" uid="uid://dqt66prc0kuan" path="res://assets/sprites/shinn_asura/Shinn-Asura-slide.png" id="8_1bcgc"]
 [ext_resource type="AudioStream" uid="uid://7ibsbwq6hqo7" path="res://assets/sounds/sword_attack.mp3" id="8_attack"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_e082f"]
@@ -109,6 +110,22 @@ region = Rect2(256, 0, 64, 64)
 [sub_resource type="AtlasTexture" id="AtlasTexture_8i0yw"]
 atlas = ExtResource("5_cv6pu")
 region = Rect2(320, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0het6"]
+atlas = ExtResource("8_1bcgc")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kh6hv"]
+atlas = ExtResource("8_1bcgc")
+region = Rect2(96, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6ggx6"]
+atlas = ExtResource("8_1bcgc")
+region = Rect2(192, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1ehcg"]
+atlas = ExtResource("8_1bcgc")
+region = Rect2(288, 0, 96, 96)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_hugui"]
 animations = [{
@@ -230,6 +247,23 @@ animations = [{
 }],
 "loop": true,
 "name": &"run",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0het6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kh6hv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6ggx6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1ehcg")
+}],
+"loop": false,
+"name": &"slide",
 "speed": 10.0
 }]
 

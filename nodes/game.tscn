@@ -323,7 +323,7 @@ theme = SubResource("Theme_gee14")
 theme_override_colors/font_color = Color(0.13725491, 0.3137255, 0.7490196, 1)
 theme_override_fonts/font = ExtResource("7_u5sy4")
 theme_override_font_sizes/font_size = 10
-text = "Space to jump"
+text = "Up arrow to jump"
 
 [node name="Label2" type="Label" parent="Labels" unique_id=1238606866]
 offset_left = 709.0
