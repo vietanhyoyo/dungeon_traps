@@ -10,6 +10,7 @@
 [ext_resource type="AudioStream" uid="uid://dxg8x1n6r6y2p" path="res://assets/sounds/running.mp3" id="7_running"]
 [ext_resource type="Texture2D" uid="uid://dqt66prc0kuan" path="res://assets/sprites/shinn_asura/Shinn-Asura-slide.png" id="8_1bcgc"]
 [ext_resource type="AudioStream" uid="uid://7ibsbwq6hqo7" path="res://assets/sounds/sword_attack.mp3" id="8_attack"]
+[ext_resource type="Texture2D" uid="uid://dhkqrhyf67gra" path="res://assets/sprites/shinn_asura/Shinn-Asura-slide-attack.png" id="9_dhu25"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_e082f"]
 atlas = ExtResource("2_u1ow0")
@@ -126,6 +127,18 @@ region = Rect2(192, 0, 96, 96)
 [sub_resource type="AtlasTexture" id="AtlasTexture_1ehcg"]
 atlas = ExtResource("8_1bcgc")
 region = Rect2(288, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tbuwi"]
+atlas = ExtResource("9_dhu25")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hw7g6"]
+atlas = ExtResource("9_dhu25")
+region = Rect2(96, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uxljf"]
+atlas = ExtResource("9_dhu25")
+region = Rect2(192, 0, 96, 96)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_hugui"]
 animations = [{
@@ -265,6 +278,20 @@ animations = [{
 "loop": false,
 "name": &"slide",
 "speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tbuwi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hw7g6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uxljf")
+}],
+"loop": false,
+"name": &"slide_attack",
+"speed": 10.0
 }]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_2j3w5"]
@@ -283,8 +310,10 @@ script = ExtResource("3_tby2x")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=260658179 groups=["player"]]
 sprite_frames = SubResource("SpriteFrames_hugui")
-animation = &"idle"
+animation = &"slide_attack"
 autoplay = "idle"
+frame = 2
+frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=103448317]
 position = Vector2(0, 1)

@@ -65,15 +65,36 @@ func _physics_process(delta: float) -> void:
 
 	# Khi đang lướt, giữ nguyên hướng nhìn và vận tốc cho đến hết animation.
 	if is_sliding:
-		slide_time_left -= delta
-		velocity.x = slide_direction * SLIDE_SPEED
-		# Giữ nhân vật trên cùng độ cao trong suốt cú lướt, kể cả ngoài không trung.
-		velocity.y = 0.0
-		move_and_slide()
-
-		if slide_time_left <= 0.0 or is_on_wall():
+		# Một lần nhấn trái/phải mới sẽ hủy slide ngay. Dùng just_pressed để
+		# người chơi vẫn có thể giữ hướng chạy khi bắt đầu slide.
+		var cancel_slide := Input.is_action_just_pressed("move_left") or \
+			Input.is_action_just_pressed("move_right")
+		if cancel_slide:
 			stop_slide()
-		return
+		else:
+			# Tấn công trong lúc lướt dùng animation và hitbox chém thấp riêng.
+			if Input.is_action_just_pressed("attack") and not is_attacking:
+				start_attack("slide_attack")
+				# Dừng lướt ngay khi bắt đầu chém, tránh slide_attack đưa nhân vật
+				# đi xa hơn quãng đường slide mà người chơi mong muốn.
+				slide_direction = 0.0
+				velocity.x = 0.0
+
+			slide_time_left -= delta
+			velocity.x = slide_direction * SLIDE_SPEED
+			# Giữ nhân vật trên cùng độ cao trong suốt cú lướt, kể cả ngoài không trung.
+			velocity.y = 0.0
+			if is_attacking:
+				update_attack_hitbox()
+			move_and_slide()
+
+			# Đòn slide attack được phát trọn vẹn rồi callback animation mới kết thúc
+			# trạng thái lướt. Nếu đụng tường, chỉ dừng chuyển động trong lúc chém.
+			if is_on_wall() and is_attacking:
+				slide_direction = 0.0
+			elif (slide_time_left <= 0.0 or is_on_wall()) and not is_attacking:
+				stop_slide()
+			return
 
 	# Add the gravity.
 	if not is_on_floor():
@@ -165,8 +186,8 @@ func start_attack(anim: String) -> void:
 	animated_sprite.play(anim)
 
 	hit_enemies.clear()
-	# "attack" là nhát chém ngang tầm ngực, "attack2" là nhát chém thấp xuống chân
-	attack_shape = attack_shape_low if anim == "attack2" else attack_shape_high
+	# "attack" là nhát chém ngang tầm ngực; attack2 và slide_attack chém thấp.
+	attack_shape = attack_shape_low if anim in ["attack2", "slide_attack"] else attack_shape_high
 
 	# Lật vùng sát thương theo hướng nhân vật đang quay. Phải đặt trước khi bật
 	# shape, vì physics server chỉ đọc transform mới ở bước kế tiếp.
@@ -194,7 +215,9 @@ func stop_slide() -> void:
 	velocity.x = 0.0
 	set_slide_collision(false)
 	set_air_slide_sprite_offset(false)
-	animated_sprite.play("idle")
+	# Không ghi đè slide_attack nếu người chơi hủy slide giữa lúc đang chém.
+	if not is_attacking:
+		animated_sprite.play("idle")
 
 
 func set_slide_collision(enabled: bool) -> void:
@@ -319,7 +342,11 @@ func lock_movement() -> void:
 
 
 func _on_animated_sprite_2d_animation_finished():
-	if animated_sprite.animation in ["attack", "attack2"]:
+	if animated_sprite.animation in ["attack", "attack2", "slide_attack"]:
+		var finished_slide_attack := animated_sprite.animation == "slide_attack"
 		is_attacking = false
 		clear_attack_hitbox()
-		animated_sprite.play("idle")
+		if finished_slide_attack:
+			stop_slide()
+		else:
+			animated_sprite.play("idle")
