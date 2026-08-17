@@ -33,6 +33,15 @@ func _ready() -> void:
 	add_child(_game_over_sound_player)
 
 
+func _unhandled_input(event: InputEvent) -> void:
+	if not _is_counting_down:
+		return
+
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode in [KEY_SPACE, KEY_ENTER, KEY_KP_ENTER]:
+			_restart_now()
+
+
 func trigger_game_over(player: Node2D) -> void:
 	if state == State.GAME_OVER:
 		return
@@ -69,15 +78,30 @@ func _run_restart_countdown() -> void:
 	_show_countdown(RESTART_DELAY_SECONDS)
 
 	for seconds_left in range(RESTART_DELAY_SECONDS, 0, -1):
+		# Kiểm tra nếu đã restart sớm (nhấn Space/Enter)
+		if not _is_counting_down:
+			return
 		_update_countdown(seconds_left)
 		restart_countdown_changed.emit(seconds_left)
 		await get_tree().create_timer(1.0).timeout
 
-	var error := get_tree().change_scene_to_file(_restart_scene_path)
-	if error != OK:
-		push_error("Could not reload scene %s: %s" % [_restart_scene_path, error])
+	# Có thể đã restart sớm trong lúc chờ timer cuối
+	if not _is_counting_down:
+		return
 
+	_restart_now()
+
+
+func _restart_now() -> void:
+	if not _is_counting_down:
+		return
+
+	var scene_path := _restart_scene_path
 	reset_to_playing()
+
+	var error := get_tree().change_scene_to_file(scene_path)
+	if error != OK:
+		push_error("Could not reload scene %s: %s" % [scene_path, error])
 
 
 func _get_current_scene_path() -> String:

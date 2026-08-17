@@ -251,7 +251,7 @@ polygon = PackedVector2Array(-1024, -768, 3072, -768, 3072, 1024, -1024, 1024)
 
 [node name="Asura" parent="." unique_id=1107660582 instance=ExtResource("1_r7por")]
 z_index = 5
-position = Vector2(-162, -305)
+position = Vector2(-162, -308)
 
 [node name="Camera2D" parent="Asura" unique_id=1738643562 instance=ExtResource("9_camera")]
 limit_bottom = 725
@@ -384,5 +384,17 @@ z_index = 5
 position = Vector2(1368, 118)
 patrol_left = 381.0
 patrol_right = 33.0
+
+[node name="Slime2" parent="SlimeList" unique_id=1750080454 instance=ExtResource("12_slime")]
+z_index = 5
+position = Vector2(774, -222)
+patrol_left = 86.0
+patrol_right = 19.0
+
+[node name="Slime3" parent="SlimeList" unique_id=357903444 instance=ExtResource("12_slime")]
+z_index = 5
+position = Vector2(1190, -345)
+patrol_left = 194.0
+patrol_right = 19.0
 
 [node name="StarHUD" parent="." unique_id=1829039490 instance=ExtResource("11_star_hud")]

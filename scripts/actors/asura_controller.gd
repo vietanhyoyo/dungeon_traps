@@ -108,9 +108,9 @@ func _physics_process(delta: float) -> void:
 		
 	# Attack input
 	if Input.is_action_just_pressed("attack") and not is_attacking:
-		# Nếu đang trên không thì luôn dùng attack2
+		# Nếu đang trên không thì dùng jump_attack
 		if not is_on_floor():
-			start_attack("attack2")
+			start_attack("jump_attack")
 		else:
 			# Ở dưới đất thì xen kẽ
 			if use_attack_1:
@@ -186,8 +186,8 @@ func start_attack(anim: String) -> void:
 	animated_sprite.play(anim)
 
 	hit_enemies.clear()
-	# "attack" là nhát chém ngang tầm ngực; attack2 và slide_attack chém thấp.
-	attack_shape = attack_shape_low if anim in ["attack2", "slide_attack"] else attack_shape_high
+	# "attack" là nhát chém ngang tầm ngực; attack2, slide_attack, jump_attack chém thấp.
+	attack_shape = attack_shape_low if anim in ["attack2", "slide_attack", "jump_attack"] else attack_shape_high
 
 	# Lật vùng sát thương theo hướng nhân vật đang quay. Phải đặt trước khi bật
 	# shape, vì physics server chỉ đọc transform mới ở bước kế tiếp.
@@ -342,7 +342,7 @@ func lock_movement() -> void:
 
 
 func _on_animated_sprite_2d_animation_finished():
-	if animated_sprite.animation in ["attack", "attack2", "slide_attack"]:
+	if animated_sprite.animation in ["attack", "attack2", "slide_attack", "jump_attack"]:
 		var finished_slide_attack := animated_sprite.animation == "slide_attack"
 		is_attacking = false
 		clear_attack_hitbox()

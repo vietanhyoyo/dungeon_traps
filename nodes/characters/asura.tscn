@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://bkprs2akf857h" path="res://assets/sprites/shinn_asura/Shinn-Asura-run.png" id="5_cv6pu"]
 [ext_resource type="Texture2D" uid="uid://mt13ehvoet3d" path="res://assets/sprites/shinn_asura/Shinn-Asura-jump.png" id="5_i2l0f"]
 [ext_resource type="Texture2D" uid="uid://doeukudxrqnqn" path="res://assets/sprites/shinn_asura/Shinn-Asura-death.png" id="6_death"]
+[ext_resource type="Texture2D" uid="uid://bvsfcqyddstks" path="res://assets/sprites/shinn_asura/Shinn-Asura-jump-attack.png" id="7_341xe"]
 [ext_resource type="AudioStream" uid="uid://dxg8x1n6r6y2p" path="res://assets/sounds/running.mp3" id="7_running"]
 [ext_resource type="Texture2D" uid="uid://dqt66prc0kuan" path="res://assets/sprites/shinn_asura/Shinn-Asura-slide.png" id="8_1bcgc"]
 [ext_resource type="AudioStream" uid="uid://7ibsbwq6hqo7" path="res://assets/sounds/sword_attack.mp3" id="8_attack"]
@@ -71,6 +72,18 @@ region = Rect2(256, 0, 64, 64)
 [sub_resource type="AtlasTexture" id="AtlasTexture_rls3k"]
 atlas = ExtResource("5_cv6pu")
 region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q60cs"]
+atlas = ExtResource("7_341xe")
+region = Rect2(0, 0, 94, 94)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ilkss"]
+atlas = ExtResource("7_341xe")
+region = Rect2(94, 0, 94, 94)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e4ivm"]
+atlas = ExtResource("7_341xe")
+region = Rect2(188, 0, 94, 94)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1bcgc"]
 atlas = ExtResource("5_i2l0f")
@@ -219,6 +232,20 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_q60cs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ilkss")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e4ivm")
+}],
+"loop": false,
+"name": &"jump_attack",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_1bcgc")
 }, {
 "duration": 1.0,
@@ -291,7 +318,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"slide_attack",
-"speed": 10.0
+"speed": 8.0
 }]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_2j3w5"]
@@ -310,10 +337,9 @@ script = ExtResource("3_tby2x")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=260658179 groups=["player"]]
 sprite_frames = SubResource("SpriteFrames_hugui")
-animation = &"slide_attack"
+animation = &"jump_attack"
 autoplay = "idle"
-frame = 2
-frame_progress = 1.0
+frame_progress = 0.23353517
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=103448317]
 position = Vector2(0, 1)
