@@ -52,7 +52,7 @@ flowchart TD
 `project.godot` defines the main scene, input map, autoloads, global groups and render defaults. It holds no gameplay logic.
 
 - Main scene: `nodes/scenes/level_1.tscn` (referenced by UID `uid://l1dhtqji1d6x`).
-- Autoload `Music`: scene `nodes/music.tscn`, an `AudioStreamPlayer2D` autoplaying `background_music.mp3` on the `Music` bus.
+- Autoload `Music`: scene `nodes/music.tscn`, an `AudioStreamPlayer` autoplaying `background_music.mp3` globally on the `Music` bus.
 - Autoload `GameState`: `scripts/game_state.gd`.
 - Global group: `player`.
 - Input actions: `move_left` (A/←), `move_right` (D/→), `jump` (↑), `attack` (C), `slide` (X).
@@ -61,7 +61,7 @@ flowchart TD
 
 ### Level Scenes
 
-`nodes/scenes/level_1.tscn` (root `Level1`) and `nodes/scenes/level_2.tscn` (root `Level2`).
+`nodes/scenes/level_1.tscn` (root `Level1`), `nodes/scenes/level_2.tscn` (root `Level2`) and `nodes/scenes/level_3.tscn` (root `Level3`).
 
 A level contains:
 
@@ -107,7 +107,7 @@ Sounds actually referenced by scenes: `running.mp3` and `sword_attack.mp3` (Asur
 
 `asura.tscn` is a `CharacterBody2D` in the `player` group, on layer 2 with mask 1, driven by `scripts/actors/asura_controller.gd`.
 
-The script handles gravity, jumping, left/right movement, ground/air sliding, sprite flipping, attacks (alternating `attack`/`attack2`, always `attack2` while airborne), the idle/run/jump_up/jump_down/slide/death animations, landing dust when fall speed exceeds `LANDING_DUST_MIN_SPEED`, and `die()`.
+The script handles gravity, jumping, left/right movement, ground/air sliding, sprite flipping, attacks (alternating `attack`/`attack2`, always `attack2` while airborne), the idle/run/jump_up/jump_down/slide/death animations, landing dust when fall speed exceeds `LANDING_DUST_MIN_SPEED`, and `die()`. Air slide is limited to once per airborne period and resets when the player touches the floor.
 
 Things to be aware of:
 
@@ -172,7 +172,8 @@ Exported parameters: `fall_speed`, `max_fall_distance`, `floor_collision_mask`, 
 `next_scene_path` is an `@export`, configured per level instance.
 
 - `level_1` points to `res://nodes/scenes/level_2.tscn`.
-- `level_2` has no `next_scene_path` configured, so the final door currently leads nowhere.
+- `level_2` points to `res://nodes/scenes/level_3.tscn`.
+- `level_3` is currently the final level, so its door has no next scene.
 - An empty `next_scene_path` means the door does not change scenes.
 
 ### Lighting
@@ -193,7 +194,7 @@ New gameplay sprites must lower their `modulate` in line with the table above; o
 
 ### Music
 
-`Music` is the autoload scene `nodes/music.tscn`, whose root `AudioStreamPlayer2D` autoplays `background_music.mp3` on the `Music` bus. Every other sound effect goes through the `SFX` bus.
+`Music` is the autoload scene `nodes/music.tscn`, whose root `AudioStreamPlayer` autoplays `background_music.mp3` globally on the `Music` bus. It is non-positional, so camera and player movement do not change its volume. Every other sound effect goes through the `SFX` bus.
 
 ## Collision And Groups
 

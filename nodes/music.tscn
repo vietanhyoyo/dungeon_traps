@@ -2,7 +2,7 @@
 
 [ext_resource type="AudioStream" uid="uid://c3f7a9d2e5b1c6f8" path="res://assets/music/background_music.mp3" id="1_05ggv"]
 
-[node name="Music" type="AudioStreamPlayer2D" unique_id=1244323829]
+[node name="Music" type="AudioStreamPlayer" unique_id=1244323829]
 stream = ExtResource("1_05ggv")
 autoplay = true
 bus = &"Music"

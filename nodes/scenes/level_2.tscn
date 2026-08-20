@@ -239,16 +239,6 @@ sources/1 = SubResource("TileSetAtlasSource_flnyc")
 
 [node name="Level2" type="Node2D" unique_id=46945069]
 
-[node name="LightReceiver" type="Polygon2D" parent="." unique_id=1707510712]
-z_index = -100
-color = Color(0.025, 0.007, 0.08, 1)
-polygon = PackedVector2Array(-1024, -768, 3072, -768, 3072, 1024, -1024, 1024)
-
-[node name="LightReceiver2" type="Polygon2D" parent="." unique_id=1142741429]
-z_index = -100
-color = Color(0.025, 0.007, 0.08, 1)
-polygon = PackedVector2Array(-1024, -768, 3072, -768, 3072, 1024, -1024, 1024)
-
 [node name="Asura" parent="." unique_id=1107660582 instance=ExtResource("1_r7por")]
 z_index = 5
 position = Vector2(-162, -308)
@@ -299,6 +289,7 @@ layer_0/tile_data = PackedInt32Array(-655366, 131073, 4, -589830, 131073, 4, -52
 
 [node name="Door" parent="." unique_id=265049239 instance=ExtResource("3_r7por")]
 position = Vector2(1447, 111)
+next_scene_path = "res://nodes/scenes/level_3.tscn"
 
 [node name="FireList" type="Node" parent="." unique_id=1699640204]
 

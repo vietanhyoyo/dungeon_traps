@@ -32,6 +32,7 @@ var was_on_floor = false
 var last_fall_speed = 0.0
 var slide_direction = 1.0
 var slide_time_left = 0.0
+var air_slide_used = false
 var normal_collision_height = 0.0
 var normal_collision_position = Vector2.ZERO
 var normal_sprite_position = Vector2.ZERO
@@ -62,6 +63,10 @@ func _physics_process(delta: float) -> void:
 		velocity = Vector2.ZERO
 		running_sound.stop()
 		return
+
+	# Chạm đất sẽ hồi lại một lần lướt trên không cho cú nhảy tiếp theo.
+	if is_on_floor():
+		air_slide_used = false
 
 	# Khi đang lướt, giữ nguyên hướng nhìn và vận tốc cho đến hết animation.
 	if is_sliding:
@@ -101,8 +106,9 @@ func _physics_process(delta: float) -> void:
 		velocity += get_gravity() * delta
 		last_fall_speed = velocity.y
 
-	# Có thể lướt cả trên mặt đất lẫn trên không; hướng lướt là hướng nhân vật đang nhìn.
-	if Input.is_action_just_pressed("slide") and not is_attacking:
+	# Lướt mặt đất không giới hạn; trên không chỉ được dùng một lần trước khi tiếp đất.
+	var can_slide := is_on_floor() or not air_slide_used
+	if Input.is_action_just_pressed("slide") and not is_attacking and can_slide:
 		start_slide()
 		return
 		
@@ -197,6 +203,8 @@ func start_attack(anim: String) -> void:
 
 func start_slide() -> void:
 	var started_in_air := not is_on_floor()
+	if started_in_air:
+		air_slide_used = true
 	is_sliding = true
 	slide_time_left = SLIDE_DURATION
 	slide_direction = -1.0 if animated_sprite.flip_h else 1.0

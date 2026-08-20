@@ -8,7 +8,7 @@ Cập nhật: 2026-07-07
 
 Dự án hiện có hai nhánh gameplay:
 
-- Luồng chính đang chạy: `res://nodes/scenes/level_1.tscn` -> `res://nodes/scenes/level_2.tscn`, dùng nhân vật `asura.tscn`, bẫy lửa, đuốc, ánh sáng và `GameState`.
+- Luồng chính đang chạy: `res://nodes/scenes/level_1.tscn` -> `res://nodes/scenes/level_2.tscn` -> `res://nodes/scenes/level_3.tscn`, dùng nhân vật `asura.tscn`, bẫy lửa, gai rơi, slime, đuốc, ánh sáng và `GameState`.
 - Scene tutorial/legacy: `res://nodes/game.tscn`, hiện đã dùng lại `asura.tscn`, coin, slime, platform, score label và `GameManager`.
 
 ## Công Nghệ
@@ -74,7 +74,7 @@ Luồng chuyển level:
 2. `door.gd` play animation `open`.
 3. Khi player vào `PassArea` và cửa đã mở, door đổi scene theo `next_scene_path`.
 4. `level_1` cấu hình `next_scene_path = "res://nodes/scenes/level_2.tscn"`.
-5. Door ở `level_2` hiện chưa có `next_scene_path`, nên chưa đi tiếp level khác.
+5. Door ở `level_2` chuyển sang `res://nodes/scenes/level_3.tscn`.
 
 ## Cấu Trúc Thư Mục Hiện Tại
 
@@ -119,6 +119,7 @@ res://
 | --- | --- |
 | `res://nodes/scenes/level_1.tscn` | Main scene hiện tại, có Asura, camera, ánh sáng, tilemap, cửa sang level 2, fire traps, torches |
 | `res://nodes/scenes/level_2.tscn` | Level thứ hai, layout dài hơn, có nhiều torches và fire traps |
+| `res://nodes/scenes/level_3.tscn` | Level thứ ba dài khoảng 4.000 px, có hố chết, platform cao thấp, 16 bẫy lửa, 7 gai rơi, 6 slime và 5 sao |
 | `res://nodes/characters/asura.tscn` | Nhân vật chính, gắn script `asura_controller.gd`, thuộc group `player`, collision layer 2 |
 | `res://nodes/traps/fire_trap.tscn` | Bẫy lửa, phát sáng, gây game over qua `GameState` |
 | `res://nodes/door.tscn` | Cửa mở bằng animation và đổi scene |
