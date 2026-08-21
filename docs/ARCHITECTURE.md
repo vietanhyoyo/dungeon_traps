@@ -183,6 +183,7 @@ The project does not use `CanvasModulate`. Darkness is faked by lowering each ob
 | Node | modulate |
 | --- | --- |
 | `TileMap` in `level_1` | 0.733 |
+| `TileMap16` in `level_3` | 0.733 |
 | `Asura` instance in a level | 0.545 |
 | `torch.tscn` root | 0.439 |
 | `fire_trap.tscn/AnimatedSprite2D` | 0.431 |
