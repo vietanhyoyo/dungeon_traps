@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://cbkso31ndo3ne" path="res://assets/sprites/traps/fire.png" id="1_mq3ff"]
 [ext_resource type="Script" uid="uid://dphitwoiks6bt" path="res://scripts/fire_trap.gd" id="2_jruu2"]
-[ext_resource type="AudioStream" uid="uid://b7e2c4f6a8d1e3f5" path="res://assets/sounds/fireball_whoosh.mp3" id="3_whoosh"]
+[ext_resource type="AudioStream" uid="uid://c32cun46p8bwq" path="res://assets/sounds/fireball_whoosh.mp3" id="3_whoosh"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_qkpo1"]
 atlas = ExtResource("1_mq3ff")
@@ -86,16 +86,18 @@ position = Vector2(0, 2)
 shape = SubResource("RectangleShape2D_jruu2")
 disabled = true
 
-[node name="TriggerArea" type="Area2D" parent="."]
+[node name="TriggerArea" type="Area2D" parent="." unique_id=437836765]
 position = Vector2(0, -32)
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerArea" unique_id=1200162106]
+position = Vector2(0, -1)
+scale = Vector2(1.47, 1.19)
 shape = SubResource("RectangleShape2D_trigger")
 
-[node name="AppearSound" type="AudioStreamPlayer2D" parent="."]
+[node name="AppearSound" type="AudioStreamPlayer2D" parent="." unique_id=946384261]
 stream = ExtResource("3_whoosh")
 volume_db = -12.0
 bus = &"SFX"
