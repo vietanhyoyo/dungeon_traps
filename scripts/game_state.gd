@@ -3,6 +3,7 @@ class_name GameStateManager
 
 signal game_over_started(player: Node2D)
 signal restart_countdown_changed(seconds_left: int)
+signal checkpoint_activated(scene_path: String, spawn_position: Vector2)
 
 enum State {
 	PLAYING,
@@ -21,6 +22,8 @@ var _restart_scene_path := DEFAULT_RESTART_SCENE_PATH
 var _countdown_layer: CanvasLayer
 var _countdown_label: Label
 var _game_over_sound_player: AudioStreamPlayer
+var _checkpoint_scene_path := ""
+var _checkpoint_position := Vector2.ZERO
 
 
 func _ready() -> void:
@@ -67,6 +70,17 @@ func is_game_over() -> bool:
 	return state == State.GAME_OVER
 
 
+func activate_checkpoint(spawn_position: Vector2) -> void:
+	_checkpoint_scene_path = _get_current_scene_path()
+	_checkpoint_position = spawn_position
+	checkpoint_activated.emit(_checkpoint_scene_path, _checkpoint_position)
+
+
+func is_checkpoint_active(spawn_position: Vector2) -> bool:
+	return _checkpoint_scene_path == _get_current_scene_path() and \
+		_checkpoint_position.is_equal_approx(spawn_position)
+
+
 func reset_to_playing() -> void:
 	state = State.PLAYING
 	_is_counting_down = false
@@ -97,11 +111,33 @@ func _restart_now() -> void:
 		return
 
 	var scene_path := _restart_scene_path
+	var should_restore_checkpoint := _checkpoint_scene_path == scene_path
+	var checkpoint_position := _checkpoint_position
 	reset_to_playing()
 
 	var error := get_tree().change_scene_to_file(scene_path)
 	if error != OK:
 		push_error("Could not reload scene %s: %s" % [scene_path, error])
+	elif should_restore_checkpoint:
+		_restore_checkpoint_after_scene_change(checkpoint_position)
+
+
+func _restore_checkpoint_after_scene_change(spawn_position: Vector2) -> void:
+	# change_scene_to_file thay scene ở cuối frame; chờ player mới vào SceneTree
+	# rồi mới gán vị trí. Thử vài frame để ổn định cả khi scene tải chậm.
+	for attempt in 3:
+		await get_tree().process_frame
+		var player: CharacterBody2D
+		for candidate in get_tree().get_nodes_in_group(&"player"):
+			if candidate is CharacterBody2D:
+				player = candidate
+				break
+		if player:
+			player.global_position = spawn_position
+			player.velocity = Vector2.ZERO
+			return
+
+	push_warning("Checkpoint could not find a player after scene reload")
 
 
 func _get_current_scene_path() -> String:

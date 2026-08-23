@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://cg8mbcubeyje8" path="res://nodes/items/star.tscn" id="8_star"]
 [ext_resource type="PackedScene" path="res://nodes/star_hud.tscn" id="9_hud"]
 [ext_resource type="Texture2D" uid="uid://dttn1pberb42" path="res://assets/sprites/mapp16.png" id="13_8ytc0"]
+[ext_resource type="PackedScene" uid="uid://cd230y5iqj4bd" path="res://nodes/save_point.tscn" id="14_save_point"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_8pcmo"]
 polygon = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
@@ -391,6 +392,9 @@ position = Vector2(1672, -197)
 
 [node name="Camera2D" parent="Asura" unique_id=1738643562 instance=ExtResource("2_camera")]
 limit_bottom = 725
+
+[node name="SavePoint" parent="." unique_id=1734711806 instance=ExtResource("14_save_point")]
+position = Vector2(3539, -192)
 
 [node name="TileMap32" parent="." unique_id=1406996474 instance=ExtResource("3_yinkl")]
 tile_set = SubResource("TileSet_flnyc")

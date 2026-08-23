@@ -2,6 +2,9 @@
 extends CharacterBody2D
 
 const SPEED = 30.0
+const HIT_FLASH_COUNT := 3
+const HIT_FLASH_ON_DURATION := 0.04
+const HIT_FLASH_OFF_DURATION := 0.035
 
 ## Vùng tuần tra, tính bằng px từ vị trí đặt slime trong editor.
 ## Để -1 nghĩa là không giới hạn phía đó, chỉ quay đầu khi đụng tường.
@@ -29,6 +32,10 @@ var _start_x: float = 0.0
 
 func _ready() -> void:
 	_start_x = position.x
+	# Mỗi slime cần material riêng, nếu không đổi shader parameter ở một con
+	# có thể làm các instance dùng chung material cùng nhấp nháy.
+	if animated_sprite.material:
+		animated_sprite.material = animated_sprite.material.duplicate()
 
 func _physics_process(delta: float) -> void:
 	if Engine.is_editor_hint() or is_dead:
@@ -58,7 +65,7 @@ func _physics_process(delta: float) -> void:
 	velocity.x = direction * SPEED
 	move_and_slide()
 
-# Bị nhân vật chém trúng: phát animation chết rồi biến mất
+# Bị nhân vật chém trúng: chớp trắng vài nhịp rồi phát animation chết.
 func die() -> void:
 	if is_dead:
 		return
@@ -69,11 +76,28 @@ func die() -> void:
 	collision_shape.set_deferred("disabled", true)
 	killzone.set_deferred("monitoring", false)
 
+	await _play_hit_flash()
+
 	if animated_sprite.sprite_frames.has_animation("death"):
 		animated_sprite.play("death")
 		await animated_sprite.animation_finished
 
 	queue_free()
+
+
+# Nhấp tắt/mở dứt khoát thay vì fade mượt để hợp với nhịp pixel-art 2D.
+func _play_hit_flash() -> void:
+	if not animated_sprite.material is ShaderMaterial:
+		return
+
+	var flash_material := animated_sprite.material as ShaderMaterial
+	for flash_index in HIT_FLASH_COUNT:
+		flash_material.set_shader_parameter("flash_amount", 1.0)
+		await get_tree().create_timer(HIT_FLASH_ON_DURATION, false).timeout
+		flash_material.set_shader_parameter("flash_amount", 0.0)
+
+		if flash_index < HIT_FLASH_COUNT - 1:
+			await get_tree().create_timer(HIT_FLASH_OFF_DURATION, false).timeout
 
 
 # Player chạm vào slime: quay mặt về player và phát animation attack.

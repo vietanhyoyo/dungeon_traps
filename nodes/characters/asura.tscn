@@ -85,6 +85,10 @@ region = Rect2(94, 0, 94, 94)
 atlas = ExtResource("7_341xe")
 region = Rect2(188, 0, 94, 94)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_mh270"]
+atlas = ExtResource("7_341xe")
+region = Rect2(188, 0, 94, 94)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_1bcgc"]
 atlas = ExtResource("5_i2l0f")
 region = Rect2(128, 0, 64, 64)
@@ -239,6 +243,9 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_e4ivm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mh270")
 }],
 "loop": false,
 "name": &"jump_attack",
@@ -339,7 +346,8 @@ script = ExtResource("3_tby2x")
 sprite_frames = SubResource("SpriteFrames_hugui")
 animation = &"jump_attack"
 autoplay = "idle"
-frame_progress = 0.23353517
+frame = 3
+frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=103448317]
 position = Vector2(0, 1)

@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://cd230y5iqj4bd"]
+
+[ext_resource type="Script" path="res://scripts/save_point.gd" id="1_save_point"]
+[ext_resource type="Texture2D" uid="uid://da8soip3d7dh2" path="res://assets/sprites/save-flag.png" id="2_flag"]
+
+[sub_resource type="Gradient" id="Gradient_save_point"]
+offsets = PackedFloat32Array(0, 0.35, 1)
+colors = PackedColorArray(1, 0.72, 0.25, 1, 0.75, 0.15, 0.05, 0.55, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_save_point"]
+gradient = SubResource("Gradient_save_point")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_save_point"]
+size = Vector2(44, 64)
+
+[node name="SavePoint" type="Area2D" unique_id=668168341]
+z_index = 4
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_save_point")
+
+[node name="FlagSprite" type="Sprite2D" parent="." unique_id=1416793611]
+modulate = Color(0.8196546, 0.8196545, 0.8196545, 1)
+position = Vector2(0, -32)
+texture = ExtResource("2_flag")
+
+[node name="ActivationLight" type="PointLight2D" parent="." unique_id=58731699]
+position = Vector2(0, -32)
+enabled = false
+color = Color(1, 0.28, 0.08, 1)
+energy = 0.06
+texture = SubResource("GradientTexture2D_save_point")
+texture_scale = 1.6
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=947909518]
+position = Vector2(0, -32)
+shape = SubResource("RectangleShape2D_save_point")
