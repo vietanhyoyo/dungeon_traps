@@ -1,0 +1,72 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scripts/bat.gd" id="1_bat"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/bat.png" id="2_bat"]
+[ext_resource type="PackedScene" path="res://nodes/killzone.tscn" id="3_killzone"]
+
+[sub_resource type="Shader" id="Shader_hit_flash"]
+code = "shader_type canvas_item;\n\nuniform float flash_amount : hint_range(0.0, 1.0) = 0.0;\nuniform vec4 flash_color : source_color = vec4(1.0, 0.96, 0.78, 1.0);\n\nvoid fragment() {\n\tvec4 sprite_color = texture(TEXTURE, UV);\n\tsprite_color.rgb = mix(sprite_color.rgb, flash_color.rgb, flash_amount);\n\tCOLOR = sprite_color * COLOR;\n}\n"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hit_flash"]
+resource_local_to_scene = true
+shader = SubResource("Shader_hit_flash")
+shader_parameter/flash_amount = 0.0
+shader_parameter/flash_color = Color(1, 0.96, 0.78, 1)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1"]
+atlas = ExtResource("2_bat")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2"]
+atlas = ExtResource("2_bat")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3"]
+atlas = ExtResource("2_bat")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4"]
+atlas = ExtResource("2_bat")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_bat"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4")
+}],
+"loop": true,
+"name": &"fly",
+"speed": 8.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bat"]
+size = Vector2(34, 20)
+
+[node name="Bat" type="CharacterBody2D" groups=["enemy"]]
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("1_bat")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_bat")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+material = SubResource("ShaderMaterial_hit_flash")
+sprite_frames = SubResource("SpriteFrames_bat")
+animation = &"fly"
+autoplay = "fly"
+
+[node name="Killzone" parent="." instance=ExtResource("3_killzone")]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Killzone"]
+shape = SubResource("RectangleShape2D_bat")
