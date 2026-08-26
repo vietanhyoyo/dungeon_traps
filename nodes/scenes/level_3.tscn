@@ -3,9 +3,9 @@
 [ext_resource type="PackedScene" uid="uid://cwgqa60xyqnyj" path="res://nodes/characters/asura.tscn" id="1_player"]
 [ext_resource type="PackedScene" uid="uid://deqd3mnvbeh2d" path="res://nodes/camera.tscn" id="2_camera"]
 [ext_resource type="PackedScene" uid="uid://c4jvx4glbgl2" path="res://nodes/door.tscn" id="3_door"]
-[ext_resource type="PackedScene" path="res://nodes/tile_map_32.tscn" id="3_yinkl"]
+[ext_resource type="PackedScene" uid="uid://b3smmvaulqe1" path="res://nodes/tile_map_32.tscn" id="3_yinkl"]
 [ext_resource type="Texture2D" uid="uid://bcxnn1f6qiuev" path="res://assets/sprites/mapp32.png" id="4_8ytc0"]
-[ext_resource type="PackedScene" path="res://nodes/torch.tscn" id="4_torch"]
+[ext_resource type="PackedScene" uid="uid://bx16n4demckja" path="res://nodes/torch.tscn" id="4_torch"]
 [ext_resource type="PackedScene" uid="uid://dscr153320p4r" path="res://nodes/traps/fire_trap.tscn" id="5_fire"]
 [ext_resource type="Texture2D" uid="uid://d28tluf6jm21n" path="res://assets/sprites/background5.png" id="6_coome"]
 [ext_resource type="PackedScene" uid="uid://ddq2qqo23k2o0" path="res://nodes/traps/thorn.tscn" id="6_thorn"]
@@ -15,6 +15,7 @@
 [ext_resource type="Texture2D" uid="uid://dttn1pberb42" path="res://assets/sprites/mapp16.png" id="13_8ytc0"]
 [ext_resource type="PackedScene" uid="uid://cd230y5iqj4bd" path="res://nodes/save_point.tscn" id="14_save_point"]
 [ext_resource type="PackedScene" path="res://nodes/enemies/bat.tscn" id="15_bat"]
+[ext_resource type="PackedScene" path="res://nodes/ui/pause_menu.tscn" id="20_pause"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_8pcmo"]
 polygon = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
@@ -389,13 +390,16 @@ sources/1 = SubResource("TileSetAtlasSource_coome")
 
 [node name="Asura" parent="." unique_id=1107660582 instance=ExtResource("1_player")]
 z_index = 5
-position = Vector2(4394, -450)
+position = Vector2(-162, -225)
 
 [node name="Camera2D" parent="Asura" unique_id=1738643562 instance=ExtResource("2_camera")]
 limit_bottom = 725
 
 [node name="SavePoint" parent="." unique_id=1734711806 instance=ExtResource("14_save_point")]
-position = Vector2(3539, -192)
+position = Vector2(2940, 96)
+
+[node name="SavePoint2" parent="." unique_id=668168341 instance=ExtResource("14_save_point")]
+position = Vector2(4900, -320)
 
 [node name="TileMap32" parent="." unique_id=1406996474 instance=ExtResource("3_yinkl")]
 tile_set = SubResource("TileSet_flnyc")
@@ -456,7 +460,7 @@ position = Vector2(3599, -305)
 position = Vector2(3857, -274)
 
 [node name="Torch18" parent="TorchList" unique_id=299396510 instance=ExtResource("4_torch")]
-position = Vector2(4016, -275)
+position = Vector2(4016, -273)
 
 [node name="Torch19" parent="TorchList" unique_id=1453689863 instance=ExtResource("4_torch")]
 position = Vector2(4498, -400)
@@ -543,6 +547,30 @@ position = Vector2(1355, -40)
 [node name="Fire9" parent="FireList" unique_id=1689373622 instance=ExtResource("5_fire")]
 position = Vector2(1371, -40)
 
+[node name="Fire16" parent="FireList" unique_id=344414791 instance=ExtResource("5_fire")]
+position = Vector2(2795, 88)
+
+[node name="Fire17" parent="FireList" unique_id=1423675391 instance=ExtResource("5_fire")]
+position = Vector2(2810, 88)
+
+[node name="Fire18" parent="FireList" unique_id=1114157223 instance=ExtResource("5_fire")]
+position = Vector2(2825, 88)
+
+[node name="Fire24" parent="FireList" unique_id=1920885860 instance=ExtResource("5_fire")]
+position = Vector2(4746, -167)
+
+[node name="Fire27" parent="FireList" unique_id=214438948 instance=ExtResource("5_fire")]
+position = Vector2(5241, -408)
+
+[node name="Fire28" parent="FireList" unique_id=1726170890 instance=ExtResource("5_fire")]
+position = Vector2(6056, -472)
+
+[node name="Fire29" parent="FireList" unique_id=438836301 instance=ExtResource("5_fire")]
+position = Vector2(6071, -472)
+
+[node name="Fire30" parent="FireList" unique_id=1694886456 instance=ExtResource("5_fire")]
+position = Vector2(6086, -472)
+
 [node name="Fire10" parent="FireList" unique_id=500171923 instance=ExtResource("5_fire")]
 position = Vector2(2097, -104)
 
@@ -553,13 +581,28 @@ position = Vector2(2113, -104)
 position = Vector2(2129, -104)
 
 [node name="Fire13" parent="FireList" unique_id=1062060480 instance=ExtResource("5_fire")]
-position = Vector2(3856, -40)
+position = Vector2(3816, -40)
 
 [node name="Fire14" parent="FireList" unique_id=1804054898 instance=ExtResource("5_fire")]
-position = Vector2(3872, -40)
+position = Vector2(3832, -40)
 
 [node name="Fire15" parent="FireList" unique_id=1663596768 instance=ExtResource("5_fire")]
-position = Vector2(3888, -40)
+position = Vector2(3848, -40)
+
+[node name="Fire19" parent="FireList" unique_id=1096961540 instance=ExtResource("5_fire")]
+position = Vector2(3864, -40)
+
+[node name="Fire20" parent="FireList" unique_id=352775616 instance=ExtResource("5_fire")]
+position = Vector2(3880, -40)
+
+[node name="Fire21" parent="FireList" unique_id=1224734930 instance=ExtResource("5_fire")]
+position = Vector2(3896, -40)
+
+[node name="Fire22" parent="FireList" unique_id=493593508 instance=ExtResource("5_fire")]
+position = Vector2(3912, -40)
+
+[node name="Fire23" parent="FireList" unique_id=1808273676 instance=ExtResource("5_fire")]
+position = Vector2(3928, -40)
 
 [node name="ThornList" type="Node" parent="." unique_id=1216989016]
 
@@ -599,6 +642,86 @@ position = Vector2(1993, -24)
 z_index = 10
 position = Vector2(1985, -312)
 
+[node name="Thorn10" parent="ThornList" unique_id=1657025535 instance=ExtResource("6_thorn")]
+z_index = 10
+position = Vector2(5433, -632)
+
+[node name="Thorn15" parent="ThornList" unique_id=1572681774 instance=ExtResource("6_thorn")]
+z_index = 10
+position = Vector2(6216, -440)
+
+[node name="Thorn17" parent="ThornList" unique_id=673768547 instance=ExtResource("6_thorn")]
+z_index = 10
+position = Vector2(6216, -440)
+
+[node name="Thorn20" parent="ThornList" unique_id=1171613286 instance=ExtResource("6_thorn")]
+z_index = 10
+position = Vector2(6232, -440)
+
+[node name="Thorn16" parent="ThornList" unique_id=1561429035 instance=ExtResource("6_thorn")]
+z_index = 10
+position = Vector2(6500, -488)
+
+[node name="Thorn18" parent="ThornList" unique_id=966613749 instance=ExtResource("6_thorn")]
+z_index = 10
+position = Vector2(6516, -488)
+
+[node name="Thorn19" parent="ThornList" unique_id=641096713 instance=ExtResource("6_thorn")]
+z_index = 10
+position = Vector2(6532, -488)
+
+[node name="Thorn21" parent="ThornList" unique_id=1973850843 instance=ExtResource("6_thorn")]
+z_index = 10
+position = Vector2(7340, -792)
+
+[node name="Thorn22" parent="ThornList" unique_id=278638609 instance=ExtResource("6_thorn")]
+z_index = 10
+position = Vector2(7356, -792)
+
+[node name="Thorn23" parent="ThornList" unique_id=1416233516 instance=ExtResource("6_thorn")]
+z_index = 10
+position = Vector2(7372, -792)
+
+[node name="Thorn24" parent="ThornList" unique_id=434672794 instance=ExtResource("6_thorn")]
+z_index = 10
+position = Vector2(7793, -792)
+
+[node name="Thorn25" parent="ThornList" unique_id=1113552032 instance=ExtResource("6_thorn")]
+z_index = 10
+position = Vector2(7809, -792)
+
+[node name="Thorn26" parent="ThornList" unique_id=1244455137 instance=ExtResource("6_thorn")]
+z_index = 10
+position = Vector2(7825, -792)
+
+[node name="Thorn27" parent="ThornList" unique_id=1251950735 instance=ExtResource("6_thorn")]
+z_index = 10
+position = Vector2(7554, -792)
+
+[node name="Thorn28" parent="ThornList" unique_id=126261680 instance=ExtResource("6_thorn")]
+z_index = 10
+position = Vector2(7570, -792)
+
+[node name="Thorn29" parent="ThornList" unique_id=1273293951 instance=ExtResource("6_thorn")]
+z_index = 10
+position = Vector2(7586, -792)
+
+[node name="Thorn11" parent="ThornList" unique_id=445058837 instance=ExtResource("6_thorn")]
+z_index = 10
+position = Vector2(5504, -632)
+
+[node name="Thorn12" parent="ThornList" unique_id=1895713364 instance=ExtResource("6_thorn")]
+z_index = 10
+position = Vector2(4239, -632)
+
+[node name="Thorn13" parent="ThornList" unique_id=1604109104 instance=ExtResource("6_thorn")]
+z_index = 10
+position = Vector2(4648, -376)
+
+[node name="Thorn14" parent="ThornList" unique_id=1324002128 instance=ExtResource("6_thorn")]
+z_index = 10
+position = Vector2(4664, -376)
+
 [node name="SlimeList" type="Node" parent="." unique_id=1204558931]
 
 [node name="Slime" parent="SlimeList" unique_id=1795330612 instance=ExtResource("7_slime")]
@@ -615,8 +738,44 @@ patrol_right = 28.0
 
 [node name="Slime3" parent="SlimeList" unique_id=1463865743 instance=ExtResource("7_slime")]
 z_index = 5
-position = Vector2(2354, 137)
+position = Vector2(5344, -342)
 patrol_left = 241.0
+patrol_right = 28.0
+
+[node name="Slime5" parent="SlimeList" unique_id=209328615 instance=ExtResource("7_slime")]
+z_index = 5
+position = Vector2(3248, 70)
+patrol_left = 241.0
+patrol_right = 28.0
+
+[node name="Slime7" parent="SlimeList" unique_id=1420157892 instance=ExtResource("7_slime")]
+z_index = 5
+position = Vector2(6005, -492)
+patrol_left = 241.0
+patrol_right = 28.0
+
+[node name="Slime8" parent="SlimeList" unique_id=728170875 instance=ExtResource("7_slime")]
+z_index = 5
+position = Vector2(6973, -539)
+patrol_left = 130.0
+patrol_right = 28.0
+
+[node name="Slime10" parent="SlimeList" unique_id=1118891278 instance=ExtResource("7_slime")]
+z_index = 5
+position = Vector2(7259, -442)
+patrol_left = 107.0
+patrol_right = 28.0
+
+[node name="Slime9" parent="SlimeList" unique_id=475821082 instance=ExtResource("7_slime")]
+z_index = 5
+position = Vector2(7449, -669)
+patrol_left = 179.0
+patrol_right = 358.0
+
+[node name="Slime6" parent="SlimeList" unique_id=1218508261 instance=ExtResource("7_slime")]
+z_index = 5
+position = Vector2(4747, -264)
+patrol_left = 143.0
 patrol_right = 28.0
 
 [node name="Slime4" parent="SlimeList" unique_id=779668883 instance=ExtResource("7_slime")]
@@ -630,6 +789,34 @@ patrol_right = 28.0
 [node name="Bat" parent="BatList" unique_id=1710858662 instance=ExtResource("15_bat")]
 z_index = 5
 position = Vector2(5145, -389)
+
+[node name="Bat4" parent="BatList" unique_id=1609851581 instance=ExtResource("15_bat")]
+z_index = 5
+position = Vector2(2161, 103)
+
+[node name="Bat2" parent="BatList" unique_id=1197382080 instance=ExtResource("15_bat")]
+z_index = 5
+position = Vector2(4212, -266)
+
+[node name="Bat5" parent="BatList" unique_id=547861350 instance=ExtResource("15_bat")]
+z_index = 5
+position = Vector2(5600, -468)
+
+[node name="Bat6" parent="BatList" unique_id=1473893222 instance=ExtResource("15_bat")]
+z_index = 5
+position = Vector2(6060, -418)
+
+[node name="Bat7" parent="BatList" unique_id=1235344595 instance=ExtResource("15_bat")]
+z_index = 5
+position = Vector2(6663, -416)
+
+[node name="Bat8" parent="BatList" unique_id=1765023814 instance=ExtResource("15_bat")]
+z_index = 5
+position = Vector2(7013, -427)
+
+[node name="Bat3" parent="BatList" unique_id=1326503391 instance=ExtResource("15_bat")]
+z_index = 5
+position = Vector2(3382, 18)
 
 [node name="StarHUD" parent="." unique_id=1829039490 instance=ExtResource("9_hud")]
 
@@ -649,3 +836,5 @@ modulate = Color(0.9019608, 0.9019608, 0.9019608, 1)
 tile_set = SubResource("TileSet_8ytc0")
 format = 2
 layer_0/tile_data = PackedInt32Array(327894, 65537, 0, 327895, 196609, 0, -65319, 1, 1, 217, 1, 1, -327468, 131073, 1, -589607, 65537, 1, -982747, 131073, 1, -982746, 131073, 1, -982745, 131073, 1, -982744, 131073, 1, -982743, 131073, 1, -982742, 131073, 1, -1113809, 65537, 1, -982748, 131073, 1, -982753, 1, 0, -982752, 131073, 1, -982751, 131073, 1, -982750, 131073, 1, -982749, 131073, 1, 589993, 1, 0, -1900102, 131073, 1, -1900103, 131073, 1, -1900104, 131073, 1, -2096715, 131073, 1, -2096716, 131073, 1, -2096717, 131073, 1, -2096718, 131073, 1, -2358853, 131073, 1, -2358852, 131073, 1, -2358851, 131073, 1, -1506883, 1, 0, -1506884, 1, 0, -2293319, 1, 0, -2293318, 1, 0, -2489922, 1, 0, -2489921, 1, 0, -2096719, 131073, 1, -2096720, 131073, 1, -2096721, 131073, 1, -2096722, 131073, 1, -2096723, 65537, 1, -1900105, 131073, 1, -1900106, 65537, 1, -2096724, 65537, 1, -2096725, 65537, 1, -2096740, 131073, 1, -2096739, 131073, 1, -2096738, 131073, 1, -2096737, 131073, 1, -2096736, 131073, 1, -2096735, 131073, 1, -2096734, 131073, 1, -2096733, 131073, 1, -2096732, 131073, 1, -2096741, 65537, 1, -2096742, 65537, 1, -2096743, 65537, 1, -2096744, 65537, 1, -2096745, 65537, 1, -2096746, 65537, 1, -2096747, 65537, 1, -1506994, 65537, 1, -1506993, 65537, 1, -1638070, 131073, 1, -1638071, 65537, 1, -1638072, 65537, 1, -1638073, 65537, 1, -1900187, 65537, 1, -1900186, 65537, 1, -1900185, 65537, 1, -1900184, 65537, 1, -1900183, 65537, 1, -1900182, 65537, 1, -1900181, 65537, 1, -1900180, 65537, 1, -1900179, 65537, 1, -1900178, 65537, 1, -1900177, 131073, 1, -1900176, 131073, 1, -1900175, 131073, 1, -1900174, 131073, 1, -1900173, 131073, 1, -1900172, 131073, 1, -1900171, 131073, 1, -1900170, 131073, 1, -1900169, 131073, 1, -1900168, 131073, 1, -1900167, 131073, 1, -1900166, 131073, 1, -1900165, 131073, 1, -1900164, 131073, 1, -1900163, 131073, 1, -1900162, 131073, 1, -1900161, 131073, 1, -1900160, 131073, 1, -1900159, 131073, 1, -1900158, 131073, 1, -1900157, 131073, 1, -1900156, 131073, 1, -1900155, 131073, 1)
+
+[node name="PauseMenu" parent="." unique_id=301713024 instance=ExtResource("20_pause")]

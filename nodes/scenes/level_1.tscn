@@ -11,17 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://deqd3mnvbeh2d" path="res://nodes/camera.tscn" id="8_camera"]
 [ext_resource type="PackedScene" uid="uid://cg8mbcubeyje8" path="res://nodes/items/star.tscn" id="10_akfln"]
 [ext_resource type="PackedScene" path="res://nodes/star_hud.tscn" id="11_star_hud"]
-
-[sub_resource type="Gradient" id="Gradient_8pcmo"]
-interpolation_color_space = 1
-offsets = PackedFloat32Array(0.50390625, 0.9296875, 1)
-colors = PackedColorArray(1, 1, 1, 1, 0.203125, 0.203125, 0.203125, 1, 0, 0, 0, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_m4axl"]
-gradient = SubResource("Gradient_8pcmo")
-fill = 1
-fill_from = Vector2(0.5, 0.5)
-fill_to = Vector2(1, 0.5)
+[ext_resource type="PackedScene" path="res://nodes/ui/pause_menu.tscn" id="20_pause"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jsomn"]
 texture = ExtResource("2_8pcmo")
@@ -145,21 +135,11 @@ theme_override_font_sizes/font_size = 10
 text = "Purple flames are very dangerous"
 
 [node name="Asura" parent="." unique_id=1107660582 instance=ExtResource("2_flbgy")]
-modulate = Color(0.5449743, 0.54497427, 0.54497427, 1)
 z_index = 5
 position = Vector2(-268, -367)
 
 [node name="Camera2D" parent="Asura" unique_id=1525755273 instance=ExtResource("8_camera")]
 limit_bottom = 100
-
-[node name="PointLight2D" type="PointLight2D" parent="Asura" unique_id=1077569544]
-color = Color(0.84454954, 0.8480106, 0.5679862, 1)
-energy = 0.78
-shadow_enabled = true
-shadow_filter = 2
-shadow_filter_smooth = 1.0
-texture = SubResource("GradientTexture2D_m4axl")
-texture_scale = 13.18
 
 [node name="TileMap" type="TileMap" parent="." unique_id=1972881174]
 modulate = Color(0.73300546, 0.7330054, 0.7330054, 1)
@@ -262,6 +242,8 @@ position = Vector2(-110, -23)
 position = Vector2(92, -24)
 
 [node name="StarHUD" parent="." unique_id=1690142634 instance=ExtResource("11_star_hud")]
+
+[node name="PauseMenu" parent="." instance=ExtResource("20_pause")]
 
 [editable path="FireList/Fire"]
 [editable path="FireList/Fire2"]

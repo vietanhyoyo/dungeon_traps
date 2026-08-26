@@ -6,7 +6,6 @@ signal activated(spawn_position: Vector2)
 @export var spawn_offset := Vector2(0.0, -31.0)
 
 @onready var flag_sprite: Sprite2D = $FlagSprite
-@onready var activation_light: PointLight2D = $ActivationLight
 
 var is_activated := false
 
@@ -33,7 +32,6 @@ func _get_spawn_position() -> Vector2:
 
 func _set_activated_visual(animate: bool) -> void:
 	is_activated = true
-	activation_light.enabled = true
 	flag_sprite.modulate = Color(1.0, 0.9, 0.65, 1.0)
 
 	if not animate:

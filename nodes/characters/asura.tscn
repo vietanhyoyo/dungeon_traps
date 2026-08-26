@@ -333,20 +333,38 @@ radius = 17.0
 height = 62.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_attack_high"]
-size = Vector2(40, 43)
+size = Vector2(50, 48)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_attack_low"]
-size = Vector2(42, 38)
+size = Vector2(50, 66)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_attack_slide"]
+size = Vector2(56, 45)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_attack_jump"]
+size = Vector2(52, 78)
+
+[sub_resource type="Gradient" id="Gradient_glow"]
+interpolation_color_space = 1
+offsets = PackedFloat32Array(0.50390625, 0.9296875, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.203125, 0.203125, 0.203125, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_glow"]
+gradient = SubResource("Gradient_glow")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
 
 [node name="Asura" type="CharacterBody2D" unique_id=1107660582 groups=["player"]]
+modulate = Color(0.5449743, 0.54497427, 0.54497427, 1)
 collision_layer = 2
 script = ExtResource("3_tby2x")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=260658179 groups=["player"]]
 sprite_frames = SubResource("SpriteFrames_hugui")
-animation = &"jump_attack"
+animation = &"slide_attack"
 autoplay = "idle"
-frame = 3
+frame = 2
 frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=103448317]
@@ -359,13 +377,23 @@ collision_mask = 4
 monitorable = false
 
 [node name="HighShape" type="CollisionShape2D" parent="AttackHitbox" unique_id=1175297809]
-position = Vector2(27, -12.5)
+position = Vector2(22, -10)
 shape = SubResource("RectangleShape2D_attack_high")
 disabled = true
 
 [node name="LowShape" type="CollisionShape2D" parent="AttackHitbox" unique_id=517016674]
-position = Vector2(26, 13)
+position = Vector2(22, 0)
 shape = SubResource("RectangleShape2D_attack_low")
+disabled = true
+
+[node name="SlideShape" type="CollisionShape2D" parent="AttackHitbox" unique_id=428317905]
+position = Vector2(26, 9.5)
+shape = SubResource("RectangleShape2D_attack_slide")
+disabled = true
+
+[node name="JumpShape" type="CollisionShape2D" parent="AttackHitbox" unique_id=884502613]
+position = Vector2(21, -3)
+shape = SubResource("RectangleShape2D_attack_jump")
 disabled = true
 
 [node name="RunningSound" type="AudioStreamPlayer2D" parent="." unique_id=1235242696]
@@ -375,5 +403,14 @@ bus = &"SFX"
 [node name="AttackSound" type="AudioStreamPlayer2D" parent="." unique_id=1131988582]
 stream = ExtResource("8_attack")
 bus = &"SFX"
+
+[node name="PointLight2D" type="PointLight2D" parent="." unique_id=1077569544]
+color = Color(0.84454954, 0.8480106, 0.5679862, 1)
+energy = 0.78
+shadow_enabled = true
+shadow_filter = 2
+shadow_filter_smooth = 1.0
+texture = SubResource("GradientTexture2D_glow")
+texture_scale = 13.18
 
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]

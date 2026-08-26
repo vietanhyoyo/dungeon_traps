@@ -12,6 +12,9 @@ const DEATH_JUMP_VELOCITY = -420.0
 const ATTACK_SOUND_OFFSET = 0.2
 # Thời gian giữ animation "hust" trước khi chuyển sang animation chết
 const HURT_DURATION = 0.4
+# Độ sáng chung của nhân vật ở mọi màn. Đặt trong script thay vì để riêng từng
+# level scene, vì override modulate trên instance rất dễ bị ghi đè khi lưu scene.
+const BODY_MODULATE = Color(0.5449743, 0.54497427, 0.54497427, 1.0)
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var running_sound: AudioStreamPlayer2D = $RunningSound
@@ -19,6 +22,8 @@ const HURT_DURATION = 0.4
 @onready var attack_hitbox: Area2D = $AttackHitbox
 @onready var attack_shape_high: CollisionShape2D = $AttackHitbox/HighShape
 @onready var attack_shape_low: CollisionShape2D = $AttackHitbox/LowShape
+@onready var attack_shape_slide: CollisionShape2D = $AttackHitbox/SlideShape
+@onready var attack_shape_jump: CollisionShape2D = $AttackHitbox/JumpShape
 @onready var body_collision: CollisionShape2D = $CollisionShape2D
 @onready var dust_scene = preload("res://nodes/effects/landing_dust.tscn")
 
@@ -37,11 +42,15 @@ var normal_collision_height = 0.0
 var normal_collision_position = Vector2.ZERO
 var normal_sprite_position = Vector2.ZERO
 
-# Vùng sát thương đang dùng cho đòn hiện tại: "attack" chém cao, "attack2" chém thấp
+# Vùng sát thương đang dùng cho đòn hiện tại. Mỗi kiểu đòn có một CollisionShape2D
+# riêng trong AttackHitbox để chỉnh trực tiếp trong editor 2D:
+# attack -> HighShape, attack2 -> LowShape, slide_attack -> SlideShape,
+# jump_attack -> JumpShape.
 var attack_shape: CollisionShape2D = null
 var hit_enemies: Array[Node] = []
 
 func _ready() -> void:
+	modulate = BODY_MODULATE
 	# Shape là Resource nên cần bản riêng trước khi thay đổi kích thước lúc chạy.
 	body_collision.shape = body_collision.shape.duplicate()
 	var capsule := body_collision.shape as CapsuleShape2D
@@ -77,7 +86,7 @@ func _physics_process(delta: float) -> void:
 		if cancel_slide:
 			stop_slide()
 		else:
-			# Tấn công trong lúc lướt dùng animation và hitbox chém thấp riêng.
+			# Tấn công trong lúc lướt dùng animation và vùng chém SlideShape riêng.
 			if Input.is_action_just_pressed("attack") and not is_attacking:
 				start_attack("slide_attack")
 				# Dừng lướt ngay khi bắt đầu chém, tránh slide_attack đưa nhân vật
@@ -192,13 +201,25 @@ func start_attack(anim: String) -> void:
 	animated_sprite.play(anim)
 
 	hit_enemies.clear()
-	# "attack" là nhát chém ngang tầm ngực; attack2, slide_attack, jump_attack chém thấp.
-	attack_shape = attack_shape_low if anim in ["attack2", "slide_attack", "jump_attack"] else attack_shape_high
+	attack_shape = get_attack_shape(anim)
 
 	# Lật vùng sát thương theo hướng nhân vật đang quay. Phải đặt trước khi bật
 	# shape, vì physics server chỉ đọc transform mới ở bước kế tiếp.
 	var facing := -1.0 if animated_sprite.flip_h else 1.0
 	attack_shape.position.x = absf(attack_shape.position.x) * facing
+
+
+# Chọn vùng sát thương tương ứng với animation đang chém.
+func get_attack_shape(anim: String) -> CollisionShape2D:
+	match anim:
+		"attack2":
+			return attack_shape_low
+		"slide_attack":
+			return attack_shape_slide
+		"jump_attack":
+			return attack_shape_jump
+		_:
+			return attack_shape_high
 
 
 func start_slide() -> void:
@@ -279,8 +300,8 @@ func clear_attack_hitbox() -> void:
 	attack_shape = null
 	hit_enemies.clear()
 	# set_deferred vì clear có thể được gọi từ trong callback va chạm (die)
-	attack_shape_high.set_deferred("disabled", true)
-	attack_shape_low.set_deferred("disabled", true)
+	for shape in [attack_shape_high, attack_shape_low, attack_shape_slide, attack_shape_jump]:
+		shape.set_deferred("disabled", true)
 
 
 func spawn_landing_dust() -> void:

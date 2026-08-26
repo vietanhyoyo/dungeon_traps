@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/bat.gd" id="1_bat"]
 [ext_resource type="Texture2D" path="res://assets/sprites/enemies/bat.png" id="2_bat"]
@@ -49,6 +49,10 @@ animations = [{
 "speed": 8.0
 }]
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_detection"]
+resource_local_to_scene = true
+radius = 120.0
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bat"]
 size = Vector2(34, 20)
 
@@ -61,10 +65,18 @@ script = ExtResource("1_bat")
 shape = SubResource("RectangleShape2D_bat")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+self_modulate = Color(1.6, 1.6, 1.6, 1)
 material = SubResource("ShaderMaterial_hit_flash")
 sprite_frames = SubResource("SpriteFrames_bat")
 animation = &"fly"
 autoplay = "fly"
+
+[node name="DetectionArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea"]
+shape = SubResource("CircleShape2D_detection")
 
 [node name="Killzone" parent="." instance=ExtResource("3_killzone")]
 

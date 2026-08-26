@@ -6,12 +6,17 @@ extends Node2D
 @export var thorn_half_width := 8.0
 @export var thorn_half_height := 8.0
 @export var floor_probe_margin := 6.0
+## Thời gian thorn nằm lại sau khi rơi xuống trước khi biến mất. Để 0 là không tự biến mất.
+@export_range(0.0, 10.0, 0.1, "or_greater") var despawn_delay := 0.2
+## Thời gian mờ dần lúc biến mất, để không bị mất đột ngột giữa màn.
+@export_range(0.0, 2.0, 0.05, "or_greater") var despawn_fade_duration := 0.2
 
 @onready var hazard: Area2D = $Hazard
 @onready var trigger_area: Area2D = $TriggerArea
 
 var _start_position: Vector2
 var _is_falling := false
+var _is_despawning := false
 
 
 func _ready() -> void:
@@ -76,6 +81,28 @@ func _get_floor_y(distance: float) -> float:
 func _stop_falling() -> void:
 	_is_falling = false
 	set_physics_process(false)
+	_start_despawn()
+
+
+# Rơi xong thì nằm lại đúng despawn_delay giây rồi mờ dần và biến mất.
+func _start_despawn() -> void:
+	if _is_despawning or despawn_delay <= 0.0:
+		return
+
+	_is_despawning = true
+	await get_tree().create_timer(despawn_delay, false).timeout
+	if not is_instance_valid(self):
+		return
+
+	# Tắt sát thương ngay khi bắt đầu mờ, tránh chết oan vì cái gai gần như vô hình.
+	hazard.set_deferred("monitoring", false)
+
+	if despawn_fade_duration > 0.0:
+		var fade_tween := create_tween()
+		fade_tween.tween_property(hazard, "modulate:a", 0.0, despawn_fade_duration)
+		await fade_tween.finished
+
+	queue_free()
 
 
 func _is_game_over() -> bool:
