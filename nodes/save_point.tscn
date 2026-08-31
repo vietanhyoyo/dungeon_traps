@@ -13,7 +13,7 @@ collision_mask = 2
 script = ExtResource("1_save_point")
 
 [node name="FlagSprite" type="Sprite2D" parent="." unique_id=1416793611]
-modulate = Color(0.5231209, 0.5231201, 0.5231203, 1)
+modulate = Color(0.431, 0.431, 0.431, 1)
 position = Vector2(0, -32)
 texture = ExtResource("2_flag")
 

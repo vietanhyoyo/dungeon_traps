@@ -6,17 +6,27 @@
 [ext_resource type="PackedScene" uid="uid://dhq0pa6na6p7k" path="res://nodes/killzone.tscn" id="2_n6pvg"]
 [ext_resource type="Texture2D" uid="uid://ncm31umrgw7q" path="res://assets/sprites/enemies/slime-death.png" id="2_t6wpk"]
 
-[sub_resource type="Shader" id="Shader_hit_flash"]
-code = "shader_type canvas_item;\n\nuniform float flash_amount : hint_range(0.0, 1.0) = 0.0;\nuniform vec4 flash_color : source_color = vec4(1.0, 0.96, 0.78, 1.0);\n\nvoid fragment() {\n\tvec4 sprite_color = texture(TEXTURE, UV);\n\tsprite_color.rgb = mix(sprite_color.rgb, flash_color.rgb, flash_amount);\n\tCOLOR = sprite_color * COLOR;\n}\n"
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(26, 20)
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_hit_flash"]
+[sub_resource type="Shader" id="Shader_hit_flash"]
+code = "shader_type canvas_item;
+
+uniform float flash_amount : hint_range(0.0, 1.0) = 0.0;
+uniform vec4 flash_color : source_color = vec4(1.0, 0.96, 0.78, 1.0);
+
+void fragment() {
+	vec4 sprite_color = texture(TEXTURE, UV);
+	sprite_color.rgb = mix(sprite_color.rgb, flash_color.rgb, flash_amount);
+	COLOR = sprite_color * COLOR;
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_m3g86"]
 resource_local_to_scene = true
 shader = SubResource("Shader_hit_flash")
 shader_parameter/flash_amount = 0.0
 shader_parameter/flash_color = Color(1, 0.96, 0.78, 1)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
-size = Vector2(26, 20)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8vb5o"]
 atlas = ExtResource("2_m3g86")
@@ -181,7 +191,8 @@ position = Vector2(0, 6)
 shape = SubResource("RectangleShape2D_body")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=270570679]
-material = SubResource("ShaderMaterial_hit_flash")
+modulate = Color(0.6235596, 0.62355995, 0.6235597, 1)
+material = SubResource("ShaderMaterial_m3g86")
 sprite_frames = SubResource("SpriteFrames_v5wyi")
 animation = &"attack"
 autoplay = "idle"
