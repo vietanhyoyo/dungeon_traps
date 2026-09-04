@@ -2,11 +2,11 @@ extends CanvasLayer
 
 const LEVEL_SELECT_SCENE := "res://nodes/ui/level_select.tscn"
 
-@onready var exit_button: Button = $ExitButton
+@onready var menu_button: Button = $MenuButton
 @onready var overlay: Control = $Overlay
-@onready var resume_button: Button = $Overlay/Panel/VBox/ResumeButton
-@onready var restart_button: Button = $Overlay/Panel/VBox/RestartButton
-@onready var select_button: Button = $Overlay/Panel/VBox/SelectButton
+@onready var resume_button: Button = $Overlay/Center/Panel/VBox/ResumeButton
+@onready var restart_button: Button = $Overlay/Center/Panel/VBox/RestartButton
+@onready var select_button: Button = $Overlay/Center/Panel/VBox/SelectButton
 
 var is_paused := false
 
@@ -16,7 +16,8 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	overlay.visible = false
 
-	exit_button.pressed.connect(_go_to_level_select)
+	# Nút hamburger mở bảng thông tin nhân vật (cũng là menu tạm dừng).
+	menu_button.pressed.connect(_pause)
 	resume_button.pressed.connect(_resume)
 	restart_button.pressed.connect(_restart_level)
 	select_button.pressed.connect(_go_to_level_select)
@@ -40,7 +41,7 @@ func _pause() -> void:
 
 	is_paused = true
 	overlay.visible = true
-	exit_button.visible = false
+	menu_button.visible = false
 	get_tree().paused = true
 	resume_button.grab_focus()
 
@@ -48,12 +49,18 @@ func _pause() -> void:
 func _resume() -> void:
 	is_paused = false
 	overlay.visible = false
-	exit_button.visible = true
+	menu_button.visible = true
 	get_tree().paused = false
 
 
 func _restart_level() -> void:
 	var scene_path := get_tree().current_scene.scene_file_path
+
+	# Chơi lại màn là chơi lại từ đầu: bỏ sao đã ăn và save point cũ.
+	var game_state := get_node_or_null("/root/GameState")
+	if game_state and game_state.has_method("clear_level_progress"):
+		game_state.clear_level_progress(scene_path)
+
 	_leave_to_scene(scene_path)
 
 

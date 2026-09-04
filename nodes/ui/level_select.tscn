@@ -62,7 +62,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.9, 0.25, 1)
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 24
-text = "CHỌN MÀN CHƠI"
+text = "SELECT LEVEL"
 horizontal_alignment = 1
 
 [node name="LevelList" type="VBoxContainer" parent="Panel/VBox"]
@@ -74,4 +74,4 @@ custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 14
-text = "Thoát game"
+text = "Quit Game"

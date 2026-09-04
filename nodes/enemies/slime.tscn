@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dg8tpc70gfgva" path="res://scripts/slime.gd" id="1_n6pvg"]
 [ext_resource type="Texture2D" uid="uid://cm2pldlxrg0k5" path="res://assets/sprites/enemies/slime.png" id="1_p2gj0"]
-[ext_resource type="Texture2D" uid="uid://csjvx72wetm61" path="res://assets/sprites/enemies/slime-attack.png" id="2_m3g86"]
+[ext_resource type="Texture2D" uid="uid://cfhcr7x7xo5dk" path="res://assets/sprites/enemies/slime-attack.png" id="2_m3g86"]
 [ext_resource type="PackedScene" uid="uid://dhq0pa6na6p7k" path="res://nodes/killzone.tscn" id="2_n6pvg"]
 [ext_resource type="Texture2D" uid="uid://ncm31umrgw7q" path="res://assets/sprites/enemies/slime-death.png" id="2_t6wpk"]
 
@@ -137,7 +137,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_3bh14")
 }],
-"loop": false,
+"loop": 0,
 "name": &"attack",
 "speed": 18.0
 }, {
@@ -157,7 +157,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_73s0a")
 }],
-"loop": false,
+"loop": 0,
 "name": &"death",
 "speed": 6.0
 }, {
@@ -174,7 +174,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_gstla")
 }],
-"loop": true,
+"loop": 1,
 "name": &"idle",
 "speed": 8.0
 }]
@@ -191,13 +191,11 @@ position = Vector2(0, 6)
 shape = SubResource("RectangleShape2D_body")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=270570679]
-modulate = Color(0.6235596, 0.62355995, 0.6235597, 1)
+modulate = Color(0.89925843, 0.8992584, 0.89925843, 1)
 material = SubResource("ShaderMaterial_m3g86")
 sprite_frames = SubResource("SpriteFrames_v5wyi")
 animation = &"attack"
 autoplay = "idle"
-frame = 9
-frame_progress = 1.0
 
 [node name="Killzone" parent="." unique_id=58724787 instance=ExtResource("2_n6pvg")]
 

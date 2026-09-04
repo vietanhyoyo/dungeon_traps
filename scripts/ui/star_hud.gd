@@ -7,6 +7,8 @@ extends CanvasLayer
 var collected_stars := 0
 
 func _ready() -> void:
+	# Lấy lại số sao đã ăn để hồi sinh ở save point không bị mất tiến độ.
+	collected_stars = mini(GameState.get_collected_star_count(), total_stars)
 	_update_counter()
 
 

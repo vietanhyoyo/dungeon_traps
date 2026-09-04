@@ -24,6 +24,9 @@ var _countdown_label: Label
 var _game_over_sound_player: AudioStreamPlayer
 var _checkpoint_scene_path := ""
 var _checkpoint_position := Vector2.ZERO
+## scene_path -> { star_id: true }. Giữ ngoài scene để sao đã ăn không mất
+## khi chết và hồi sinh ở save point.
+var _collected_stars := {}
 
 
 func _ready() -> void:
@@ -79,6 +82,40 @@ func activate_checkpoint(spawn_position: Vector2) -> void:
 func is_checkpoint_active(spawn_position: Vector2) -> bool:
 	return _checkpoint_scene_path == _get_current_scene_path() and \
 		_checkpoint_position.is_equal_approx(spawn_position)
+
+
+func collect_star(star_id: String) -> void:
+	var scene_path := _get_current_scene_path()
+	if not _collected_stars.has(scene_path):
+		_collected_stars[scene_path] = {}
+	_collected_stars[scene_path][star_id] = true
+
+
+func is_star_collected(star_id: String) -> bool:
+	return _stars_of_current_scene().has(star_id)
+
+
+func get_collected_star_count() -> int:
+	return _stars_of_current_scene().size()
+
+
+## Xoá tiến độ (sao + save point) của một màn để chơi lại từ đầu. Bỏ trống
+## scene_path thì xoá tiến độ của tất cả các màn.
+func clear_level_progress(scene_path := "") -> void:
+	if scene_path.is_empty():
+		_collected_stars.clear()
+		_checkpoint_scene_path = ""
+		_checkpoint_position = Vector2.ZERO
+		return
+
+	_collected_stars.erase(scene_path)
+	if _checkpoint_scene_path == scene_path:
+		_checkpoint_scene_path = ""
+		_checkpoint_position = Vector2.ZERO
+
+
+func _stars_of_current_scene() -> Dictionary:
+	return _collected_stars.get(_get_current_scene_path(), {})
 
 
 func reset_to_playing() -> void:
