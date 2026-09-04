@@ -27,6 +27,8 @@ var _checkpoint_position := Vector2.ZERO
 ## scene_path -> { star_id: true }. Giữ ngoài scene để sao đã ăn không mất
 ## khi chết và hồi sinh ở save point.
 var _collected_stars := {}
+## scene_path -> { chest_id: true }, giữ rương đã mở khi hồi sinh.
+var _opened_chests := {}
 
 
 func _ready() -> void:
@@ -99,16 +101,30 @@ func get_collected_star_count() -> int:
 	return _stars_of_current_scene().size()
 
 
-## Xoá tiến độ (sao + save point) của một màn để chơi lại từ đầu. Bỏ trống
+func mark_chest_opened(chest_id: String) -> void:
+	var scene_path := _get_current_scene_path()
+	if not _opened_chests.has(scene_path):
+		_opened_chests[scene_path] = {}
+	_opened_chests[scene_path][chest_id] = true
+
+
+func is_chest_opened(chest_id: String) -> bool:
+	var opened: Dictionary = _opened_chests.get(_get_current_scene_path(), {})
+	return opened.has(chest_id)
+
+
+## Xoá tiến độ (sao + rương + save point) của một màn để chơi lại từ đầu. Bỏ trống
 ## scene_path thì xoá tiến độ của tất cả các màn.
 func clear_level_progress(scene_path := "") -> void:
 	if scene_path.is_empty():
 		_collected_stars.clear()
+		_opened_chests.clear()
 		_checkpoint_scene_path = ""
 		_checkpoint_position = Vector2.ZERO
 		return
 
 	_collected_stars.erase(scene_path)
+	_opened_chests.erase(scene_path)
 	if _checkpoint_scene_path == scene_path:
 		_checkpoint_scene_path = ""
 		_checkpoint_position = Vector2.ZERO

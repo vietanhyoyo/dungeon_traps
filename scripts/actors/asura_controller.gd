@@ -12,6 +12,11 @@ const DEATH_JUMP_VELOCITY = -420.0
 const ATTACK_SOUND_OFFSET = 0.2
 # Thời gian giữ animation "hust" trước khi chuyển sang animation chết
 const HURT_DURATION = 0.4
+# Người chơi không cần đợi hết animation mới chém tiếp: đòn mới được cắt ngang
+# đòn cũ ngay khi vùng sát thương của đòn cũ đã bật đủ số bước physics này.
+# Physics server chỉ trả kết quả va chạm ở bước kế tiếp sau khi bật shape, nên
+# phải chờ vài bước thì đòn bị cắt ngang mới chắc chắn kịp gây sát thương.
+const ATTACK_ACTIVE_STEPS = 3
 # Độ sáng chung của nhân vật ở mọi màn. Đặt trong script thay vì để riêng từng
 # level scene, vì override modulate trên instance rất dễ bị ghi đè khi lưu scene.
 const BODY_MODULATE = Color(0.5449743, 0.54497427, 0.54497427, 1.0)
@@ -28,6 +33,7 @@ const BODY_MODULATE = Color(0.5449743, 0.54497427, 0.54497427, 1.0)
 @onready var dust_scene = preload("res://nodes/effects/landing_dust.tscn")
 
 var is_attacking = false
+var attack_active_steps = 0
 var is_sliding = false
 var is_hurt = false
 var is_dead = false
@@ -87,7 +93,7 @@ func _physics_process(delta: float) -> void:
 			stop_slide()
 		else:
 			# Tấn công trong lúc lướt dùng animation và vùng chém SlideShape riêng.
-			if Input.is_action_just_pressed("attack") and not is_attacking:
+			if Input.is_action_just_pressed("attack") and can_start_attack():
 				start_attack("slide_attack")
 				# Dừng lướt ngay khi bắt đầu chém, tránh slide_attack đưa nhân vật
 				# đi xa hơn quãng đường slide mà người chơi mong muốn.
@@ -122,7 +128,7 @@ func _physics_process(delta: float) -> void:
 		return
 		
 	# Attack input
-	if Input.is_action_just_pressed("attack") and not is_attacking:
+	if Input.is_action_just_pressed("attack") and can_start_attack():
 		# Nếu đang trên không thì dùng jump_attack
 		if not is_on_floor():
 			start_attack("jump_attack")
@@ -195,12 +201,24 @@ func _physics_process(delta: float) -> void:
 		running_sound.stop()
 
 
+# Đòn mới được phép cắt ngang đòn đang chạy, miễn là đòn đó đã kịp vung ra.
+func can_start_attack() -> bool:
+	return not is_attacking or attack_active_steps >= ATTACK_ACTIVE_STEPS
+
+
 func start_attack(anim: String) -> void:
 	is_attacking = true
+	attack_active_steps = 0
 	attack_sound.play(ATTACK_SOUND_OFFSET)
 	animated_sprite.play(anim)
+	# play() không tua lại animation đang chạy, nên phải tự đưa về frame lấy đà
+	# thì đòn nối mới hiện đủ động tác.
+	animated_sprite.set_frame_and_progress(0, 0.0)
 
 	hit_enemies.clear()
+	# Tắt vùng chém của đòn trước, kể cả khi đòn mới dùng lại đúng shape đó, để
+	# không gây sát thương ngay ở frame lấy đà.
+	disable_attack_shapes()
 	attack_shape = get_attack_shape(anim)
 
 	# Lật vùng sát thương theo hướng nhân vật đang quay. Phải đặt trước khi bật
@@ -280,6 +298,7 @@ func update_attack_hitbox() -> void:
 		return
 
 	attack_shape.disabled = false
+	attack_active_steps += 1
 
 	for body in attack_hitbox.get_overlapping_bodies():
 		hit_enemy(body)
@@ -296,12 +315,16 @@ func hit_enemy(body: Node) -> void:
 		body.die()
 
 
+func disable_attack_shapes() -> void:
+	# set_deferred vì hàm có thể được gọi từ trong callback va chạm (die)
+	for shape in [attack_shape_high, attack_shape_low, attack_shape_slide, attack_shape_jump]:
+		shape.set_deferred("disabled", true)
+
+
 func clear_attack_hitbox() -> void:
 	attack_shape = null
 	hit_enemies.clear()
-	# set_deferred vì clear có thể được gọi từ trong callback va chạm (die)
-	for shape in [attack_shape_high, attack_shape_low, attack_shape_slide, attack_shape_jump]:
-		shape.set_deferred("disabled", true)
+	disable_attack_shapes()
 
 
 func spawn_landing_dust() -> void:
