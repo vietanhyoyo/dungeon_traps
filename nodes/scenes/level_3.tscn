@@ -3,9 +3,9 @@
 [ext_resource type="PackedScene" uid="uid://cwgqa60xyqnyj" path="res://nodes/characters/asura.tscn" id="1_player"]
 [ext_resource type="PackedScene" uid="uid://deqd3mnvbeh2d" path="res://nodes/camera.tscn" id="2_camera"]
 [ext_resource type="PackedScene" uid="uid://c4jvx4glbgl2" path="res://nodes/door.tscn" id="3_door"]
-[ext_resource type="PackedScene" uid="uid://b3smmvaulqe1" path="res://nodes/tile_map_32.tscn" id="3_yinkl"]
+[ext_resource type="PackedScene" path="res://nodes/tile_map_32.tscn" id="3_yinkl"]
 [ext_resource type="Texture2D" uid="uid://bcxnn1f6qiuev" path="res://assets/sprites/mapp32.png" id="4_8ytc0"]
-[ext_resource type="PackedScene" uid="uid://bx16n4demckja" path="res://nodes/torch.tscn" id="4_torch"]
+[ext_resource type="PackedScene" path="res://nodes/torch.tscn" id="4_torch"]
 [ext_resource type="PackedScene" uid="uid://dscr153320p4r" path="res://nodes/traps/fire_trap.tscn" id="5_fire"]
 [ext_resource type="Texture2D" uid="uid://d28tluf6jm21n" path="res://assets/sprites/background5.png" id="6_coome"]
 [ext_resource type="PackedScene" uid="uid://ddq2qqo23k2o0" path="res://nodes/traps/thorn.tscn" id="6_thorn"]
@@ -16,6 +16,7 @@
 [ext_resource type="PackedScene" uid="uid://cd230y5iqj4bd" path="res://nodes/save_point.tscn" id="14_save_point"]
 [ext_resource type="PackedScene" path="res://nodes/enemies/bat.tscn" id="15_bat"]
 [ext_resource type="PackedScene" path="res://nodes/ui/pause_menu.tscn" id="20_pause"]
+[ext_resource type="PackedScene" path="res://nodes/traps/bow_trap.tscn" id="21_bow_trap"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_8pcmo"]
 polygon = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
@@ -440,7 +441,7 @@ sources/1 = SubResource("TileSetAtlasSource_coome")
 
 [node name="Asura" parent="." unique_id=1107660582 instance=ExtResource("1_player")]
 z_index = 5
-position = Vector2(7194, -733)
+position = Vector2(4066, -392)
 
 [node name="Camera2D" parent="Asura" unique_id=1738643562 instance=ExtResource("2_camera")]
 limit_bottom = 725
@@ -567,6 +568,12 @@ layer_0/tile_data = PackedInt32Array(-655366, 131073, 4, -589830, 131073, 4, -52
 [node name="Door" parent="." unique_id=265049239 instance=ExtResource("3_door")]
 position = Vector2(7960, -688)
 next_scene_path = "res://nodes/scenes/level_4.tscn"
+
+[node name="BowTrapList" type="Node" parent="." unique_id=1521468791]
+
+[node name="BowTrap" parent="BowTrapList" unique_id=634741560 instance=ExtResource("21_bow_trap")]
+z_index = 10
+position = Vector2(4127, -208)
 
 [node name="FireList" type="Node" parent="." unique_id=1699640204]
 
@@ -724,45 +731,9 @@ position = Vector2(6532, -488)
 z_index = 10
 position = Vector2(7340, -792)
 
-[node name="Thorn22" parent="ThornList" unique_id=278638609 instance=ExtResource("6_thorn")]
-z_index = 10
-position = Vector2(7356, -792)
-
-[node name="Thorn23" parent="ThornList" unique_id=1416233516 instance=ExtResource("6_thorn")]
-z_index = 10
-position = Vector2(7372, -792)
-
-[node name="Thorn24" parent="ThornList" unique_id=434672794 instance=ExtResource("6_thorn")]
-z_index = 10
-position = Vector2(7793, -792)
-
-[node name="Thorn25" parent="ThornList" unique_id=1113552032 instance=ExtResource("6_thorn")]
-z_index = 10
-position = Vector2(7809, -792)
-
-[node name="Thorn26" parent="ThornList" unique_id=1244455137 instance=ExtResource("6_thorn")]
-z_index = 10
-position = Vector2(7825, -792)
-
-[node name="Thorn27" parent="ThornList" unique_id=1251950735 instance=ExtResource("6_thorn")]
-z_index = 10
-position = Vector2(7554, -792)
-
-[node name="Thorn28" parent="ThornList" unique_id=126261680 instance=ExtResource("6_thorn")]
-z_index = 10
-position = Vector2(7570, -792)
-
-[node name="Thorn29" parent="ThornList" unique_id=1273293951 instance=ExtResource("6_thorn")]
-z_index = 10
-position = Vector2(7586, -792)
-
 [node name="Thorn11" parent="ThornList" unique_id=445058837 instance=ExtResource("6_thorn")]
 z_index = 10
 position = Vector2(5504, -632)
-
-[node name="Thorn12" parent="ThornList" unique_id=1895713364 instance=ExtResource("6_thorn")]
-z_index = 10
-position = Vector2(4239, -632)
 
 [node name="Thorn13" parent="ThornList" unique_id=1604109104 instance=ExtResource("6_thorn")]
 z_index = 10
@@ -846,7 +817,7 @@ position = Vector2(2161, 103)
 
 [node name="Bat2" parent="BatList" unique_id=1197382080 instance=ExtResource("15_bat")]
 z_index = 5
-position = Vector2(4212, -266)
+position = Vector2(4443, -305)
 
 [node name="Bat5" parent="BatList" unique_id=547861350 instance=ExtResource("15_bat")]
 z_index = 5

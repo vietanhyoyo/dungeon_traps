@@ -1,0 +1,52 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/traps/bow-trap.png" id="1_bow"]
+[ext_resource type="Script" path="res://scripts/bow_trap.gd" id="2_script"]
+[ext_resource type="AudioStream" path="res://assets/sounds/fireball_whoosh.mp3" id="3_whoosh"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_trap"]
+atlas = ExtResource("1_bow")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_arrow"]
+atlas = ExtResource("1_bow")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_trigger"]
+size = Vector2(28, 12)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_arrow"]
+size = Vector2(24, 5)
+
+[node name="BowTrap" type="Node2D"]
+z_index = 4
+script = ExtResource("2_script")
+
+[node name="TrapSprite" type="Sprite2D" parent="."]
+texture = SubResource("AtlasTexture_trap")
+
+[node name="TriggerArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerArea"]
+position = Vector2(0, -3)
+shape = SubResource("RectangleShape2D_trigger")
+
+[node name="Arrow" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="Sprite2D" type="Sprite2D" parent="Arrow"]
+texture = SubResource("AtlasTexture_arrow")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Arrow"]
+rotation = -0.785398
+shape = SubResource("RectangleShape2D_arrow")
+
+[node name="ShootSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_whoosh")
+volume_db = -14.0
+bus = &"SFX"

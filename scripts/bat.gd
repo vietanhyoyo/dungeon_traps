@@ -4,6 +4,8 @@ extends CharacterBody2D
 const HIT_FLASH_COUNT := 3
 const HIT_FLASH_ON_DURATION := 0.04
 const HIT_FLASH_OFF_DURATION := 0.035
+const DEFEAT_SOUND := preload("res://assets/sounds/freesound_community-poof-80161.mp3")
+const DEFEAT_SOUND_OFFSET := 0.5
 ## Sai số vị trí coi như bat đã bay về đúng chỗ tuần tra.
 const RETURN_TOLERANCE := 4.0
 
@@ -158,6 +160,7 @@ func die() -> void:
 	collision_shape.set_deferred("disabled", true)
 	killzone.set_deferred("monitoring", false)
 	detection_area.set_deferred("monitoring", false)
+	_play_defeat_sound()
 
 	await _play_hit_flash()
 
@@ -166,6 +169,21 @@ func die() -> void:
 	death_tween.tween_property(animated_sprite, "modulate:a", 0.0, 0.18)
 	await death_tween.finished
 	queue_free()
+
+
+func _play_defeat_sound() -> void:
+	if Engine.is_editor_hint():
+		return
+
+	# Player âm thanh nằm ở scene để vẫn phát hết tiếng sau khi bat bị xoá.
+	var sound_player := AudioStreamPlayer2D.new()
+	sound_player.stream = DEFEAT_SOUND
+	sound_player.bus = &"SFX"
+	sound_player.global_position = global_position
+	get_tree().current_scene.add_child(sound_player)
+	sound_player.finished.connect(sound_player.queue_free)
+	# Bỏ qua khoảng nửa giây yên lặng ở đầu file để tiếng khớp với cú hạ gục.
+	sound_player.play(DEFEAT_SOUND_OFFSET)
 
 
 func _play_hit_flash() -> void:

@@ -4,7 +4,7 @@ Cập nhật: 2026-07-07
 
 ## Tổng Quan
 
-`dungeon_traps` là một game platformer 2D làm bằng Godot 4.6. Người chơi điều khiển nhân vật pixel-art đi qua bản đồ dungeon, né bẫy lửa, mở cửa sang level tiếp theo và bị reset khi game over.
+`dungeon_traps` là một game platformer 2D làm bằng Godot 4.7. Người chơi điều khiển nhân vật pixel-art đi qua bản đồ dungeon, né bẫy lửa, mở cửa sang level tiếp theo và bị reset khi game over.
 
 Dự án hiện có hai nhánh gameplay:
 
@@ -13,7 +13,7 @@ Dự án hiện có hai nhánh gameplay:
 
 ## Công Nghệ
 
-- Engine: Godot 4.6
+- Engine: Godot 4.7
 - Ngôn ngữ script: GDScript
 - Render: Forward Plus
 - Physics 3D engine: Jolt Physics, nhưng gameplay hiện tại là 2D

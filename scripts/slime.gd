@@ -5,6 +5,8 @@ const SPEED = 30.0
 const HIT_FLASH_COUNT := 3
 const HIT_FLASH_ON_DURATION := 0.04
 const HIT_FLASH_OFF_DURATION := 0.035
+const DEFEAT_SOUND := preload("res://assets/sounds/freesound_community-poof-80161.mp3")
+const DEFEAT_SOUND_OFFSET := 0.5
 
 ## Vùng tuần tra, tính bằng px từ vị trí đặt slime trong editor.
 ## Để -1 nghĩa là không giới hạn phía đó, chỉ quay đầu khi đụng tường.
@@ -75,6 +77,7 @@ func die() -> void:
 	# Tắt va chạm để không còn giết được người chơi trong lúc đang tan biến
 	collision_shape.set_deferred("disabled", true)
 	killzone.set_deferred("monitoring", false)
+	_play_defeat_sound()
 
 	await _play_hit_flash()
 
@@ -83,6 +86,23 @@ func die() -> void:
 		await animated_sprite.animation_finished
 
 	queue_free()
+
+
+func _play_defeat_sound() -> void:
+	if Engine.is_editor_hint():
+		return
+
+	# Không gắn player âm thanh làm con của slime vì slime sẽ bị queue_free
+	# sau animation chết, làm tiếng "poof" bị ngắt giữa chừng.
+	var sound_player := AudioStreamPlayer2D.new()
+	sound_player.stream = DEFEAT_SOUND
+	sound_player.bus = &"SFX"
+	sound_player.global_position = global_position
+	get_tree().current_scene.add_child(sound_player)
+	sound_player.finished.connect(sound_player.queue_free)
+	# File nguồn có khoảng nửa giây yên lặng ở đầu; bỏ qua phần này để tiếng
+	# vang đúng nhịp với cú chém.
+	sound_player.play(DEFEAT_SOUND_OFFSET)
 
 
 # Nhấp tắt/mở dứt khoát thay vì fade mượt để hợp với nhịp pixel-art 2D.

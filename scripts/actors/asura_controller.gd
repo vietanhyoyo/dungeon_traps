@@ -8,6 +8,8 @@ const SLIDE_COLLISION_HEIGHT = 34.0
 const AIR_SLIDE_SPRITE_OFFSET_Y = -16.0
 const LANDING_DUST_MIN_SPEED = 180.0
 const DEATH_JUMP_VELOCITY = -420.0
+const GAME_OVER_CAMERA_DROP = 40.0
+const GAME_OVER_CAMERA_DROP_DURATION = 0.4
 # Bỏ qua đoạn đầu file tiếng chém để tiếng khớp sớm hơn với lúc vung kiếm
 const ATTACK_SOUND_OFFSET = 0.2
 # Thời gian giữ animation "hust" trước khi chuyển sang animation chết
@@ -365,6 +367,7 @@ func die() -> void:
 		return
 
 	is_dead = true
+	_detach_camera_for_game_over()
 	is_attacking = false
 	is_sliding = false
 	set_slide_collision(false)
@@ -383,6 +386,28 @@ func die() -> void:
 		animated_sprite.play("death")
 	else:
 		animated_sprite.play("jump_up")
+
+
+func _detach_camera_for_game_over() -> void:
+	var camera := get_node_or_null("Camera2D") as Camera2D
+	var current_scene := get_tree().current_scene
+	if not camera or not current_scene:
+		return
+
+	# Camera không tiếp tục rơi theo player sau khi chết. Tách nó khỏi player,
+	# rồi chỉ hạ nhẹ một đoạn để giữ chuyển động game-over vừa đủ.
+	camera.reparent(current_scene, true)
+	camera.position_smoothing_enabled = false
+	var target_y := camera.global_position.y + GAME_OVER_CAMERA_DROP
+	var camera_tween := camera.create_tween()
+	camera_tween.set_trans(Tween.TRANS_SINE)
+	camera_tween.set_ease(Tween.EASE_OUT)
+	camera_tween.tween_property(
+		camera,
+		"global_position:y",
+		target_y,
+		GAME_OVER_CAMERA_DROP_DURATION
+	)
 
 
 func lock_movement() -> void:

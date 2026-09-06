@@ -1,6 +1,6 @@
 # Dungeon Traps
 
-Game platformer 2D pixel-art làm bằng **Godot 4.6** (GDScript). Người chơi điều khiển nhân vật Asura đi qua các dungeon tối, né bẫy lửa và bẫy gai rơi, tìm cửa để sang level tiếp theo. Chạm bẫy hoặc rơi xuống killzone thì game over và level tự restart sau 5 giây.
+Game platformer 2D pixel-art làm bằng **Godot 4.7** (GDScript). Người chơi điều khiển nhân vật Asura đi qua các dungeon tối, né bẫy lửa và bẫy gai rơi, tìm cửa để sang level tiếp theo. Chạm bẫy hoặc rơi xuống killzone thì game over và level tự restart sau 5 giây.
 
 Cập nhật: 2026-08-10
 
@@ -20,7 +20,7 @@ Cập nhật: 2026-08-10
 
 ## Yêu Cầu
 
-- Godot 4.6 (Forward Plus renderer).
+- Godot 4.7 (Forward Plus renderer).
 - Không có dependency ngoài, không cần build step.
 
 ## Chạy Dự Án
