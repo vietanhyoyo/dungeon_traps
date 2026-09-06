@@ -26,6 +26,7 @@ const BODY_MODULATE = Color(0.5449743, 0.54497427, 0.54497427, 1.0)
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var running_sound: AudioStreamPlayer2D = $RunningSound
 @onready var attack_sound: AudioStreamPlayer2D = $AttackSound
+@onready var slide_sound: AudioStreamPlayer2D = $SlideSound
 @onready var attack_hitbox: Area2D = $AttackHitbox
 @onready var attack_shape_high: CollisionShape2D = $AttackHitbox/HighShape
 @onready var attack_shape_low: CollisionShape2D = $AttackHitbox/LowShape
@@ -251,6 +252,7 @@ func start_slide() -> void:
 	slide_direction = -1.0 if animated_sprite.flip_h else 1.0
 	velocity = Vector2(slide_direction * SLIDE_SPEED, 0.0)
 	running_sound.stop()
+	slide_sound.play()
 	set_slide_collision(true)
 	set_air_slide_sprite_offset(started_in_air)
 	animated_sprite.play("slide")
