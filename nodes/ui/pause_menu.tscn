@@ -17,6 +17,10 @@ region = Rect2(0, 0, 32, 32)
 atlas = ExtResource("4_skills")
 region = Rect2(32, 0, 32, 32)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_wall_jump"]
+atlas = ExtResource("4_skills")
+region = Rect2(64, 0, 32, 32)
+
 [sub_resource type="StyleBoxFlat" id="StyleBox_pause_panel"]
 content_margin_left = 18.0
 content_margin_top = 16.0
@@ -345,6 +349,55 @@ theme_override_colors/font_color = Color(0.72, 0.72, 0.78, 1)
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 11
 text = "Low dash, one extra dash in mid-air"
+
+[node name="WallJump" type="HBoxContainer" parent="Overlay/Center/Panel/VBox/SkillList"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="IconFrame" type="PanelContainer" parent="Overlay/Center/Panel/VBox/SkillList/WallJump"]
+custom_minimum_size = Vector2(42, 42)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBox_skill_icon")
+
+[node name="Icon" type="TextureRect" parent="Overlay/Center/Panel/VBox/SkillList/WallJump/IconFrame"]
+texture_filter = 1
+layout_mode = 2
+texture = SubResource("AtlasTexture_wall_jump")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Key" type="Label" parent="Overlay/Center/Panel/VBox/SkillList/WallJump"]
+custom_minimum_size = Vector2(42, 26)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBox_key_badge")
+text = "UP x2"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Text" type="VBoxContainer" parent="Overlay/Center/Panel/VBox/SkillList/WallJump"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_constants/separation = 0
+
+[node name="Name" type="Label" parent="Overlay/Center/Panel/VBox/SkillList/WallJump/Text"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 14
+text = "Wall Double Jump"
+
+[node name="Desc" type="Label" parent="Overlay/Center/Panel/VBox/SkillList/WallJump/Text"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.72, 0.78, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 11
+text = "Press UP twice on a wall for one more jump"
 
 [node name="Separator" type="HSeparator" parent="Overlay/Center/Panel/VBox"]
 layout_mode = 2

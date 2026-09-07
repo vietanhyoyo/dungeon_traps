@@ -3,9 +3,9 @@
 [ext_resource type="PackedScene" uid="uid://cwgqa60xyqnyj" path="res://nodes/characters/asura.tscn" id="1_player"]
 [ext_resource type="PackedScene" uid="uid://deqd3mnvbeh2d" path="res://nodes/camera.tscn" id="2_camera"]
 [ext_resource type="PackedScene" uid="uid://c4jvx4glbgl2" path="res://nodes/door.tscn" id="3_door"]
-[ext_resource type="PackedScene" path="res://nodes/tile_map_32.tscn" id="3_yinkl"]
+[ext_resource type="PackedScene" uid="uid://b3smmvaulqe1" path="res://nodes/tile_map_32.tscn" id="3_yinkl"]
 [ext_resource type="Texture2D" uid="uid://bcxnn1f6qiuev" path="res://assets/sprites/mapp32.png" id="4_8ytc0"]
-[ext_resource type="PackedScene" path="res://nodes/torch.tscn" id="4_torch"]
+[ext_resource type="PackedScene" uid="uid://bx16n4demckja" path="res://nodes/torch.tscn" id="4_torch"]
 [ext_resource type="PackedScene" uid="uid://dscr153320p4r" path="res://nodes/traps/fire_trap.tscn" id="5_fire"]
 [ext_resource type="Texture2D" uid="uid://d28tluf6jm21n" path="res://assets/sprites/background5.png" id="6_coome"]
 [ext_resource type="PackedScene" uid="uid://ddq2qqo23k2o0" path="res://nodes/traps/thorn.tscn" id="6_thorn"]
@@ -441,7 +441,7 @@ sources/1 = SubResource("TileSetAtlasSource_coome")
 
 [node name="Asura" parent="." unique_id=1107660582 instance=ExtResource("1_player")]
 z_index = 5
-position = Vector2(4066, -392)
+position = Vector2(-165, -309)
 
 [node name="Camera2D" parent="Asura" unique_id=1738643562 instance=ExtResource("2_camera")]
 limit_bottom = 725

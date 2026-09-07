@@ -29,6 +29,9 @@ var _checkpoint_position := Vector2.ZERO
 var _collected_stars := {}
 ## scene_path -> { chest_id: true }, giữ rương đã mở khi hồi sinh.
 var _opened_chests := {}
+## skill_id -> scene_path đã mở khoá kỹ năng đó. Lưu kèm màn để khi xoá tiến độ
+## của màn nào thì kỹ năng nhận trong màn đó cũng bị khoá lại theo.
+var _unlocked_skills := {}
 
 
 func _ready() -> void:
@@ -113,18 +116,31 @@ func is_chest_opened(chest_id: String) -> bool:
 	return opened.has(chest_id)
 
 
-## Xoá tiến độ (sao + rương + save point) của một màn để chơi lại từ đầu. Bỏ trống
-## scene_path thì xoá tiến độ của tất cả các màn.
+## Mở khoá một kỹ năng trong Skills.CATALOG cho nhân vật.
+func unlock_skill(skill_id: String) -> void:
+	_unlocked_skills[skill_id] = _get_current_scene_path()
+
+
+func has_skill(skill_id: String) -> bool:
+	return _unlocked_skills.has(skill_id)
+
+
+## Xoá tiến độ (sao + rương + kỹ năng + save point) của một màn để chơi lại từ
+## đầu. Bỏ trống scene_path thì xoá tiến độ của tất cả các màn.
 func clear_level_progress(scene_path := "") -> void:
 	if scene_path.is_empty():
 		_collected_stars.clear()
 		_opened_chests.clear()
+		_unlocked_skills.clear()
 		_checkpoint_scene_path = ""
 		_checkpoint_position = Vector2.ZERO
 		return
 
 	_collected_stars.erase(scene_path)
 	_opened_chests.erase(scene_path)
+	for skill_id in _unlocked_skills.keys():
+		if _unlocked_skills[skill_id] == scene_path:
+			_unlocked_skills.erase(skill_id)
 	if _checkpoint_scene_path == scene_path:
 		_checkpoint_scene_path = ""
 		_checkpoint_position = Vector2.ZERO

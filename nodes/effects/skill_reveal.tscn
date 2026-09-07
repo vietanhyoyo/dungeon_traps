@@ -1,0 +1,25 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/skill_reveal.gd" id="1_reveal"]
+
+[sub_resource type="Gradient" id="Gradient_reveal_glow"]
+offsets = PackedFloat32Array(0, 0.25, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.6, 0.6, 0.6, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_reveal_glow"]
+gradient = SubResource("Gradient_reveal_glow")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[node name="SkillReveal" type="Node2D"]
+z_index = 20
+script = ExtResource("1_reveal")
+
+[node name="Icon" type="Sprite2D" parent="."]
+
+[node name="Glow" type="PointLight2D" parent="Icon"]
+color = Color(0.92654854, 0.82248145, 0.09917266, 1)
+energy = 0.0
+texture = SubResource("GradientTexture2D_reveal_glow")
+texture_scale = 2.2

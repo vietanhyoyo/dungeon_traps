@@ -12,7 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://dqt66prc0kuan" path="res://assets/sprites/shinn_asura/Shinn-Asura-slide.png" id="8_1bcgc"]
 [ext_resource type="AudioStream" uid="uid://7ibsbwq6hqo7" path="res://assets/sounds/sword_attack.mp3" id="8_attack"]
 [ext_resource type="Texture2D" uid="uid://dhkqrhyf67gra" path="res://assets/sprites/shinn_asura/Shinn-Asura-slide-attack.png" id="9_dhu25"]
-[ext_resource type="AudioStream" path="res://assets/sounds/abdalrahman_bm-8-bit-grass-footsteps-2-408574.mp3" id="10_slide"]
+[ext_resource type="AudioStream" uid="uid://di68ox08hmp5h" path="res://assets/sounds/denielcz-bamboo-whoosh-429156.mp3" id="10_slide"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_e082f"]
 atlas = ExtResource("2_u1ow0")
@@ -408,7 +408,7 @@ bus = &"SFX"
 
 [node name="SlideSound" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("10_slide")
-volume_db = 12.0
+volume_db = 6.0
 bus = &"SFX"
 
 [node name="PointLight2D" type="PointLight2D" parent="." unique_id=1077569544]

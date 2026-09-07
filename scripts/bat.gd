@@ -1,5 +1,6 @@
 @tool
 extends CharacterBody2D
+class_name Bat
 
 const HIT_FLASH_COUNT := 3
 const HIT_FLASH_ON_DURATION := 0.04
@@ -8,6 +9,9 @@ const DEFEAT_SOUND := preload("res://assets/sounds/freesound_community-poof-8016
 const DEFEAT_SOUND_OFFSET := 0.5
 ## Sai số vị trí coi như bat đã bay về đúng chỗ tuần tra.
 const RETURN_TOLERANCE := 4.0
+## Thời gian bat hiện ra khi được đánh thức khỏi trạng thái ngủ đông.
+const APPEAR_DURATION := 0.35
+const APPEAR_START_SCALE := Vector2(0.3, 0.3)
 
 enum State { PATROL, DIVE, RETURN }
 
@@ -148,6 +152,41 @@ func _apply_detection_radius() -> void:
 	var shape := detection_shape.shape as CircleShape2D
 	if shape:
 		shape.radius = detection_radius
+
+
+## Ngủ đông: bat biến mất và ngừng hẳn mọi hoạt động (không bay, không phát hiện
+## player, không gây sát thương, không ăn đòn) cho tới khi được appear(). Dùng cho
+## màn muốn giấu sẵn một đàn dơi rồi mới thả ra - xem scripts/level_4_controller.gd.
+func set_dormant(dormant: bool) -> void:
+	if is_dead:
+		return
+
+	visible = not dormant
+	set_physics_process(not dormant)
+	collision_shape.set_deferred("disabled", dormant)
+	killzone.set_deferred("monitoring", not dormant)
+	detection_area.set_deferred("monitoring", not dormant)
+
+
+## Đánh thức bat đang ngủ đông, hiện dần từ nhỏ ra cho đỡ đột ngột. delay để cả
+## đàn hiện so le nhau thay vì bật lên cùng một lúc.
+func appear(delay := 0.0) -> void:
+	if is_dead:
+		return
+
+	if delay > 0.0:
+		await get_tree().create_timer(delay).timeout
+		if is_dead or not is_inside_tree():
+			return
+
+	set_dormant(false)
+	modulate.a = 0.0
+	scale = APPEAR_START_SCALE
+
+	var appear_tween := create_tween().set_parallel(true)
+	appear_tween.tween_property(self, "modulate:a", 1.0, APPEAR_DURATION)
+	appear_tween.tween_property(self, "scale", Vector2.ONE, APPEAR_DURATION) \
+		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 
 func die() -> void:

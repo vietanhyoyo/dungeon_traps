@@ -5,6 +5,16 @@ const JUMP_VELOCITY = -320.0
 const SLIDE_SPEED = 240.0
 const SLIDE_DURATION = 0.4
 const SLIDE_COLLISION_HEIGHT = 34.0
+# Kỹ năng Wall Double Jump: cú nhảy thêm khi đang bám tường. Bật đúng bằng cú
+# nhảy từ mặt đất, yếu hơn là người chơi thấy ngay cú thứ hai bị hụt.
+const WALL_JUMP_VELOCITY = JUMP_VELOCITY
+# Khung bụi 32x32 vẽ luồng bụi thổi ra từ một góc dưới của ô, nên phải dịch tâm
+# sprite đi nửa ô thì góc đó mới nằm đúng chỗ bụi cần bốc lên.
+const DUST_HALF_SIZE = 16.0
+# Mặt tường cách tâm nhân vật đúng bán kính capsule va chạm.
+const WALL_DUST_REACH = 17.0
+# Bụi nhảy tường bốc ngang hông, thấp hơn tâm người một chút.
+const WALL_DUST_HEIGHT = 4.0
 const AIR_SLIDE_SPRITE_OFFSET_Y = -16.0
 const LANDING_DUST_MIN_SPEED = 180.0
 const DEATH_JUMP_VELOCITY = -420.0
@@ -47,6 +57,8 @@ var last_fall_speed = 0.0
 var slide_direction = 1.0
 var slide_time_left = 0.0
 var air_slide_used = false
+var wall_jump_used = false
+var was_on_wall = false
 var normal_collision_height = 0.0
 var normal_collision_position = Vector2.ZERO
 var normal_sprite_position = Vector2.ZERO
@@ -85,6 +97,15 @@ func _physics_process(delta: float) -> void:
 	# Chạm đất sẽ hồi lại một lần lướt trên không cho cú nhảy tiếp theo.
 	if is_on_floor():
 		air_slide_used = false
+		wall_jump_used = false
+
+	# Mỗi lần bám vào tường được thêm một cú nhảy tường, nên nhân vật có thể leo
+	# nối tiếp qua nhiều mặt tường. is_on_wall() đọc kết quả move_and_slide của
+	# frame trước, đủ chính xác cho việc bật/tắt kỹ năng.
+	var touching_wall := is_on_wall() and not is_on_floor()
+	if touching_wall and not was_on_wall:
+		wall_jump_used = false
+	was_on_wall = touching_wall
 
 	# Khi đang lướt, giữ nguyên hướng nhìn và vận tốc cho đến hết animation.
 	if is_sliding:
@@ -160,8 +181,11 @@ func _physics_process(delta: float) -> void:
 		return
 
 	# Handle jump
-	if Input.is_action_just_pressed("jump") and is_on_floor():
-		velocity.y = JUMP_VELOCITY
+	if Input.is_action_just_pressed("jump"):
+		if is_on_floor():
+			velocity.y = JUMP_VELOCITY
+		elif can_wall_jump():
+			start_wall_jump()
 
 	# Get the input direction: -1, 0, 1
 	var direction := Input.get_axis("move_left", "move_right")
@@ -241,6 +265,41 @@ func get_attack_shape(anim: String) -> CollisionShape2D:
 			return attack_shape_jump
 		_:
 			return attack_shape_high
+
+
+## Nhảy tường chỉ dùng được sau khi mở rương kỹ năng ở level 4.
+func can_wall_jump() -> bool:
+	return not wall_jump_used and is_on_wall() and not is_on_floor() \
+		and GameState.has_skill(Skills.WALL_DOUBLE_JUMP)
+
+
+func start_wall_jump() -> void:
+	wall_jump_used = true
+	velocity.y = WALL_JUMP_VELOCITY
+
+	# Quay mặt ra khỏi tường. Không hất ngang: velocity.x luôn bị đoạn xử lý
+	# direction bên dưới ghi đè lại ngay trong cùng frame nên người chơi giữ
+	# trọn quyền điều khiển hướng bay.
+	var wall_normal := get_wall_normal()
+	if not is_zero_approx(wall_normal.x):
+		animated_sprite.flip_h = wall_normal.x < 0.0
+		spawn_wall_dust(wall_normal)
+
+	animated_sprite.play("jump_up")
+
+
+## Đám bụi bật ra khỏi mặt tường ngay lúc đạp tường nhảy tiếp.
+func spawn_wall_dust(wall_normal: Vector2) -> void:
+	# wall_side = +1 khi tường nằm bên phải nhân vật.
+	var wall_side := -signf(wall_normal.x)
+	var dust: AnimatedSprite2D = dust_scene.instantiate()
+	# Luồng bụi thổi ngược ra xa mặt tường.
+	dust.flip_h = wall_side > 0.0
+	get_parent().add_child(dust)
+	dust.global_position = global_position + Vector2(
+		wall_side * (WALL_DUST_REACH - DUST_HALF_SIZE),
+		WALL_DUST_HEIGHT - DUST_HALF_SIZE
+	)
 
 
 func start_slide() -> void:

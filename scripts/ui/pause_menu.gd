@@ -7,6 +7,7 @@ const LEVEL_SELECT_SCENE := "res://nodes/ui/level_select.tscn"
 @onready var resume_button: Button = $Overlay/Center/Panel/VBox/ResumeButton
 @onready var restart_button: Button = $Overlay/Center/Panel/VBox/RestartButton
 @onready var select_button: Button = $Overlay/Center/Panel/VBox/SelectButton
+@onready var wall_jump_skill: HBoxContainer = $Overlay/Center/Panel/VBox/SkillList/WallJump
 
 var is_paused := false
 
@@ -40,6 +41,8 @@ func _pause() -> void:
 		return
 
 	is_paused = true
+	# Kỹ năng mở khoá từ rương chỉ hiện trong bảng sau khi thực sự nhận được.
+	wall_jump_skill.visible = GameState.has_skill(Skills.WALL_DOUBLE_JUMP)
 	overlay.visible = true
 	menu_button.visible = false
 	get_tree().paused = true
