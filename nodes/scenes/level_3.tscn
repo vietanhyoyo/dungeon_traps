@@ -744,6 +744,10 @@ position = Vector2(4648, -376)
 z_index = 10
 position = Vector2(4664, -376)
 
+[node name="Thorn22" parent="ThornList" unique_id=645914797 instance=ExtResource("6_thorn")]
+z_index = 10
+position = Vector2(4293, -632)
+
 [node name="SlimeList" type="Node" parent="." unique_id=1204558931]
 
 [node name="Slime" parent="SlimeList" unique_id=1795330612 instance=ExtResource("7_slime")]
