@@ -29,13 +29,21 @@ var _checkpoint_position := Vector2.ZERO
 var _collected_stars := {}
 ## scene_path -> { chest_id: true }, giữ rương đã mở khi hồi sinh.
 var _opened_chests := {}
-## skill_id -> scene_path đã mở khoá kỹ năng đó. Lưu kèm màn để khi xoá tiến độ
-## của màn nào thì kỹ năng nhận trong màn đó cũng bị khoá lại theo.
+## skill_id -> scene_path đã mở khoá kỹ năng đó **trong phiên chơi này** nhưng
+## chưa đi hết màn nên chưa được ghi ra file. Lưu kèm màn để khi xoá tiến độ của
+## màn nào thì kỹ năng nhận trong màn đó cũng bị khoá lại theo, và để
+## complete_level() biết màn vừa qua đã mở được những gì.
 var _unlocked_skills := {}
+## skill_id -> true cho kỹ năng đã hoàn thành màn và được ghi vào file save. Nạp
+## lại ở mỗi lần mở game nên màn nào cũng dùng được, kể cả chơi lại từ level 1.
+var _saved_skills := {}
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+
+	for skill_id in SaveGame.load_skills():
+		_saved_skills[skill_id] = true
 
 	_game_over_sound_player = AudioStreamPlayer.new()
 	_game_over_sound_player.stream = GAME_OVER_SOUND
@@ -116,22 +124,54 @@ func is_chest_opened(chest_id: String) -> bool:
 	return opened.has(chest_id)
 
 
-## Mở khoá một kỹ năng trong Skills.CATALOG cho nhân vật.
+## Mở khoá một kỹ năng trong Skills.CATALOG cho nhân vật. Dùng được ngay, nhưng
+## chỉ thành của mình vĩnh viễn sau khi đi hết màn — xem complete_level().
 func unlock_skill(skill_id: String) -> void:
+	if _saved_skills.has(skill_id):
+		return
+
 	_unlocked_skills[skill_id] = _get_current_scene_path()
 
 
 func has_skill(skill_id: String) -> bool:
-	return _unlocked_skills.has(skill_id)
+	return _saved_skills.has(skill_id) or _unlocked_skills.has(skill_id)
+
+
+## Người chơi đi hết một màn (qua được cửa). Kỹ năng nhặt trong màn đó bây giờ
+## mới được ghi ra file, nên nhặt xong rồi chết hoặc thoát giữa chừng thì không
+## tính: phần thưởng là của người chơi hết màn.
+func complete_level() -> void:
+	var scene_path := _get_current_scene_path()
+	var has_new_skill := false
+
+	# keys() trả về một mảng mới nên xoá trong lúc lặp là an toàn.
+	for skill_id in _unlocked_skills.keys():
+		if _unlocked_skills[skill_id] != scene_path:
+			continue
+
+		# Chuyển hẳn sang danh sách đã lưu: từ đây clear_level_progress() của màn
+		# này không khoá kỹ năng lại được nữa.
+		_unlocked_skills.erase(skill_id)
+		if not _saved_skills.has(skill_id):
+			_saved_skills[skill_id] = true
+			has_new_skill = true
+
+	if has_new_skill:
+		SaveGame.save_skills(_saved_skills.keys())
 
 
 ## Xoá tiến độ (sao + rương + kỹ năng + save point) của một màn để chơi lại từ
-## đầu. Bỏ trống scene_path thì xoá tiến độ của tất cả các màn.
+## đầu. Kỹ năng đã ghi vào file save thì không bị khoá lại: chơi lại một màn cũ
+## không phải là lý do để mất kỹ năng đã kiếm được.
+##
+## Bỏ trống scene_path thì xoá tiến độ của tất cả các màn, kể cả file save.
 func clear_level_progress(scene_path := "") -> void:
 	if scene_path.is_empty():
 		_collected_stars.clear()
 		_opened_chests.clear()
 		_unlocked_skills.clear()
+		_saved_skills.clear()
+		SaveGame.save_skills([])
 		_checkpoint_scene_path = ""
 		_checkpoint_position = Vector2.ZERO
 		return

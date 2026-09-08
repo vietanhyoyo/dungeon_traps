@@ -6,6 +6,7 @@ extends RefCounted
 ## từ đây nên không có chỗ nào phải chép tay lại nội dung.
 
 const WALL_DOUBLE_JUMP := "wall_double_jump"
+const SPIN_JUMP_ATTACK := "spin_jump_attack"
 
 ## skills.png là một dải icon 32x32 xếp ngang, icon_index tính từ 0.
 const ICON_SHEET := preload("res://assets/sprites/skills/skills.png")
@@ -17,6 +18,12 @@ const CATALOG := {
 		"description": "Press the Up arrow twice while touching a wall to jump one more time.",
 		"key": "UP x2",
 		"icon_index": 2,
+	},
+	SPIN_JUMP_ATTACK: {
+		"name": "Spin Jump Attack",
+		"description": "Attack in mid-air to somersault with a much wider slash.",
+		"key": "C in air",
+		"icon_index": 3,
 	},
 }
 

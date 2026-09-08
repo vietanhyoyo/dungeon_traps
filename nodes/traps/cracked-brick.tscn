@@ -1,27 +1,27 @@
-[gd_scene load_steps=10 format=3 uid="uid://cx1l83kjowuj3"]
+[gd_scene load_steps=11 format=3 uid="uid://cx1l83kjowuj3"]
 
 [ext_resource type="Texture2D" uid="uid://cnewhiesws7to" path="res://assets/sprites/traps/cracked-brick.png" id="1_jgcb3"]
 [ext_resource type="Script" path="res://scripts/cracked_brick.gd" id="2_script"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jgcb3"]
 atlas = ExtResource("1_jgcb3")
-region = Rect2(0, 0, 32, 32)
+region = Rect2(0, 0, 48, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_v85g0"]
 atlas = ExtResource("1_jgcb3")
-region = Rect2(32, 0, 32, 32)
+region = Rect2(48, 0, 48, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ib3yw"]
 atlas = ExtResource("1_jgcb3")
-region = Rect2(64, 0, 32, 32)
+region = Rect2(96, 0, 48, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6c88n"]
 atlas = ExtResource("1_jgcb3")
-region = Rect2(96, 0, 32, 32)
+region = Rect2(144, 0, 48, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_74rsp"]
 atlas = ExtResource("1_jgcb3")
-region = Rect2(0, 0, 32, 32)
+region = Rect2(0, 0, 48, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_07igm"]
 animations = [{
@@ -52,21 +52,28 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
-size = Vector2(32, 9)
+size = Vector2(48, 9)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_trigger"]
-size = Vector2(30, 8)
+size = Vector2(46, 8)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_brick"]
+polygon = PackedVector2Array(-24, -5, 24, -5, 24, 4, -24, 4)
 
 [node name="CrackedBrick" type="StaticBody2D" unique_id=32011243]
 script = ExtResource("2_script")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1387141445]
+modulate = Color(0.90359825, 0.90359825, 0.9035982, 1)
 sprite_frames = SubResource("SpriteFrames_07igm")
 animation = &"default"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -1)
 shape = SubResource("RectangleShape2D_body")
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="."]
+occluder = SubResource("OccluderPolygon2D_brick")
 
 [node name="TriggerArea" type="Area2D" parent="."]
 collision_layer = 0

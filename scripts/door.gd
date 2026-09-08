@@ -54,9 +54,18 @@ func _on_animated_sprite_animation_finished() -> void:
 
 
 func _go_to_next_scene() -> void:
-	if is_transitioning or next_scene_path.is_empty():
+	if is_transitioning:
 		return
 
 	is_transitioning = true
+
+	# Qua được cửa là hoàn thành màn. Báo trước khi đổi scene, vì GameState cần
+	# biết màn nào vừa xong mà _get_current_scene_path() chỉ đúng ở thời điểm này.
+	GameState.complete_level()
+
+	# Cửa cuối chưa trỏ đi đâu thì dừng ở đây, nhưng màn vẫn được tính là xong.
+	if next_scene_path.is_empty():
+		return
+
 	await get_tree().create_timer(0.3).timeout
 	get_tree().change_scene_to_file(next_scene_path)

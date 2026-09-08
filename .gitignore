@@ -34,3 +34,8 @@ Thumbs.db
 *~
 *.bak
 *.old
+
+# File save của người chơi. Godot đặt nó ở user:// (ngoài thư mục project) nên
+# bình thường git không thấy; dòng này chỉ để chắc chắn không lọt vào repo nếu
+# có ai copy file ra đây để xem.
+save_game.json

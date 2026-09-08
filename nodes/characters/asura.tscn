@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://bvsfcqyddstks" path="res://assets/sprites/shinn_asura/Shinn-Asura-jump-attack.png" id="7_341xe"]
 [ext_resource type="AudioStream" uid="uid://dxg8x1n6r6y2p" path="res://assets/sounds/running.mp3" id="7_running"]
 [ext_resource type="Texture2D" uid="uid://dqt66prc0kuan" path="res://assets/sprites/shinn_asura/Shinn-Asura-slide.png" id="8_1bcgc"]
+[ext_resource type="Texture2D" uid="uid://b62b27guhyjs6" path="res://assets/sprites/shinn_asura/Shinn-Asura-jump-attack2.png" id="8_32pva"]
 [ext_resource type="AudioStream" uid="uid://7ibsbwq6hqo7" path="res://assets/sounds/sword_attack.mp3" id="8_attack"]
 [ext_resource type="Texture2D" uid="uid://dhkqrhyf67gra" path="res://assets/sprites/shinn_asura/Shinn-Asura-slide-attack.png" id="9_dhu25"]
 [ext_resource type="AudioStream" uid="uid://di68ox08hmp5h" path="res://assets/sounds/denielcz-bamboo-whoosh-429156.mp3" id="10_slide"]
@@ -89,6 +90,26 @@ region = Rect2(188, 0, 94, 94)
 [sub_resource type="AtlasTexture" id="AtlasTexture_mh270"]
 atlas = ExtResource("7_341xe")
 region = Rect2(188, 0, 94, 94)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_edhg0"]
+atlas = ExtResource("8_32pva")
+region = Rect2(0, 0, 110, 110)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l0ulw"]
+atlas = ExtResource("8_32pva")
+region = Rect2(110, 0, 110, 110)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5h0ai"]
+atlas = ExtResource("8_32pva")
+region = Rect2(220, 0, 110, 110)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_puuc7"]
+atlas = ExtResource("8_32pva")
+region = Rect2(330, 0, 110, 110)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xcsdv"]
+atlas = ExtResource("8_32pva")
+region = Rect2(440, 0, 110, 110)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1bcgc"]
 atlas = ExtResource("5_i2l0f")
@@ -170,7 +191,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ggdqj")
 }],
-"loop": false,
+"loop": 0,
 "name": &"attack",
 "speed": 10.0
 }, {
@@ -184,7 +205,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_sjxfn")
 }],
-"loop": false,
+"loop": 0,
 "name": &"attack2",
 "speed": 10.0
 }, {
@@ -195,7 +216,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_death_1")
 }],
-"loop": true,
+"loop": 1,
 "name": &"death",
 "speed": 8.0
 }, {
@@ -203,7 +224,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_32pva")
 }],
-"loop": true,
+"loop": 1,
 "name": &"hust",
 "speed": 5.0
 }, {
@@ -223,7 +244,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_vlmav")
 }],
-"loop": true,
+"loop": 1,
 "name": &"idle",
 "speed": 8.0
 }, {
@@ -231,7 +252,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_rls3k")
 }],
-"loop": true,
+"loop": 1,
 "name": &"jump",
 "speed": 6.0
 }, {
@@ -248,9 +269,29 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_mh270")
 }],
-"loop": false,
+"loop": 0,
 "name": &"jump_attack",
 "speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_edhg0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l0ulw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5h0ai")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_puuc7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xcsdv")
+}],
+"loop": 0,
+"name": &"jump_attack2",
+"speed": 14.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -259,7 +300,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_dhu25")
 }],
-"loop": true,
+"loop": 1,
 "name": &"jump_down",
 "speed": 8.0
 }, {
@@ -270,7 +311,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_l3did")
 }],
-"loop": true,
+"loop": 1,
 "name": &"jump_up",
 "speed": 8.0
 }, {
@@ -293,7 +334,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_8i0yw")
 }],
-"loop": true,
+"loop": 1,
 "name": &"run",
 "speed": 10.0
 }, {
@@ -310,7 +351,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_1ehcg")
 }],
-"loop": false,
+"loop": 0,
 "name": &"slide",
 "speed": 10.0
 }, {
@@ -324,7 +365,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_uxljf")
 }],
-"loop": false,
+"loop": 0,
 "name": &"slide_attack",
 "speed": 8.0
 }]
@@ -345,6 +386,9 @@ size = Vector2(56, 45)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_attack_jump"]
 size = Vector2(52, 78)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_attack_spin"]
+size = Vector2(84, 96)
+
 [sub_resource type="Gradient" id="Gradient_glow"]
 interpolation_color_space = 1
 offsets = PackedFloat32Array(0.50390625, 0.9296875, 1)
@@ -363,9 +407,9 @@ script = ExtResource("3_tby2x")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=260658179 groups=["player"]]
 sprite_frames = SubResource("SpriteFrames_hugui")
-animation = &"slide_attack"
+animation = &"jump_attack2"
 autoplay = "idle"
-frame = 2
+frame = 4
 frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=103448317]
@@ -397,6 +441,11 @@ position = Vector2(21, -3)
 shape = SubResource("RectangleShape2D_attack_jump")
 disabled = true
 
+[node name="SpinShape" type="CollisionShape2D" parent="AttackHitbox" unique_id=884502614]
+position = Vector2(14, -3)
+shape = SubResource("RectangleShape2D_attack_spin")
+disabled = true
+
 [node name="RunningSound" type="AudioStreamPlayer2D" parent="." unique_id=1235242696]
 stream = ExtResource("7_running")
 volume_db = 20.0
@@ -406,7 +455,7 @@ bus = &"SFX"
 stream = ExtResource("8_attack")
 bus = &"SFX"
 
-[node name="SlideSound" type="AudioStreamPlayer2D" parent="."]
+[node name="SlideSound" type="AudioStreamPlayer2D" parent="." unique_id=390771162]
 stream = ExtResource("10_slide")
 volume_db = 6.0
 bus = &"SFX"

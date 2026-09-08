@@ -29,9 +29,21 @@ const HURT_DURATION = 0.4
 # Physics server chỉ trả kết quả va chạm ở bước kế tiếp sau khi bật shape, nên
 # phải chờ vài bước thì đòn bị cắt ngang mới chắc chắn kịp gây sát thương.
 const ATTACK_ACTIVE_STEPS = 3
+# Khung bất tử ngay đầu mỗi đòn đánh. Đòn chém là lúc nhân vật phải lao vào sát
+# bẫy/quái, nên cho người chơi một nhịp ngắn để "đánh đổi" mà không chết oan vì
+# chạm phải hitbox của mục tiêu ngay khi vung kiếm.
+const ATTACK_INVULNERABLE_DURATION = 0.5
+# Khoảng cách tối thiểu giữa hai lần được hưởng khung bất tử, tính từ lúc đòn
+# trước kích hoạt nó. Không có cooldown thì người chơi chỉ cần bấm chém liên tục
+# là bất tử vĩnh viễn, vì đòn mới được phép cắt ngang đòn cũ.
+const ATTACK_INVULNERABLE_COOLDOWN = 1.0
 # Độ sáng chung của nhân vật ở mọi màn. Đặt trong script thay vì để riêng từng
 # level scene, vì override modulate trên instance rất dễ bị ghi đè khi lưu scene.
 const BODY_MODULATE = Color(0.5449743, 0.54497427, 0.54497427, 1.0)
+# Các animation đánh, dùng để nhận ra lúc một đòn vừa kết thúc.
+const ATTACK_ANIMATIONS = ["attack", "attack2", "slide_attack", "jump_attack", "jump_attack2"]
+const JUMP_ATTACK_ANIM = "jump_attack"
+const SPIN_ATTACK_ANIM = "jump_attack2"
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var running_sound: AudioStreamPlayer2D = $RunningSound
@@ -42,11 +54,17 @@ const BODY_MODULATE = Color(0.5449743, 0.54497427, 0.54497427, 1.0)
 @onready var attack_shape_low: CollisionShape2D = $AttackHitbox/LowShape
 @onready var attack_shape_slide: CollisionShape2D = $AttackHitbox/SlideShape
 @onready var attack_shape_jump: CollisionShape2D = $AttackHitbox/JumpShape
+@onready var attack_shape_spin: CollisionShape2D = $AttackHitbox/SpinShape
 @onready var body_collision: CollisionShape2D = $CollisionShape2D
 @onready var dust_scene = preload("res://nodes/effects/landing_dust.tscn")
 
 var is_attacking = false
 var attack_active_steps = 0
+# Mốc thời gian (msec) hết khung bất tử của đòn đánh. Dùng đồng hồ thay vì đếm
+# ngược mỗi frame vì _physics_process có nhiều nhánh return sớm.
+var attack_invulnerable_until_msec = 0
+# Mốc thời gian (msec) sớm nhất mà một đòn đánh lại được cấp khung bất tử.
+var attack_invulnerable_ready_msec = 0
 var is_sliding = false
 var is_hurt = false
 var is_dead = false
@@ -57,6 +75,7 @@ var last_fall_speed = 0.0
 var slide_direction = 1.0
 var slide_time_left = 0.0
 var air_slide_used = false
+var spin_attack_used = false
 var wall_jump_used = false
 var was_on_wall = false
 var normal_collision_height = 0.0
@@ -66,7 +85,7 @@ var normal_sprite_position = Vector2.ZERO
 # Vùng sát thương đang dùng cho đòn hiện tại. Mỗi kiểu đòn có một CollisionShape2D
 # riêng trong AttackHitbox để chỉnh trực tiếp trong editor 2D:
 # attack -> HighShape, attack2 -> LowShape, slide_attack -> SlideShape,
-# jump_attack -> JumpShape.
+# jump_attack -> JumpShape, jump_attack2 -> SpinShape.
 var attack_shape: CollisionShape2D = null
 var hit_enemies: Array[Node] = []
 
@@ -94,10 +113,12 @@ func _physics_process(delta: float) -> void:
 		running_sound.stop()
 		return
 
-	# Chạm đất sẽ hồi lại một lần lướt trên không cho cú nhảy tiếp theo.
+	# Chạm đất sẽ hồi lại một lần lướt trên không và một cú lộn vòng cho cú nhảy
+	# tiếp theo.
 	if is_on_floor():
 		air_slide_used = false
 		wall_jump_used = false
+		spin_attack_used = false
 
 	# Mỗi lần bám vào tường được thêm một cú nhảy tường, nên nhân vật có thể leo
 	# nối tiếp qua nhiều mặt tường. is_on_wall() đọc kết quả move_and_slide của
@@ -155,7 +176,14 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("attack") and can_start_attack():
 		# Nếu đang trên không thì dùng jump_attack
 		if not is_on_floor():
-			start_attack("jump_attack")
+			var jump_anim := get_jump_attack_anim()
+			if jump_anim != SPIN_ATTACK_ANIM:
+				start_attack(jump_anim)
+			elif not spin_attack_used:
+				# Cú lộn vòng chỉ được một lần mỗi lần rời mặt đất, không bấm
+				# liên tiếp giữa không trung được nữa.
+				spin_attack_used = true
+				start_attack(jump_anim)
 		else:
 			# Ở dưới đất thì xen kẽ
 			if use_attack_1:
@@ -236,6 +264,7 @@ func can_start_attack() -> bool:
 func start_attack(anim: String) -> void:
 	is_attacking = true
 	attack_active_steps = 0
+	grant_attack_invulnerability()
 	attack_sound.play(ATTACK_SOUND_OFFSET)
 	animated_sprite.play(anim)
 	# play() không tua lại animation đang chạy, nên phải tự đưa về frame lấy đà
@@ -261,10 +290,21 @@ func get_attack_shape(anim: String) -> CollisionShape2D:
 			return attack_shape_low
 		"slide_attack":
 			return attack_shape_slide
-		"jump_attack":
+		JUMP_ATTACK_ANIM:
 			return attack_shape_jump
+		SPIN_ATTACK_ANIM:
+			return attack_shape_spin
 		_:
 			return attack_shape_high
+
+
+## Đòn chém trên không. Mở rương kỹ năng ở level 3 thì đổi sang cú lộn vòng:
+## animation jump_attack2 và vùng sát thương SpinShape rộng hơn hẳn.
+func get_jump_attack_anim() -> String:
+	if GameState.has_skill(Skills.SPIN_JUMP_ATTACK):
+		return SPIN_ATTACK_ANIM
+
+	return JUMP_ATTACK_ANIM
 
 
 ## Nhảy tường chỉ dùng được sau khi mở rương kỹ năng ở level 4.
@@ -380,7 +420,13 @@ func hit_enemy(body: Node) -> void:
 
 func disable_attack_shapes() -> void:
 	# set_deferred vì hàm có thể được gọi từ trong callback va chạm (die)
-	for shape in [attack_shape_high, attack_shape_low, attack_shape_slide, attack_shape_jump]:
+	for shape in [
+		attack_shape_high,
+		attack_shape_low,
+		attack_shape_slide,
+		attack_shape_jump,
+		attack_shape_spin,
+	]:
 		shape.set_deferred("disabled", true)
 
 
@@ -401,12 +447,29 @@ func spawn_landing_dust() -> void:
 	dust.global_position = global_position + Vector2(-facing * 10, 16)
 
 
+## Chỉ đòn đánh đầu tiên sau mỗi chu kỳ cooldown mới được cấp khung bất tử.
+func grant_attack_invulnerability() -> void:
+	var now := Time.get_ticks_msec()
+	if now < attack_invulnerable_ready_msec:
+		return
+
+	attack_invulnerable_until_msec = now + int(ATTACK_INVULNERABLE_DURATION * 1000.0)
+	attack_invulnerable_ready_msec = now + int(ATTACK_INVULNERABLE_COOLDOWN * 1000.0)
+
+
+## Đang trong khung bất tử đầu đòn đánh thì hazard bỏ qua sát thương.
+func is_invulnerable() -> bool:
+	return not is_dead and not is_hurt \
+		and Time.get_ticks_msec() < attack_invulnerable_until_msec
+
+
 # Player trúng đòn (slime, bẫy...): khoá điều khiển và giữ animation "hust"
 # một nhịp ngắn trước khi hazard xử lý tiếp (thường là game over).
 func take_hit() -> void:
 	if is_dead or is_hurt:
 		return
 
+	attack_invulnerable_until_msec = 0
 	is_hurt = true
 	is_attacking = false
 	is_sliding = false
@@ -480,7 +543,7 @@ func lock_movement() -> void:
 
 
 func _on_animated_sprite_2d_animation_finished():
-	if animated_sprite.animation in ["attack", "attack2", "slide_attack", "jump_attack"]:
+	if animated_sprite.animation in ATTACK_ANIMATIONS:
 		var finished_slide_attack := animated_sprite.animation == "slide_attack"
 		is_attacking = false
 		clear_attack_hitbox()
