@@ -1,0 +1,121 @@
+[gd_scene format=3 uid="uid://ugkld1yyytqd"]
+
+[ext_resource type="Texture2D" uid="uid://cffoghcwb5uif" path="res://assets/sprites/traps/big-rock-ball .png" id="1_ball"]
+[ext_resource type="Script" uid="uid://m3qsucwobqpx" path="res://scripts/big_rock_ball.gd" id="2_script"]
+[ext_resource type="AudioStream" uid="uid://di68ox08hmp5h" path="res://assets/sounds/denielcz-bamboo-whoosh-429156.mp3" id="3_fall"]
+[ext_resource type="AudioStream" uid="uid://4dmtbkiktebn" path="res://assets/sounds/explosion.wav" id="4_impact"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_marker"]
+atlas = ExtResource("1_ball")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_trigger"]
+size = Vector2(64, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fall"]
+atlas = ExtResource("1_ball")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hit1"]
+atlas = ExtResource("1_ball")
+region = Rect2(256, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hit2"]
+atlas = ExtResource("1_ball")
+region = Rect2(384, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hit3"]
+atlas = ExtResource("1_ball")
+region = Rect2(512, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hit4"]
+atlas = ExtResource("1_ball")
+region = Rect2(640, 0, 128, 128)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ball"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fall")
+}],
+"loop": 1,
+"name": &"fall",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hit1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hit2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hit3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hit4")
+}],
+"loop": 0,
+"name": &"impact",
+"speed": 12.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ball"]
+radius = 27.0
+
+[node name="BigRockBall" type="Node2D" unique_id=1113988740]
+modulate = Color(0.72, 0.72, 0.72, 1)
+z_index = 4
+script = ExtResource("2_script")
+
+[node name="Marker" type="Sprite2D" parent="." unique_id=919193141]
+position = Vector2(0, -8)
+texture = SubResource("AtlasTexture_marker")
+
+[node name="TriggerArea" type="Area2D" parent="." unique_id=591379047]
+position = Vector2(0, -24)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerArea" unique_id=1237615030]
+shape = SubResource("RectangleShape2D_trigger")
+
+[node name="SpawnPoint" type="Marker2D" parent="." unique_id=1769075522]
+position = Vector2(32, -288)
+gizmo_extents = 20.0
+
+[node name="LandPoint" type="Marker2D" parent="." unique_id=306917766]
+position = Vector2(0, -48)
+gizmo_extents = 20.0
+
+[node name="Preview" type="Sprite2D" parent="LandPoint" unique_id=595307665]
+modulate = Color(1, 1, 1, 0.35)
+texture = SubResource("AtlasTexture_fall")
+
+[node name="Ball" type="Node2D" parent="." unique_id=1148278730]
+visible = false
+position = Vector2(32, -288)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Ball" unique_id=1666864017]
+sprite_frames = SubResource("SpriteFrames_ball")
+animation = &"fall"
+
+[node name="Hazard" type="Area2D" parent="Ball" unique_id=1663857114]
+collision_layer = 0
+collision_mask = 2
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ball/Hazard" unique_id=1703390779]
+shape = SubResource("CircleShape2D_ball")
+
+[node name="FallSound" type="AudioStreamPlayer2D" parent="." unique_id=1379115463]
+stream = ExtResource("3_fall")
+volume_db = -8.0
+bus = &"SFX"
+
+[node name="ImpactSound" type="AudioStreamPlayer2D" parent="." unique_id=1378047246]
+stream = ExtResource("4_impact")
+volume_db = -14.0
+bus = &"SFX"

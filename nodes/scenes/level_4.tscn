@@ -10,7 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://c4jvx4glbgl2" path="res://nodes/door.tscn" id="8_ghy0c"]
 [ext_resource type="PackedScene" uid="uid://dscr153320p4r" path="res://nodes/traps/fire_trap.tscn" id="9_p4xfq"]
 [ext_resource type="PackedScene" uid="uid://ddq2qqo23k2o0" path="res://nodes/traps/thorn.tscn" id="10_fu5xh"]
-[ext_resource type="PackedScene" path="res://nodes/traps/bow_trap.tscn" id="11_7imj7"]
+[ext_resource type="PackedScene" uid="uid://cewy0sh64816q" path="res://nodes/traps/bow_trap.tscn" id="11_7imj7"]
 [ext_resource type="PackedScene" uid="uid://dg4n7tp4d7q1y" path="res://nodes/enemies/slime.tscn" id="11_ghiv5"]
 [ext_resource type="PackedScene" path="res://nodes/traps/pendulum_trap.tscn" id="12_pendulum"]
 [ext_resource type="PackedScene" path="res://nodes/enemies/bat.tscn" id="12_yotrr"]
@@ -19,7 +19,7 @@
 [ext_resource type="Texture2D" uid="uid://dttn1pberb42" path="res://assets/sprites/mapp16.png" id="15_xgdpl"]
 [ext_resource type="PackedScene" path="res://nodes/ui/pause_menu.tscn" id="16_h85ep"]
 [ext_resource type="PackedScene" path="res://nodes/items/treasure_chest.tscn" id="17_chest"]
-[ext_resource type="Script" uid="uid://mgst4n874sin" path="res://scripts/level_4_controller.gd" id="18_level4"]
+[ext_resource type="Script" uid="uid://mgst4n874sin" path="res://scripts/chest_ambush_controller.gd" id="18_level4"]
 [ext_resource type="PackedScene" uid="uid://cx1l83kjowuj3" path="res://nodes/traps/cracked-brick.tscn" id="19_cracked_brick"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_8pcmo"]
@@ -446,7 +446,7 @@ script = ExtResource("18_level4")
 
 [node name="Asura" parent="." unique_id=1107660582 instance=ExtResource("1_dxylt")]
 z_index = 5
-position = Vector2(985, -894)
+position = Vector2(-137, -245)
 
 [node name="Camera2D" parent="Asura" unique_id=1738643562 instance=ExtResource("2_aixuq")]
 limit_bottom = 725
@@ -530,7 +530,7 @@ layer_0/tile_data = PackedInt32Array(-589830, 262145, 1, -524294, 262145, 1, -45
 
 [node name="Door" parent="." unique_id=265049239 instance=ExtResource("8_ghy0c")]
 position = Vector2(3288, -976)
-next_scene_path = "res://nodes/scenes/level_3.tscn"
+next_scene_path = "res://nodes/scenes/level_5.tscn"
 
 [node name="FireList" type="Node" parent="." unique_id=1699640204]
 
@@ -539,6 +539,9 @@ position = Vector2(2438, -200)
 
 [node name="Fire32" parent="FireList" unique_id=1127246523 instance=ExtResource("9_p4xfq")]
 position = Vector2(2453, -200)
+
+[node name="Fire36" parent="FireList" unique_id=1593094209 instance=ExtResource("9_p4xfq")]
+position = Vector2(925, -120)
 
 [node name="Fire33" parent="FireList" unique_id=1765287441 instance=ExtResource("9_p4xfq")]
 position = Vector2(2382, -904)

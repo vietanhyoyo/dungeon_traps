@@ -1,8 +1,11 @@
 extends Node2D
 
-## Xử lý riêng của level 4: một đàn dơi phục sẵn nhưng chỉ hiện ra khi người chơi
-## mở rương kho báu. Level scene vẫn chỉ đặt vị trí, còn kịch bản của màn nằm ở
-## đây - rương và bat đều không biết gì về nhau.
+## Kịch bản dùng chung cho các màn có rương mai phục: một đàn dơi phục sẵn nhưng
+## chỉ hiện ra khi người chơi mở rương kho báu. Level scene vẫn chỉ đặt vị trí,
+## còn kịch bản nằm ở đây - rương và bat đều không biết gì về nhau.
+##
+## Gắn vào node gốc của màn; màn phải có ChestList/TreasureChest và một BatList
+## chứa các bat đặt tên theo AMBUSH_BAT_NAMES.
 
 ## Tên các bat bị giấu trong BatList. Bat còn lại bay sẵn từ đầu màn.
 const AMBUSH_BAT_NAMES: Array[StringName] = [&"Bat2", &"Bat3", &"Bat4", &"Bat5", &"Bat6"]
@@ -33,7 +36,7 @@ func _collect_ambush_bats() -> void:
 	for bat_name in AMBUSH_BAT_NAMES:
 		var bat := bat_list.get_node_or_null(NodePath(bat_name)) as Bat
 		if bat == null:
-			push_warning("Level 4: không tìm thấy BatList/%s" % bat_name)
+			push_warning("%s: không tìm thấy BatList/%s" % [name, bat_name])
 			continue
 		_ambush_bats.append(bat)
 
