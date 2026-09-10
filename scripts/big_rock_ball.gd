@@ -28,6 +28,7 @@ extends Node2D
 
 var _fall_speed := 0.0
 var _has_triggered := false
+var _has_landed := false
 
 
 func _ready() -> void:
@@ -73,26 +74,26 @@ func _on_trigger_body_entered(body: Node2D) -> void:
 
 
 func _on_hazard_body_entered(body: Node2D) -> void:
+	# Đã đáp đất thì hết sát thương ngay, không chờ animation vỡ chạy xong.
+	# monitoring chỉ tắt được bằng set_deferred nên vẫn còn một frame Area2D
+	# tiếp tục bắn signal; cờ này chặn nốt frame đó.
+	if _has_landed and not deadly_after_landing:
+		return
+
 	if body.is_in_group(&"player"):
 		var game_state := get_node_or_null("/root/GameState")
 		if game_state and game_state.has_method("trigger_game_over"):
 			game_state.trigger_game_over(body)
 
 
+# Đập xong thì quả cầu nằm lại luôn trên nền, không biến mất. Animation "impact"
+# không lặp nên nó dừng ở khung cuối (quả cầu đã tan bụi) và giữ nguyên khung đó.
 func _land() -> void:
 	set_physics_process(false)
 	_fall_speed = 0.0
+	_has_landed = true
 	impact_sound.play()
 	animated_sprite.play(&"impact")
-	_settle()
-
-
-# Đập xong thì quả cầu nằm lại luôn trên nền, không biến mất. Animation "impact"
-# không lặp nên nó dừng ở khung cuối (quả cầu đã tan bụi) và giữ nguyên khung đó.
-func _settle() -> void:
-	await animated_sprite.animation_finished
-	if not is_instance_valid(self):
-		return
 
 	if not deadly_after_landing:
 		hazard.set_deferred("monitoring", false)

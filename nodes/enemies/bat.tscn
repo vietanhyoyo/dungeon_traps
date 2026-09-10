@@ -1,8 +1,9 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/bat.gd" id="1_bat"]
 [ext_resource type="Texture2D" path="res://assets/sprites/enemies/bat.png" id="2_bat"]
 [ext_resource type="PackedScene" path="res://nodes/killzone.tscn" id="3_killzone"]
+[ext_resource type="AudioStream" uid="uid://uk6yffa0gp54" path="res://assets/sounds/bat_screech.wav" id="4_dive"]
 
 [sub_resource type="Shader" id="Shader_hit_flash"]
 code = "shader_type canvas_item;\n\nuniform float flash_amount : hint_range(0.0, 1.0) = 0.0;\nuniform vec4 flash_color : source_color = vec4(1.0, 0.96, 0.78, 1.0);\n\nvoid fragment() {\n\tvec4 sprite_color = texture(TEXTURE, UV);\n\tsprite_color.rgb = mix(sprite_color.rgb, flash_color.rgb, flash_amount);\n\tCOLOR = sprite_color * COLOR;\n}\n"
@@ -77,6 +78,11 @@ collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea"]
 shape = SubResource("CircleShape2D_detection")
+
+[node name="DiveSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_dive")
+volume_db = -6.0
+bus = &"SFX"
 
 [node name="Killzone" parent="." instance=ExtResource("3_killzone")]
 

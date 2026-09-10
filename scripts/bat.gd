@@ -13,6 +13,13 @@ const RETURN_TOLERANCE := 4.0
 const APPEAR_DURATION := 0.35
 const APPEAR_START_SCALE := Vector2(0.3, 0.3)
 
+## Nhịp rít khi đang đuổi theo player. Mỗi tiếng lệch nhau một chút để cả đàn
+## không kêu đều như máy - dơi thật kêu thành từng chuỗi không đều nhau.
+const SCREECH_INTERVAL_MIN := 0.34
+const SCREECH_INTERVAL_MAX := 0.62
+const SCREECH_PITCH_MIN := 0.88
+const SCREECH_PITCH_MAX := 1.18
+
 enum State { PATROL, DIVE, RETURN }
 
 ## Khoảng cách bat bay sang mỗi bên tính từ vị trí đặt trong editor.
@@ -44,12 +51,15 @@ var _state := State.PATROL
 var _target: Node2D = null
 var _elapsed := 0.0
 var _start_position := Vector2.ZERO
+## Đếm ngược tới tiếng rít kế tiếp, chỉ chạy khi đang lao theo player.
+var _screech_countdown := 0.0
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var detection_area: Area2D = $DetectionArea
 @onready var detection_shape: CollisionShape2D = $DetectionArea/CollisionShape2D
 @onready var killzone: Area2D = $Killzone
+@onready var dive_sound: AudioStreamPlayer2D = $DiveSound
 
 
 func _ready() -> void:
@@ -103,6 +113,10 @@ func _process_dive(delta: float) -> void:
 		_state = State.RETURN
 		return
 
+	_screech_countdown -= delta
+	if _screech_countdown <= 0.0:
+		_play_screech()
+
 	var to_target := _target.global_position - global_position
 	if to_target.length() > 0.1:
 		global_position += to_target.normalized() * dive_speed * delta
@@ -133,8 +147,13 @@ func _on_detection_body_entered(body: Node2D) -> void:
 	if is_dead or not body.is_in_group("player"):
 		return
 
+	var was_diving := _state == State.DIVE
 	_target = body
 	_state = State.DIVE
+	# Rít ngay khi vừa phát hiện player, sau đó _process_dive lo nhịp lặp. Nếu bat
+	# vốn đã đang đuổi thì kệ nhịp cũ chạy tiếp, đừng cắt ngang tiếng đang kêu.
+	if not was_diving:
+		_play_screech()
 
 
 func _on_detection_body_exited(body: Node2D) -> void:
@@ -196,6 +215,7 @@ func die() -> void:
 	is_dead = true
 	_target = null
 	_state = State.PATROL
+	dive_sound.stop()
 	collision_shape.set_deferred("disabled", true)
 	killzone.set_deferred("monitoring", false)
 	detection_area.set_deferred("monitoring", false)
@@ -208,6 +228,12 @@ func die() -> void:
 	death_tween.tween_property(animated_sprite, "modulate:a", 0.0, 0.18)
 	await death_tween.finished
 	queue_free()
+
+
+func _play_screech() -> void:
+	dive_sound.pitch_scale = randf_range(SCREECH_PITCH_MIN, SCREECH_PITCH_MAX)
+	dive_sound.play()
+	_screech_countdown = randf_range(SCREECH_INTERVAL_MIN, SCREECH_INTERVAL_MAX)
 
 
 func _play_defeat_sound() -> void:
