@@ -422,26 +422,31 @@ collision_mask = 4
 monitorable = false
 
 [node name="HighShape" type="CollisionShape2D" parent="AttackHitbox" unique_id=1175297809]
+visible = false
 position = Vector2(25.5, -1)
 shape = SubResource("RectangleShape2D_attack_high")
 disabled = true
 
 [node name="LowShape" type="CollisionShape2D" parent="AttackHitbox" unique_id=517016674]
+visible = false
 position = Vector2(26, 0)
 shape = SubResource("RectangleShape2D_attack_low")
 disabled = true
 
 [node name="SlideShape" type="CollisionShape2D" parent="AttackHitbox" unique_id=428317905]
+visible = false
 position = Vector2(26, 9.5)
 shape = SubResource("RectangleShape2D_attack_slide")
 disabled = true
 
 [node name="JumpShape" type="CollisionShape2D" parent="AttackHitbox" unique_id=884502613]
+visible = false
 position = Vector2(21, -3)
 shape = SubResource("RectangleShape2D_attack_jump")
 disabled = true
 
 [node name="SpinShape" type="CollisionShape2D" parent="AttackHitbox" unique_id=884502614]
+visible = false
 position = Vector2(14, -3)
 shape = SubResource("RectangleShape2D_attack_spin")
 disabled = true

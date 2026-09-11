@@ -1,9 +1,14 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://cexdosup8j5bc"]
 
-[ext_resource type="Script" path="res://scripts/slime_gunner.gd" id="1_gunner"]
+[ext_resource type="Script" uid="uid://da4530sqww8wv" path="res://scripts/slime_gunner.gd" id="1_gunner"]
 [ext_resource type="Texture2D" uid="uid://umxk4yghoto3" path="res://assets/sprites/enemies/slime-gunner.png" id="2_gunner"]
 [ext_resource type="PackedScene" uid="uid://dhq0pa6na6p7k" path="res://nodes/killzone.tscn" id="3_killzone"]
 [ext_resource type="AudioStream" uid="uid://c32cun46p8bwq" path="res://assets/sounds/fireball_whoosh.mp3" id="4_shoot"]
+[ext_resource type="Texture2D" uid="uid://cnahr6de6yvtj" path="res://assets/sprites/enemies/slime-gunner-attack.png" id="5_attack"]
+[ext_resource type="Texture2D" uid="uid://bt1c4k864uw85" path="res://assets/sprites/enemies/slime-gunner-death.png" id="6_death"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(30, 32)
 
 [sub_resource type="Shader" id="Shader_hit_flash"]
 code = "shader_type canvas_item;
@@ -23,6 +28,42 @@ resource_local_to_scene = true
 shader = SubResource("Shader_hit_flash")
 shader_parameter/flash_amount = 0.0
 shader_parameter/flash_color = Color(1, 0.96, 0.78, 1)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_attack0"]
+atlas = ExtResource("5_attack")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_attack1"]
+atlas = ExtResource("5_attack")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_attack2"]
+atlas = ExtResource("5_attack")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death0"]
+atlas = ExtResource("6_death")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death1"]
+atlas = ExtResource("6_death")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death2"]
+atlas = ExtResource("6_death")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death3"]
+atlas = ExtResource("6_death")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death4"]
+atlas = ExtResource("6_death")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death5"]
+atlas = ExtResource("6_death")
+region = Rect2(320, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_idle0"]
 atlas = ExtResource("2_gunner")
@@ -59,6 +100,43 @@ region = Rect2(448, 0, 64, 64)
 [sub_resource type="SpriteFrames" id="SpriteFrames_gunner"]
 animations = [{
 "frames": [{
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_attack0")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_attack1")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_attack2")
+}],
+"loop": 0,
+"name": &"attack",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death5")
+}],
+"loop": 0,
+"name": &"death",
+"speed": 12.0
+}, {
+"frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_idle0")
 }, {
@@ -83,13 +161,10 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_idle7")
 }],
-"loop": true,
+"loop": 1,
 "name": &"idle",
 "speed": 8.0
 }]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
-size = Vector2(30, 32)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_killzone"]
 size = Vector2(30, 32)
@@ -98,36 +173,39 @@ size = Vector2(30, 32)
 resource_local_to_scene = true
 radius = 280.0
 
-[node name="SlimeGunner" type="CharacterBody2D" groups=["enemy"]]
+[node name="SlimeGunner" type="CharacterBody2D" unique_id=2077220917 groups=["enemy"]]
 collision_layer = 4
 script = ExtResource("1_gunner")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1179796624]
 shape = SubResource("RectangleShape2D_body")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=331121916]
 material = SubResource("ShaderMaterial_hit_flash")
 sprite_frames = SubResource("SpriteFrames_gunner")
-animation = &"idle"
+animation = &"death"
 autoplay = "idle"
+frame = 5
+frame_progress = 1.0
 offset = Vector2(0, -15)
 
-[node name="Killzone" parent="." instance=ExtResource("3_killzone")]
+[node name="Killzone" parent="." unique_id=1261008364 instance=ExtResource("3_killzone")]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Killzone"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Killzone" unique_id=11812875]
 shape = SubResource("RectangleShape2D_killzone")
 
-[node name="DetectionArea" type="Area2D" parent="."]
+[node name="DetectionArea" type="Area2D" parent="." unique_id=204118606]
 collision_layer = 0
 collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea" unique_id=1846368174]
+visible = false
 shape = SubResource("CircleShape2D_detection")
 
-[node name="Muzzle" type="Marker2D" parent="."]
-position = Vector2(-10, -21)
+[node name="Muzzle" type="Marker2D" parent="." unique_id=1072558275]
+position = Vector2(-14, -4)
 
-[node name="ShootSound" type="AudioStreamPlayer2D" parent="."]
+[node name="ShootSound" type="AudioStreamPlayer2D" parent="." unique_id=6903168]
 stream = ExtResource("4_shoot")
 volume_db = -13.0
 pitch_scale = 1.35

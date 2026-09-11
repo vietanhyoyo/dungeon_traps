@@ -1,12 +1,25 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene format=3 uid="uid://cqwyfrn5xy0ei"]
 
-[ext_resource type="Script" path="res://scripts/bat.gd" id="1_bat"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/bat.png" id="2_bat"]
-[ext_resource type="PackedScene" path="res://nodes/killzone.tscn" id="3_killzone"]
+[ext_resource type="Script" uid="uid://bnv0dtsy5yq5g" path="res://scripts/bat.gd" id="1_bat"]
+[ext_resource type="Texture2D" uid="uid://cveeocy2ajscd" path="res://assets/sprites/enemies/bat.png" id="2_bat"]
+[ext_resource type="PackedScene" uid="uid://dhq0pa6na6p7k" path="res://nodes/killzone.tscn" id="3_killzone"]
 [ext_resource type="AudioStream" uid="uid://uk6yffa0gp54" path="res://assets/sounds/bat_screech.wav" id="4_dive"]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bat"]
+size = Vector2(34, 20)
+
 [sub_resource type="Shader" id="Shader_hit_flash"]
-code = "shader_type canvas_item;\n\nuniform float flash_amount : hint_range(0.0, 1.0) = 0.0;\nuniform vec4 flash_color : source_color = vec4(1.0, 0.96, 0.78, 1.0);\n\nvoid fragment() {\n\tvec4 sprite_color = texture(TEXTURE, UV);\n\tsprite_color.rgb = mix(sprite_color.rgb, flash_color.rgb, flash_amount);\n\tCOLOR = sprite_color * COLOR;\n}\n"
+code = "shader_type canvas_item;
+
+uniform float flash_amount : hint_range(0.0, 1.0) = 0.0;
+uniform vec4 flash_color : source_color = vec4(1.0, 0.96, 0.78, 1.0);
+
+void fragment() {
+	vec4 sprite_color = texture(TEXTURE, UV);
+	sprite_color.rgb = mix(sprite_color.rgb, flash_color.rgb, flash_amount);
+	COLOR = sprite_color * COLOR;
+}
+"
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_hit_flash"]
 resource_local_to_scene = true
@@ -45,7 +58,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_4")
 }],
-"loop": true,
+"loop": 1,
 "name": &"fly",
 "speed": 8.0
 }]
@@ -54,37 +67,37 @@ animations = [{
 resource_local_to_scene = true
 radius = 120.0
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_bat"]
-size = Vector2(34, 20)
-
-[node name="Bat" type="CharacterBody2D" groups=["enemy"]]
+[node name="Bat" type="CharacterBody2D" unique_id=2018107730 groups=["enemy"]]
 collision_layer = 4
 collision_mask = 0
 script = ExtResource("1_bat")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=464429811]
+visible = false
 shape = SubResource("RectangleShape2D_bat")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1770980484]
 self_modulate = Color(1.6, 1.6, 1.6, 1)
 material = SubResource("ShaderMaterial_hit_flash")
 sprite_frames = SubResource("SpriteFrames_bat")
 animation = &"fly"
 autoplay = "fly"
 
-[node name="DetectionArea" type="Area2D" parent="."]
+[node name="DetectionArea" type="Area2D" parent="." unique_id=1132749523]
 collision_layer = 0
 collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea" unique_id=354823339]
+visible = false
 shape = SubResource("CircleShape2D_detection")
 
-[node name="DiveSound" type="AudioStreamPlayer2D" parent="."]
+[node name="DiveSound" type="AudioStreamPlayer2D" parent="." unique_id=1541954742]
 stream = ExtResource("4_dive")
 volume_db = -6.0
 bus = &"SFX"
 
-[node name="Killzone" parent="." instance=ExtResource("3_killzone")]
+[node name="Killzone" parent="." unique_id=1577902477 instance=ExtResource("3_killzone")]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Killzone"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Killzone" unique_id=48949470]
+visible = false
 shape = SubResource("RectangleShape2D_bat")

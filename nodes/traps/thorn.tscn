@@ -21,6 +21,7 @@ rotation = 3.1415927
 texture = ExtResource("1_thorn")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hazard" unique_id=1960656664]
+visible = false
 shape = SubResource("RectangleShape2D_thorn")
 
 [node name="TriggerArea" type="Area2D" parent="." unique_id=1071367287]
@@ -30,4 +31,5 @@ collision_mask = 2
 monitorable = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerArea" unique_id=94025158]
+visible = false
 shape = SubResource("RectangleShape2D_trigger")

@@ -12,10 +12,9 @@ const DEFEAT_SOUND_OFFSET := 0.5
 ## Vị trí đầu nòng so với gốc node, tính cho lúc slime quay sang phải. Khẩu súng
 ## nằm ngang tầm thân slime, không phải cái ăng-ten chĩa lên trên.
 const MUZZLE_OFFSET := Vector2(14, -4)
-## Nhịp nảy khi khạc đạn: nén thân xuống rồi bật lại.
-const RECOIL_SQUASH := Vector2(1.18, 0.82)
-const RECOIL_DOWN_DURATION := 0.06
-const RECOIL_UP_DURATION := 0.18
+## Giới hạn co giãn animation "attack": windup quá ngắn thì ba khung hình chỉ còn
+## là một cái giật, quá dài thì slime đứng đơ giữa chừng.
+const ATTACK_SPEED_SCALE_RANGE := Vector2(0.5, 4.0)
 
 ## Hướng đứng lúc đặt trong editor, cũng là hướng của khung hình đầu tiên. Vào
 ## game thì gunner luôn quay mặt theo player nên giá trị này chỉ để xem trước.
@@ -39,8 +38,10 @@ const RECOIL_UP_DURATION := 0.18
 @export_range(0.2, 8.0, 0.05, "or_greater") var fire_interval := 2.0
 ## Nhịp chờ trước phát đầu tiên, để người chơi kịp thấy khẩu súng trước khi ăn đạn.
 @export_range(0.0, 3.0, 0.05) var first_shot_delay := 0.6
-## Trễ giữa lúc thân slime nén xuống và lúc đạn rời nòng, cho thấy động tác lấy đà.
-@export_range(0.0, 1.0, 0.01) var windup := 0.28
+## Thời lượng cả animation "attack": slime lấy đà, nảy lên, rồi đạn mới rời nòng
+## đúng lúc khung cuối chạy xong. Animation được co giãn theo giá trị này nên
+## chỉnh ở đây là chỉnh luôn độ dài động tác báo hiệu.
+@export_range(0.0, 1.0, 0.01) var windup := 0.6
 ## Góc bắn cố định; tốc độ mới là thứ được tính lại theo khoảng cách tới player.
 @export_range(10.0, 80.0, 1.0) var launch_angle_degrees := 45.0
 @export_range(60.0, 1200.0, 10.0, "or_greater") var min_launch_speed := 170.0
@@ -53,7 +54,6 @@ var _player: Node2D = null
 var _target: Node2D = null
 var _cooldown := 0.0
 var _is_firing := false
-var _recoil_tween: Tween = null
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
@@ -79,6 +79,7 @@ func _ready() -> void:
 
 	detection_area.body_entered.connect(_on_detection_body_entered)
 	detection_area.body_exited.connect(_on_detection_body_exited)
+	animated_sprite.animation_finished.connect(_on_animation_finished)
 
 
 func _physics_process(delta: float) -> void:
@@ -116,14 +117,17 @@ func _fire() -> void:
 	_is_firing = true
 	_cooldown = fire_interval
 
-	if _recoil_tween and _recoil_tween.is_valid():
-		_recoil_tween.kill()
-	_recoil_tween = create_tween()
-	_recoil_tween.tween_property(animated_sprite, "scale", RECOIL_SQUASH, RECOIL_DOWN_DURATION)
-	_recoil_tween.tween_property(animated_sprite, "scale", Vector2.ONE, RECOIL_UP_DURATION) \
-		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	animated_sprite.speed_scale = clampf(
+		_attack_animation_length() / maxf(windup, 0.01),
+		ATTACK_SPEED_SCALE_RANGE.x,
+		ATTACK_SPEED_SCALE_RANGE.y
+	)
+	animated_sprite.play(&"attack")
 
-	await get_tree().create_timer(windup, false).timeout
+	# Chờ hết động tác rồi mới nhả đạn. Dùng timer chứ không await tín hiệu
+	# animation_finished: tín hiệu đó đang có sẵn một handler trả sprite về "idle",
+	# await chung một chỗ thì thứ tự chạy phụ thuộc thứ tự kết nối.
+	await get_tree().create_timer(_attack_animation_length() / animated_sprite.speed_scale, false).timeout
 	if is_dead or not is_inside_tree() or not is_instance_valid(_target):
 		_is_firing = false
 		return
@@ -138,6 +142,30 @@ func _fire() -> void:
 
 	shoot_sound.play()
 	_is_firing = false
+
+
+## Độ dài animation "attack" ở speed_scale = 1, tính lại từ SpriteFrames thay vì
+## chép cứng con số: sửa nhịp khung hình trong editor là chỗ này tự theo.
+func _attack_animation_length() -> float:
+	var frames := animated_sprite.sprite_frames
+	var speed := frames.get_animation_speed(&"attack")
+	if speed <= 0.0:
+		return 0.0
+
+	var total := 0.0
+	for frame_index in frames.get_frame_count(&"attack"):
+		total += frames.get_frame_duration(&"attack", frame_index)
+	return total / speed
+
+
+## "attack" không loop nên cứ chạy hết là quay về nhịp thở bình thường, kể cả khi
+## player đã ra khỏi tầm giữa chừng và phát đạn bị huỷ.
+func _on_animation_finished() -> void:
+	if is_dead or animated_sprite.animation != &"attack":
+		return
+
+	animated_sprite.speed_scale = 1.0
+	animated_sprite.play(&"idle")
 
 
 ## Giải bài toán ném xiên: giữ nguyên góc bắn, tìm tốc độ để đạn rơi trúng đích.
@@ -220,7 +248,7 @@ func _on_detection_body_exited(body: Node2D) -> void:
 		_target = null
 
 
-# Bị nhân vật chém trúng: chớp trắng vài nhịp rồi xẹp xuống biến mất.
+# Bị nhân vật chém trúng: chớp trắng vài nhịp rồi phát animation chết.
 func die() -> void:
 	if is_dead:
 		return
@@ -228,8 +256,7 @@ func die() -> void:
 	is_dead = true
 	_target = null
 	velocity = Vector2.ZERO
-	if _recoil_tween and _recoil_tween.is_valid():
-		_recoil_tween.kill()
+	animated_sprite.speed_scale = 1.0
 	collision_shape.set_deferred("disabled", true)
 	killzone.set_deferred("monitoring", false)
 	detection_area.set_deferred("monitoring", false)
@@ -237,10 +264,10 @@ func die() -> void:
 
 	await _play_hit_flash()
 
-	var death_tween := create_tween().set_parallel(true)
-	death_tween.tween_property(self, "scale", Vector2.ZERO, 0.18)
-	death_tween.tween_property(animated_sprite, "modulate:a", 0.0, 0.18)
-	await death_tween.finished
+	# Animation chết tự lo phần tan biến, không cần tween thu nhỏ như trước.
+	if animated_sprite.sprite_frames.has_animation(&"death"):
+		animated_sprite.play(&"death")
+		await animated_sprite.animation_finished
 
 	queue_free()
 

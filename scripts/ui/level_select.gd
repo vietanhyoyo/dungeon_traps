@@ -8,6 +8,7 @@ const LEVELS := [
 	{"title": "Level 3", "path": "res://nodes/scenes/level_3.tscn"},
 	{"title": "Level 4", "path": "res://nodes/scenes/level_4.tscn"},
 	{"title": "Level 5", "path": "res://nodes/scenes/level_5.tscn"},
+	{"title": "Level 6", "path": "res://nodes/scenes/level_6.tscn"},
 ]
 const BUTTON_FONT := preload("res://assets/fonts/PixelOperator8-Bold.ttf")
 

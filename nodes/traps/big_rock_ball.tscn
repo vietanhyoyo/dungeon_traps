@@ -79,6 +79,7 @@ collision_mask = 2
 monitorable = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerArea" unique_id=1237615030]
+visible = false
 shape = SubResource("RectangleShape2D_trigger")
 
 [node name="SpawnPoint" type="Marker2D" parent="." unique_id=1769075522]
@@ -90,6 +91,7 @@ position = Vector2(0, -48)
 gizmo_extents = 20.0
 
 [node name="Preview" type="Sprite2D" parent="LandPoint" unique_id=595307665]
+visible = false
 modulate = Color(1, 1, 1, 0.35)
 texture = SubResource("AtlasTexture_fall")
 

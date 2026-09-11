@@ -1,7 +1,7 @@
-[gd_scene load_steps=11 format=3 uid="uid://cx1l83kjowuj3"]
+[gd_scene format=3 uid="uid://cx1l83kjowuj3"]
 
 [ext_resource type="Texture2D" uid="uid://cnewhiesws7to" path="res://assets/sprites/traps/cracked-brick.png" id="1_jgcb3"]
-[ext_resource type="Script" path="res://scripts/cracked_brick.gd" id="2_script"]
+[ext_resource type="Script" uid="uid://bw7jrm62h0rh3" path="res://scripts/cracked_brick.gd" id="2_script"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jgcb3"]
 atlas = ExtResource("1_jgcb3")
@@ -38,7 +38,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_6c88n")
 }],
-"loop": false,
+"loop": 0,
 "name": &"broken",
 "speed": 10.0
 }, {
@@ -54,11 +54,11 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
 size = Vector2(48, 9)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_trigger"]
-size = Vector2(46, 8)
-
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_brick"]
 polygon = PackedVector2Array(-24, -5, 24, -5, 24, 4, -24, 4)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_trigger"]
+size = Vector2(46, 8)
 
 [node name="CrackedBrick" type="StaticBody2D" unique_id=32011243]
 script = ExtResource("2_script")
@@ -66,20 +66,20 @@ script = ExtResource("2_script")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1387141445]
 modulate = Color(0.90359825, 0.90359825, 0.9035982, 1)
 sprite_frames = SubResource("SpriteFrames_07igm")
-animation = &"default"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=788474649]
 position = Vector2(0, -1)
 shape = SubResource("RectangleShape2D_body")
 
-[node name="LightOccluder2D" type="LightOccluder2D" parent="."]
+[node name="LightOccluder2D" type="LightOccluder2D" parent="." unique_id=566590210]
 occluder = SubResource("OccluderPolygon2D_brick")
 
-[node name="TriggerArea" type="Area2D" parent="."]
+[node name="TriggerArea" type="Area2D" parent="." unique_id=1672922508]
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerArea" unique_id=1246065754]
+visible = false
 position = Vector2(0, -9)
 shape = SubResource("RectangleShape2D_trigger")

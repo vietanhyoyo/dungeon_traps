@@ -142,7 +142,7 @@ func _physics_process(delta: float) -> void:
 			if Input.is_action_just_pressed("attack") and can_start_attack():
 				if not is_on_floor():
 					if try_start_jump_attack():
-						stop_slide(true)
+						stop_slide()
 						return
 				else:
 					start_attack("slide_attack")
@@ -194,12 +194,7 @@ func _physics_process(delta: float) -> void:
 
 	# Trong lúc attack thì không override animation
 	if is_attacking:
-		# Jump attack dùng cùng điều khiển ngang như lúc nhảy thường: giữ hướng
-		# để tiếp tục bay, thả hướng thì giảm vận tốc ngang về 0.
-		if is_jump_attack():
-			update_horizontal_movement()
-		else:
-			velocity.x = 0
+		velocity.x = 0
 		running_sound.stop()
 		update_attack_hitbox()
 		move_and_slide()
@@ -219,7 +214,20 @@ func _physics_process(delta: float) -> void:
 		elif can_wall_jump():
 			start_wall_jump()
 
-	var direction := update_horizontal_movement()
+	# Get the input direction: -1, 0, 1
+	var direction := Input.get_axis("move_left", "move_right")
+	
+	# Flip the Sprite
+	if direction > 0:
+		animated_sprite.flip_h = false
+	elif direction < 0:
+		animated_sprite.flip_h = true
+		
+	# Apply movement
+	if direction:
+		velocity.x = direction * SPEED
+	else:
+		velocity.x = move_toward(velocity.x, 0, SPEED)
 
 	move_and_slide()
 
@@ -245,23 +253,6 @@ func _physics_process(delta: float) -> void:
 		else:
 			animated_sprite.play("jump_down")
 		running_sound.stop()
-
-
-## Điều khiển ngang dùng chung cho trạng thái di chuyển và jump attack.
-func update_horizontal_movement() -> float:
-	var direction := Input.get_axis("move_left", "move_right")
-
-	if direction > 0:
-		animated_sprite.flip_h = false
-	elif direction < 0:
-		animated_sprite.flip_h = true
-
-	if direction:
-		velocity.x = direction * SPEED
-	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
-
-	return direction
 
 
 # Đòn mới được phép cắt ngang đòn đang chạy, miễn là đòn đó đã kịp vung ra.
@@ -316,19 +307,15 @@ func get_jump_attack_anim() -> String:
 
 
 ## Bắt đầu đòn trên không cho cả trạng thái nhảy thường lẫn air slide.
-func try_start_jump_attack() -> bool:
+func try_start_jump_attack() -> void:
 	var jump_anim := get_jump_attack_anim()
 	if jump_anim != SPIN_ATTACK_ANIM:
 		start_attack(jump_anim)
-		return true
 	elif not spin_attack_used:
 		# Cú lộn vòng chỉ được một lần mỗi lần rời mặt đất, không bấm
 		# liên tiếp giữa không trung được nữa.
 		spin_attack_used = true
 		start_attack(jump_anim)
-		return true
-
-	return false
 
 ## Nhảy tường chỉ dùng được sau khi mở rương kỹ năng ở level 4.
 func can_wall_jump() -> bool:
@@ -382,21 +369,15 @@ func start_slide() -> void:
 		spawn_landing_dust()
 
 
-func stop_slide(keep_horizontal_velocity := false) -> void:
+func stop_slide() -> void:
 	is_sliding = false
 	slide_time_left = 0.0
-	if not keep_horizontal_velocity:
-		velocity.x = 0.0
+	velocity.x = 0.0
 	set_slide_collision(false)
 	set_air_slide_sprite_offset(false)
 	# Không ghi đè slide_attack nếu người chơi hủy slide giữa lúc đang chém.
 	if not is_attacking:
 		animated_sprite.play("idle")
-
-
-func is_jump_attack() -> bool:
-	return animated_sprite.animation == JUMP_ATTACK_ANIM \
-		or animated_sprite.animation == SPIN_ATTACK_ANIM
 
 
 func set_slide_collision(enabled: bool) -> void:
