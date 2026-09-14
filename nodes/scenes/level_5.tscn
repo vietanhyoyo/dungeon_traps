@@ -19,6 +19,8 @@
 [ext_resource type="PackedScene" path="res://nodes/ui/pause_menu.tscn" id="16_h85ep"]
 [ext_resource type="PackedScene" uid="uid://cx1l83kjowuj3" path="res://nodes/traps/cracked-brick.tscn" id="19_cracked_brick"]
 [ext_resource type="PackedScene" uid="uid://ugkld1yyytqd" path="res://nodes/traps/big_rock_ball.tscn" id="20_rock_ball"]
+[ext_resource type="PackedScene" path="res://nodes/decor/decor-skull.tscn" id="20_vmglt"]
+[ext_resource type="PackedScene" path="res://nodes/decor/decor-grass.tscn" id="21_7atvw"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_8pcmo"]
 polygon = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
@@ -839,3 +841,11 @@ position = Vector2(616, 1359)
 position = Vector2(703, 1417)
 
 [node name="PauseMenu" parent="." unique_id=1336434601 instance=ExtResource("16_h85ep")]
+
+[node name="DecorList" type="Node2D" parent="." unique_id=1533354620]
+
+[node name="decor-skull" parent="DecorList" unique_id=1215509039 instance=ExtResource("20_vmglt")]
+position = Vector2(1013, 335)
+
+[node name="decor-grass" parent="DecorList" unique_id=617474082 instance=ExtResource("21_7atvw")]
+position = Vector2(371, 336)

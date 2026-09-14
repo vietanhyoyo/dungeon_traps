@@ -1,0 +1,7 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" uid="uid://cipl7cieu7cjl" path="res://assets/sprites/decor/decor-skull.png" id="1_skull"]
+
+[node name="decor-skull" type="Sprite2D"]
+modulate = Color(0.90359825, 0.90359825, 0.9035982, 1)
+texture = ExtResource("1_skull")

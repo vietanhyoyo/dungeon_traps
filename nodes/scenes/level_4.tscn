@@ -3,14 +3,14 @@
 [ext_resource type="PackedScene" uid="uid://cwgqa60xyqnyj" path="res://nodes/characters/asura.tscn" id="1_dxylt"]
 [ext_resource type="PackedScene" uid="uid://deqd3mnvbeh2d" path="res://nodes/camera.tscn" id="2_aixuq"]
 [ext_resource type="PackedScene" uid="uid://cd230y5iqj4bd" path="res://nodes/save_point.tscn" id="3_7imj7"]
-[ext_resource type="PackedScene" uid="uid://b3smmvaulqe1" path="res://nodes/tile_map_32.tscn" id="4_lj6jb"]
+[ext_resource type="PackedScene" path="res://nodes/tile_map_32.tscn" id="4_lj6jb"]
 [ext_resource type="Texture2D" uid="uid://bcxnn1f6qiuev" path="res://assets/sprites/mapp32.png" id="5_fo1y2"]
-[ext_resource type="PackedScene" uid="uid://bx16n4demckja" path="res://nodes/torch.tscn" id="6_ouagl"]
+[ext_resource type="PackedScene" path="res://nodes/torch.tscn" id="6_ouagl"]
 [ext_resource type="Texture2D" uid="uid://d28tluf6jm21n" path="res://assets/sprites/background5.png" id="7_gnkbd"]
 [ext_resource type="PackedScene" uid="uid://c4jvx4glbgl2" path="res://nodes/door.tscn" id="8_ghy0c"]
 [ext_resource type="PackedScene" uid="uid://dscr153320p4r" path="res://nodes/traps/fire_trap.tscn" id="9_p4xfq"]
 [ext_resource type="PackedScene" uid="uid://ddq2qqo23k2o0" path="res://nodes/traps/thorn.tscn" id="10_fu5xh"]
-[ext_resource type="PackedScene" uid="uid://cewy0sh64816q" path="res://nodes/traps/bow_trap.tscn" id="11_7imj7"]
+[ext_resource type="PackedScene" path="res://nodes/traps/bow_trap.tscn" id="11_7imj7"]
 [ext_resource type="PackedScene" uid="uid://dg4n7tp4d7q1y" path="res://nodes/enemies/slime.tscn" id="11_ghiv5"]
 [ext_resource type="PackedScene" path="res://nodes/traps/pendulum_trap.tscn" id="12_pendulum"]
 [ext_resource type="PackedScene" path="res://nodes/enemies/bat.tscn" id="12_yotrr"]
@@ -21,6 +21,8 @@
 [ext_resource type="PackedScene" path="res://nodes/items/treasure_chest.tscn" id="17_chest"]
 [ext_resource type="Script" uid="uid://mgst4n874sin" path="res://scripts/chest_ambush_controller.gd" id="18_level4"]
 [ext_resource type="PackedScene" uid="uid://cx1l83kjowuj3" path="res://nodes/traps/cracked-brick.tscn" id="19_cracked_brick"]
+[ext_resource type="PackedScene" path="res://nodes/decor/decor-skull.tscn" id="22_ghy0c"]
+[ext_resource type="PackedScene" path="res://nodes/decor/decor-grass.tscn" id="23_p4xfq"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_8pcmo"]
 polygon = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
@@ -869,3 +871,11 @@ format = 2
 layer_0/tile_data = PackedInt32Array(-458706, 65537, 1, -458705, 65537, 1, -458704, 65537, 1, -458703, 65537, 1, -458702, 65537, 1, -458701, 65537, 1, -458700, 65537, 1, -458699, 65537, 1, -458698, 65537, 1, -458697, 65537, 1, -458696, 65537, 1, -458695, 65537, 1, -458694, 65537, 1, -458693, 65537, 1, -458692, 65537, 1, -458691, 65537, 1, -458690, 65537, 1, -458689, 65537, 1, -458707, 65537, 1)
 
 [node name="PauseMenu" parent="." unique_id=301713024 instance=ExtResource("16_h85ep")]
+
+[node name="DecorList" type="Node2D" parent="." unique_id=1460461915]
+
+[node name="decor-skull" parent="DecorList" unique_id=1382187263 instance=ExtResource("22_ghy0c")]
+position = Vector2(88, -80)
+
+[node name="decor-grass" parent="DecorList" unique_id=366207765 instance=ExtResource("23_p4xfq")]
+position = Vector2(782, -128)

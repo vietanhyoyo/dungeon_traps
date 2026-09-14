@@ -3,19 +3,22 @@
 [ext_resource type="PackedScene" uid="uid://cwgqa60xyqnyj" path="res://nodes/characters/asura.tscn" id="1_asura"]
 [ext_resource type="PackedScene" uid="uid://deqd3mnvbeh2d" path="res://nodes/camera.tscn" id="2_camera"]
 [ext_resource type="PackedScene" uid="uid://cd230y5iqj4bd" path="res://nodes/save_point.tscn" id="3_save"]
-[ext_resource type="PackedScene" uid="uid://b3smmvaulqe1" path="res://nodes/tile_map_32.tscn" id="4_tilemap"]
+[ext_resource type="PackedScene" path="res://nodes/tile_map_32.tscn" id="4_tilemap"]
 [ext_resource type="Texture2D" uid="uid://bcxnn1f6qiuev" path="res://assets/sprites/mapp32.png" id="5_mapp32"]
 [ext_resource type="Texture2D" uid="uid://dycf3v8rcuox" path="res://assets/sprites/background-level6.png" id="7_bg6"]
 [ext_resource type="PackedScene" uid="uid://c4jvx4glbgl2" path="res://nodes/door.tscn" id="8_door"]
 [ext_resource type="PackedScene" uid="uid://dscr153320p4r" path="res://nodes/traps/fire_trap.tscn" id="9_fire"]
 [ext_resource type="PackedScene" uid="uid://dg4n7tp4d7q1y" path="res://nodes/enemies/slime.tscn" id="11_slime"]
-[ext_resource type="PackedScene" uid="uid://cqwyfrn5xy0ei" path="res://nodes/enemies/bat.tscn" id="12_bat"]
+[ext_resource type="PackedScene" path="res://nodes/enemies/bat.tscn" id="12_bat"]
 [ext_resource type="PackedScene" path="res://nodes/star_hud.tscn" id="13_star_hud"]
 [ext_resource type="PackedScene" uid="uid://cg8mbcubeyje8" path="res://nodes/items/star.tscn" id="14_star"]
 [ext_resource type="PackedScene" path="res://nodes/ui/pause_menu.tscn" id="16_pause"]
 [ext_resource type="PackedScene" uid="uid://cx1l83kjowuj3" path="res://nodes/traps/cracked-brick.tscn" id="19_cracked_brick"]
+[ext_resource type="Script" uid="uid://dkvrn35wifgkj" path="res://scripts/lit_camera_background.gd" id="20_lit_background"]
 [ext_resource type="PackedScene" uid="uid://ugkld1yyytqd" path="res://nodes/traps/big_rock_ball.tscn" id="20_rock_ball"]
 [ext_resource type="PackedScene" uid="uid://cexdosup8j5bc" path="res://nodes/enemies/slime_gunner.tscn" id="21_gunner"]
+[ext_resource type="PackedScene" path="res://nodes/decor/decor-skull.tscn" id="22_decor_skull"]
+[ext_resource type="PackedScene" path="res://nodes/decor/decor-grass.tscn" id="23_decor_grass"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_8pcmo"]
 polygon = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
@@ -135,19 +138,12 @@ sources/0 = SubResource("TileSetAtlasSource_60xir")
 
 [node name="Level6" type="Node2D" unique_id=1714466604]
 
-[node name="Background" type="CanvasLayer" parent="." unique_id=1427486112]
-layer = -1
-
-[node name="BackgroundTexture" type="TextureRect" parent="Background" unique_id=44104068]
+[node name="Background" type="Sprite2D" parent="." unique_id=1427486112]
 modulate = Color(0.78, 0.78, 0.86, 1)
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+z_index = -100
+z_as_relative = false
 texture = ExtResource("7_bg6")
-expand_mode = 1
-stretch_mode = 6
+script = ExtResource("20_lit_background")
 
 [node name="TileMap32" parent="." unique_id=1724397189 instance=ExtResource("4_tilemap")]
 tile_set = SubResource("TileSet_flnyc")
@@ -156,7 +152,7 @@ layer_1/tile_data = PackedInt32Array(131072, 196608, 0, 131073, 65536, 2, 131074
 
 [node name="Asura" parent="." unique_id=1809393430 instance=ExtResource("1_asura")]
 z_index = 5
-position = Vector2(1322, 381)
+position = Vector2(128, 752)
 
 [node name="Camera2D" parent="Asura" unique_id=1065377516 instance=ExtResource("2_camera")]
 limit_left = 0
@@ -169,6 +165,14 @@ position = Vector2(1840, 608)
 
 [node name="SavePoint4" parent="." unique_id=668168341 instance=ExtResource("3_save")]
 position = Vector2(422, 608)
+
+[node name="DecorList" type="Node2D" parent="." unique_id=332768461]
+
+[node name="decor-skull" parent="DecorList" unique_id=2109496752 instance=ExtResource("22_decor_skull")]
+position = Vector2(231, 816)
+
+[node name="decor-grass" parent="DecorList" unique_id=1117579400 instance=ExtResource("23_decor_grass")]
+position = Vector2(345, 816)
 
 [node name="BigRockBallList" type="Node" parent="." unique_id=1382228137]
 
@@ -238,7 +242,7 @@ position = Vector2(2192, 560)
 position = Vector2(2350, 586)
 
 [node name="Star2" parent="StarList" unique_id=1887314452 instance=ExtResource("14_star")]
-position = Vector2(244, 585)
+position = Vector2(247, 573)
 
 [node name="Star3" parent="StarList" unique_id=18173458 instance=ExtResource("14_star")]
 position = Vector2(2352, 552)

@@ -1,0 +1,7 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" uid="uid://4feka2gpocub" path="res://assets/sprites/decor/decor-grass.png" id="1_grass"]
+
+[node name="decor-grass" type="Sprite2D"]
+modulate = Color(0.90359825, 0.90359825, 0.9035982, 1)
+texture = ExtResource("1_grass")
