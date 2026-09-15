@@ -169,15 +169,15 @@ region = Rect2(288, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tbuwi"]
 atlas = ExtResource("9_dhu25")
-region = Rect2(0, 0, 96, 96)
+region = Rect2(0, 0, 128, 128)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hw7g6"]
 atlas = ExtResource("9_dhu25")
-region = Rect2(96, 0, 96, 96)
+region = Rect2(128, 0, 128, 128)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_uxljf"]
 atlas = ExtResource("9_dhu25")
-region = Rect2(192, 0, 96, 96)
+region = Rect2(256, 0, 128, 128)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_hugui"]
 animations = [{
@@ -381,7 +381,7 @@ size = Vector2(57, 66)
 size = Vector2(58, 66)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_attack_slide"]
-size = Vector2(56, 45)
+size = Vector2(69, 56)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_attack_jump"]
 size = Vector2(52, 78)
@@ -407,7 +407,7 @@ script = ExtResource("3_tby2x")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=260658179 groups=["player"]]
 sprite_frames = SubResource("SpriteFrames_hugui")
-animation = &"attack2"
+animation = &"slide_attack"
 autoplay = "idle"
 frame = 2
 frame_progress = 1.0
@@ -434,8 +434,7 @@ shape = SubResource("RectangleShape2D_attack_low")
 disabled = true
 
 [node name="SlideShape" type="CollisionShape2D" parent="AttackHitbox" unique_id=428317905]
-visible = false
-position = Vector2(26, 9.5)
+position = Vector2(17.5, 8)
 shape = SubResource("RectangleShape2D_attack_slide")
 disabled = true
 

@@ -444,7 +444,7 @@ sources/1 = SubResource("TileSetAtlasSource_coome")
 
 [node name="Asura" parent="." unique_id=1107660582 instance=ExtResource("1_player")]
 z_index = 5
-position = Vector2(-161, -301)
+position = Vector2(-169, -316)
 
 [node name="Camera2D" parent="Asura" unique_id=1738643562 instance=ExtResource("2_camera")]
 limit_bottom = 725
@@ -678,6 +678,24 @@ position = Vector2(496, -114)
 [node name="WoodenCrate2" parent="CrateList" unique_id=606051318 instance=ExtResource("23_wooden_crate")]
 position = Vector2(2579, 120)
 
+[node name="WoodenCrate3" parent="CrateList" unique_id=1828178653 instance=ExtResource("23_wooden_crate")]
+position = Vector2(6854, -368)
+
+[node name="WoodenCrate4" parent="CrateList" unique_id=1088145723 instance=ExtResource("23_wooden_crate")]
+position = Vector2(6854, -400)
+
+[node name="WoodenCrate5" parent="CrateList" unique_id=322685376 instance=ExtResource("23_wooden_crate")]
+position = Vector2(4994, -208)
+
+[node name="WoodenCrate6" parent="CrateList" unique_id=1719184529 instance=ExtResource("23_wooden_crate")]
+position = Vector2(5026, -208)
+
+[node name="WoodenCrate7" parent="CrateList" unique_id=1957919511 instance=ExtResource("23_wooden_crate")]
+position = Vector2(5026, -240)
+
+[node name="WoodenCrate8" parent="CrateList" unique_id=659513043 instance=ExtResource("23_wooden_crate")]
+position = Vector2(4994, -240)
+
 [node name="ThornList" type="Node" parent="." unique_id=1216989016]
 
 [node name="Thorn" parent="ThornList" unique_id=372358494 instance=ExtResource("6_thorn")]
@@ -894,7 +912,7 @@ position = Vector2(2350, -31)
 position = Vector2(1550, 138)
 
 [node name="Star3" parent="StarList" unique_id=1962540787 instance=ExtResource("8_star")]
-position = Vector2(5059, -215)
+position = Vector2(5064, -218)
 
 [node name="TileMap16" type="TileMap" parent="." unique_id=596641811]
 modulate = Color(0.9019608, 0.9019608, 0.9019608, 1)

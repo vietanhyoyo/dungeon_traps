@@ -57,6 +57,7 @@ const SPIN_ATTACK_ANIM = "jump_attack2"
 @onready var attack_shape_spin: CollisionShape2D = $AttackHitbox/SpinShape
 @onready var body_collision: CollisionShape2D = $CollisionShape2D
 @onready var dust_scene = preload("res://nodes/effects/landing_dust.tscn")
+@onready var hit_effect_scene = preload("res://nodes/effects/hit_effect.tscn")
 
 var is_attacking = false
 var attack_active_steps = 0
@@ -447,14 +448,24 @@ func hit_enemy(body: Node) -> void:
 	# Vật phá được (hộp gỗ) cũng ăn đòn chém, nhưng không phải quái nên không die().
 	if body.is_in_group("breakable"):
 		hit_enemies.append(body)
+		spawn_hit_effect(body)
 		body.break_apart()
 		return
 	if not body.is_in_group("enemy"):
 		return
 
 	hit_enemies.append(body)
+	spawn_hit_effect(body)
 	if body.has_method("die"):
 		body.die()
+
+
+func spawn_hit_effect(body: Node2D) -> void:
+	# Gắn vào cha của nhân vật chứ không vào mục tiêu: quái và hộp bị queue_free
+	# ngay sau đòn chém, hiệu ứng làm con của chúng sẽ biến mất giữa chừng.
+	var effect: AnimatedSprite2D = hit_effect_scene.instantiate()
+	get_parent().add_child(effect)
+	effect.global_position = body.global_position
 
 
 func disable_attack_shapes() -> void:

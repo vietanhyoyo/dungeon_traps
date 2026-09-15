@@ -1,0 +1,47 @@
+[gd_scene format=3 uid="uid://3buk20jl7im7"]
+
+[ext_resource type="Script" uid="uid://cjmse7t4uh1bi" path="res://scripts/hit_effect.gd" id="1_hit"]
+[ext_resource type="Texture2D" uid="uid://4g2tkxowwrnr" path="res://assets/sprites/effects/hit.png" id="2_hit"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hit_0"]
+atlas = ExtResource("2_hit")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hit_1"]
+atlas = ExtResource("2_hit")
+region = Rect2(96, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hit_2"]
+atlas = ExtResource("2_hit")
+region = Rect2(192, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hit_3"]
+atlas = ExtResource("2_hit")
+region = Rect2(288, 0, 96, 96)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_hit"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hit_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hit_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hit_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hit_3")
+}],
+"loop": 0,
+"name": &"hit",
+"speed": 16.0
+}]
+
+[node name="HitEffect" type="AnimatedSprite2D" unique_id=1252308382]
+z_index = 10
+sprite_frames = SubResource("SpriteFrames_hit")
+animation = &"hit"
+autoplay = "hit"
+script = ExtResource("1_hit")
