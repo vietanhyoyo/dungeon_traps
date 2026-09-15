@@ -238,7 +238,7 @@ horizontal_alignment = 1
 autowrap_mode = 2
 
 [node name="Asura" parent="." unique_id=1507577087 instance=ExtResource("1_uwrxv")]
-z_index = 5
+z_index = 6
 position = Vector2(-94, -66)
 
 [node name="Camera2D" type="Camera2D" parent="Asura" unique_id=1230487999]

@@ -135,7 +135,7 @@ theme_override_font_sizes/font_size = 10
 text = "Purple flames are very dangerous"
 
 [node name="Asura" parent="." unique_id=1107660582 instance=ExtResource("2_flbgy")]
-z_index = 5
+z_index = 6
 position = Vector2(-268, -367)
 
 [node name="Camera2D" parent="Asura" unique_id=1525755273 instance=ExtResource("8_camera")]

@@ -249,7 +249,7 @@ sources/1 = SubResource("TileSetAtlasSource_flnyc")
 [node name="Level5" type="Node2D" unique_id=943828175]
 
 [node name="Asura" parent="." unique_id=1637589097 instance=ExtResource("1_dxylt")]
-z_index = 5
+z_index = 6
 position = Vector2(41, 109)
 
 [node name="Camera2D" parent="Asura" unique_id=1410669946 instance=ExtResource("2_aixuq")]

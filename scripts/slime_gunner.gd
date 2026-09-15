@@ -57,7 +57,6 @@ var _is_firing := false
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
-@onready var killzone: Area2D = $Killzone
 @onready var detection_area: Area2D = $DetectionArea
 @onready var detection_shape: CollisionShape2D = $DetectionArea/CollisionShape2D
 @onready var muzzle: Marker2D = $Muzzle
@@ -258,7 +257,6 @@ func die() -> void:
 	velocity = Vector2.ZERO
 	animated_sprite.speed_scale = 1.0
 	collision_shape.set_deferred("disabled", true)
-	killzone.set_deferred("monitoring", false)
 	detection_area.set_deferred("monitoring", false)
 	_play_defeat_sound()
 

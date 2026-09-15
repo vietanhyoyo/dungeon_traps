@@ -447,7 +447,7 @@ sources/1 = SubResource("TileSetAtlasSource_coome")
 script = ExtResource("18_level4")
 
 [node name="Asura" parent="." unique_id=1107660582 instance=ExtResource("1_dxylt")]
-z_index = 5
+z_index = 6
 position = Vector2(-137, -245)
 
 [node name="Camera2D" parent="Asura" unique_id=1738643562 instance=ExtResource("2_aixuq")]
