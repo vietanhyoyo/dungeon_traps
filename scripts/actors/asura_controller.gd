@@ -223,6 +223,11 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 
+	# Đứng dưới đất mà tì vào mặt bên của hộp thì đẩy hộp đi theo. Nhảy lên đâm
+	# vào hộp giữa không trung không tính là đẩy.
+	if is_on_floor() and direction != 0.0:
+		PushableCrate.push_touching(self, direction)
+
 	# Vừa chạm đất sau khi rơi
 	if not was_on_floor and is_on_floor() and last_fall_speed > LANDING_DUST_MIN_SPEED:
 		spawn_landing_dust()
@@ -438,6 +443,11 @@ func update_attack_hitbox() -> void:
 
 func hit_enemy(body: Node) -> void:
 	if body in hit_enemies:
+		return
+	# Vật phá được (hộp gỗ) cũng ăn đòn chém, nhưng không phải quái nên không die().
+	if body.is_in_group("breakable"):
+		hit_enemies.append(body)
+		body.break_apart()
 		return
 	if not body.is_in_group("enemy"):
 		return

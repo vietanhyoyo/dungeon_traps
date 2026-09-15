@@ -1,0 +1,28 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/pushable_crate.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cy8blbyw7lu4h" path="res://assets/sprites/platforms/pushable-steel-crate.png" id="2_texture"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(32, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fire_sensor"]
+size = Vector2(20, 30)
+
+[node name="PushableSteelCrate" type="CharacterBody2D"]
+modulate = Color(0.6, 0.6, 0.6, 1)
+script = ExtResource("1_script")
+push_speed = 100.0
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_texture")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_body")
+
+[node name="FireSensor" type="Area2D" parent="."]
+collision_layer = 0
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FireSensor"]
+shape = SubResource("RectangleShape2D_fire_sensor")

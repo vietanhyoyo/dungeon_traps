@@ -1,0 +1,18 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/pushable_crate.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://drxca7l5urcy2" path="res://assets/sprites/platforms/pushable-wooden-crate.png" id="2_texture"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(32, 32)
+
+[node name="PushableWoodenCrate" type="CharacterBody2D"]
+modulate = Color(0.6, 0.6, 0.6, 1)
+script = ExtResource("1_script")
+breakable = true
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_texture")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_body")

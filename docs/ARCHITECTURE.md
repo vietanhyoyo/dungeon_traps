@@ -92,6 +92,7 @@ Levels hold no death/restart logic, no movement logic, and no global state. Ch�
 | `ui/skill_popup.tscn` | `scripts/ui/skill_popup.gd` (rương tự instantiate, level không đặt sẵn) |
 | `enemies/slime.tscn` | `scripts/slime.gd` (only used by the legacy `game.tscn`) |
 | `items/coin.tscn` | `scripts/coin.gd` (only used by the legacy `game.tscn`) |
+| `platforms/pushable_wooden_crate.tscn`, `platforms/pushable_steel_crate.tscn` | `scripts/pushable_crate.gd` (`class_name PushableCrate`) |
 | `platform.tscn`, `tile_map_32.tscn` | No script |
 
 A reusable scene that needs to change global state calls an autoload or emits a signal; it never changes the scene itself.
@@ -161,7 +162,39 @@ TriggerArea.body_entered (player)
 body_entered (player) -> GameState.trigger_game_over()
 ```
 
+`extinguish()` dập tắt bẫy vĩnh viễn: tắt `TriggerArea`, damage shape và monitoring, rồi làm mờ sprite cùng `PointLight2D` trong `EXTINGUISH_DURATION` (0.3s) và ẩn đi. `_activate()` bỏ qua bẫy đã tắt. Hiện chỉ hộp sắt gọi hàm này — xem mục Pushable Crate.
+
 Exported parameter: `always_active` (mặc định `false`). Bật lên thì bẫy cháy sẵn từ đầu màn — dùng cho dàn lửa đặt làm chướng ngại nhìn thấy trước chứ không phải bẫy bất ngờ. Trường hợp này `AppearSound` bị bỏ qua, vì cả dàn sẽ kêu cùng lúc lúc vào màn. `level_4` đặt `always_active = true` cho `FireList/Fire2..Fire31` (dải lửa ở `y = -936`); riêng `FireList/Fire` vẫn là bẫy nấp chờ.
+
+### Pushable Crate
+
+Hai scene hộp 32x32 dùng chung `scripts/pushable_crate.gd`, gốc là `CharacterBody2D` đặt tâm ở giữa hộp (đặt vào lưới 32px thì toạ độ là tâm ô):
+
+| Scene | `push_speed` | `breakable` | `FireSensor` |
+| --- | --- | --- | --- |
+| `platforms/pushable_wooden_crate.tscn` | 120 | `true` | Không |
+| `platforms/pushable_steel_crate.tscn` | 100 | `false` | Có |
+
+Hộp nằm trên layer 1 (world), mask 1, nên nhân vật đứng lên nóc như mặt đất và slime/đạn coi nó là tường. Hộp có trọng lực, đẩy ra khỏi mép thì rơi.
+
+```text
+asura_controller.gd, nhánh di chuyển thường, sau move_and_slide()
+  -> nếu is_on_floor() và có bấm hướng: PushableCrate.push_touching(self, direction)
+push_touching: duyệt slide collision, collider là PushableCrate
+  -> bỏ qua nếu normal.x * direction > -PUSH_NORMAL_MIN (0.7): không phải mặt bên phía trước
+  -> crate.push(direction)   # hộp đang rơi thì bỏ qua
+PushableCrate._physics_process
+  -> velocity.x = hướng bị đẩy ở bước vừa rồi * push_speed, rồi reset về 0
+  -> move_and_slide(); nếu đang bị đẩy thì push_touching(self, ...) để hộp đẩy hộp
+```
+
+Hộp chỉ trượt trong bước physics được đẩy, nên buông phím là dừng ngay. Nhảy vào hộp giữa không trung, lướt (slide) hay đang chém đều không đẩy. Đứng trên nóc hộp không đẩy được chính nó nhờ ngưỡng `PUSH_NORMAL_MIN`.
+
+**Hộp gỗ vỡ khi bị chém.** `breakable = true` làm `_ready()` bật thêm layer 3 (lớp mà `AttackHitbox` mask) và thêm hộp vào group `breakable`. `hit_enemy()` của nhân vật gọi `break_apart()` cho group này thay vì `die()`: tắt va chạm ngay (người đứng trên nóc rơi xuống luôn), phát tiếng poof trên một `AudioStreamPlayer2D` gắn vào `current_scene`, cắt ảnh hộp thành bốn góc văng theo cung parabol rồi `queue_free()`. Hộp sắt không có layer 3 nên đòn chém đi xuyên qua.
+
+**Hộp sắt dập lửa.** `FireSensor` (Area2D, layer 0, mask 1, shape 20x30) nối `area_entered`; area nào có `extinguish()` thì gọi. Sensor hẹp hơn thân hộp để lửa chỉ tắt khi hộp đã phủ lên ngọn lửa. Bẫy lửa nấp chờ chưa bật damage shape thì sensor chưa thấy, nên hộp đặt sẵn trên bẫy nấp chờ sẽ dập lửa ngay khi bẫy bùng lên. Hộp gỗ không có sensor, đi qua lửa không có tác dụng gì.
+
+Hạn chế đã biết: hộp chồng lên hộp không trượt theo khi hộp dưới bị đẩy (`CharacterBody2D` không báo vận tốc nền cho vật đứng trên), hộp trên sẽ rớt khỏi mép.
 
 ### Thorn Trap
 
@@ -371,6 +404,7 @@ The project does not use `CanvasModulate`. Darkness is faked by lowering each ob
 | `fire_trap.tscn/AnimatedSprite2D` | 0.431 |
 | `thorn.tscn/Hazard/Sprite2D` | 0.431 |
 | `pendulum_trap.tscn` root | 0.6 |
+| `platforms/pushable_*_crate.tscn` root | 0.6 |
 
 Light sources: a `PointLight2D` under `Asura` in each level, one under the fire trap's `AnimatedSprite2D`, and one under the torch root.
 
@@ -393,13 +427,17 @@ New gameplay sprites must lower their `modulate` in line with the table above; o
 | `door.tscn` `OpenArea` / `PassArea` | 0 | 3 |
 | `killzone.tscn` | 0 | 2 |
 | `items/coin.tscn` | 0 | 2 |
+| `platforms/pushable_steel_crate.tscn` | 1 | 1 |
+| `platforms/pushable_steel_crate.tscn` `FireSensor` | 0 | 1 |
+| `platforms/pushable_wooden_crate.tscn` | 1 + 3 (bật lúc chạy) | 1 |
 
 Layer meanings:
 
 | Layer | Meaning |
 | --- | --- |
-| 1 | World / TileMap / Platform |
+| 1 | World / TileMap / Platform / Pushable crate |
 | 2 | Player |
+| 3 | Enemies và vật chém vỡ được (`AttackHitbox` chỉ mask lớp này) |
 
 Conventions:
 
