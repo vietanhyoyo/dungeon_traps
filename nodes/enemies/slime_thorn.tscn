@@ -1,0 +1,176 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/slime_thorn.gd" id="1_thorn"]
+[ext_resource type="Texture2D" uid="uid://6eom6apy3ev2" path="res://assets/sprites/enemies/slime-thorn.png" id="2_thorn"]
+[ext_resource type="AudioStream" uid="uid://dulsj1kt84g0r" path="res://assets/sounds/denielcz-bamboo-whoosh-429156.mp3" id="4_shoot"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/slime-thorn-attack.png" id="5_attack"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/slime-thorn-death.png" id="6_death"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_body"]
+radius = 13.0
+
+[sub_resource type="Shader" id="Shader_hit_flash"]
+code = "shader_type canvas_item;
+
+uniform float flash_amount : hint_range(0.0, 1.0) = 0.0;
+uniform vec4 flash_color : source_color = vec4(1.0, 0.96, 0.78, 1.0);
+
+void fragment() {
+	vec4 sprite_color = texture(TEXTURE, UV);
+	sprite_color.rgb = mix(sprite_color.rgb, flash_color.rgb, flash_amount);
+	COLOR = sprite_color * COLOR;
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hit_flash"]
+resource_local_to_scene = true
+shader = SubResource("Shader_hit_flash")
+shader_parameter/flash_amount = 0.0
+shader_parameter/flash_color = Color(1, 0.96, 0.78, 1)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle0"]
+atlas = ExtResource("2_thorn")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle1"]
+atlas = ExtResource("2_thorn")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle2"]
+atlas = ExtResource("2_thorn")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_attack0"]
+atlas = ExtResource("5_attack")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_attack1"]
+atlas = ExtResource("5_attack")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_attack2"]
+atlas = ExtResource("5_attack")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_attack3"]
+atlas = ExtResource("5_attack")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_attack4"]
+atlas = ExtResource("5_attack")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death0"]
+atlas = ExtResource("6_death")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death1"]
+atlas = ExtResource("6_death")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death2"]
+atlas = ExtResource("6_death")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death3"]
+atlas = ExtResource("6_death")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death4"]
+atlas = ExtResource("6_death")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_thorn"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_attack0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_attack1")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_attack2")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_attack3")
+}, {
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_attack4")
+}],
+"loop": 0,
+"name": &"attack",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death3")
+}, {
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_death4")
+}],
+"loop": 0,
+"name": &"death",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_idle0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle2")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 6.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_detection"]
+resource_local_to_scene = true
+radius = 220.0
+
+[node name="SlimeThorn" type="CharacterBody2D" groups=["enemy"]]
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("1_thorn")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 2)
+shape = SubResource("CircleShape2D_body")
+
+[node name="Pivot" type="Node2D" parent="."]
+position = Vector2(0, -32)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Pivot"]
+material = SubResource("ShaderMaterial_hit_flash")
+position = Vector2(0, 32)
+sprite_frames = SubResource("SpriteFrames_thorn")
+animation = &"idle"
+autoplay = "idle"
+
+[node name="DetectionArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea"]
+visible = false
+position = Vector2(0, 2)
+shape = SubResource("CircleShape2D_detection")
+
+[node name="ShootSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_shoot")
+volume_db = -10.0
+pitch_scale = 1.15
+bus = &"SFX"

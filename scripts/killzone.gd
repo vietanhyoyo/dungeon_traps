@@ -5,6 +5,13 @@ func _on_body_entered(body: Node2D) -> void:
 	if not body.is_in_group("player"):
 		return
 
+	# Mục tiêu vừa bị chém chết thì không giết người chơi nữa. Phải kiểm tra ở
+	# đây vì monitoring chỉ tắt được bằng set_deferred: tín hiệu va chạm của
+	# chính frame đó vẫn kịp tới nơi, và người chơi chết dù đòn chém đã trúng.
+	# Node nào không có property is_dead thì get() trả về null, coi như còn sống.
+	if get_parent().get("is_dead"):
+		return
+
 	# Nhân vật có khung bất tử ngắn ngay đầu đòn đánh. Không bỏ luôn cú va chạm
 	# này: chờ hết khung rồi kiểm tra lại, nếu người chơi vẫn còn nằm trong vùng
 	# nguy hiểm thì mới ăn đòn. Nhờ vậy khung bất tử chỉ cứu cú chém lướt qua,

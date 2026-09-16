@@ -4,6 +4,9 @@ const SPEED = 180.0
 const JUMP_VELOCITY = -320.0
 const SLIDE_SPEED = 240.0
 const SLIDE_DURATION = 0.4
+# Tốc độ giữ lại trong lúc slide_attack. Thấp hơn lúc lướt thường để đòn chém
+# không đẩy nhân vật đi quá xa, nhưng vẫn đủ để cú lướt chém liền mạch.
+const SLIDE_ATTACK_SPEED = 170.0
 const SLIDE_COLLISION_HEIGHT = 34.0
 # Kỹ năng Wall Double Jump: cú nhảy thêm khi đang bám tường. Bật đúng bằng cú
 # nhảy từ mặt đất, yếu hơn là người chơi thấy ngay cú thứ hai bị hụt.
@@ -147,13 +150,12 @@ func _physics_process(delta: float) -> void:
 						return
 				else:
 					start_attack("slide_attack")
-					# Dừng lướt ngay khi bắt đầu chém, tránh slide_attack đưa nhân vật
-					# đi xa hơn quãng đường slide mà người chơi mong muốn.
-					slide_direction = 0.0
-					velocity.x = 0.0
 
 			slide_time_left -= delta
-			velocity.x = slide_direction * SLIDE_SPEED
+			# Đang chém thì vẫn lao tới: slide_attack là đòn lướt chém, đứng khựng
+			# lại giữa chừng vừa xấu vừa làm hụt tầm với của vùng chém.
+			var speed := SLIDE_ATTACK_SPEED if is_attacking else SLIDE_SPEED
+			velocity.x = slide_direction * speed
 			# Giữ nhân vật trên cùng độ cao trong suốt cú lướt, kể cả ngoài không trung.
 			velocity.y = 0.0
 			if is_attacking:

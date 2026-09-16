@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(ls /var/lib/flatpak/exports/bin /usr/bin/flatpak ~/.local/share/flatpak/exports/bin 2>&1; which godot godot4 2>&1; ls /home/vhec-dev/Documents/godotgame/dungeon_traps/_check_tmp* 2>&1)",
-      "Read(//var/lib/flatpak/exports/**)"
+      "Read(//var/lib/flatpak/exports/**)",
+      "Bash(python3 -c ' *)",
+      "Bash(python3 -c \"import PIL; print\\('PIL ok', PIL.__version__\\)\")"
     ]
   }
 }
