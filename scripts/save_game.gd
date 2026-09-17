@@ -15,6 +15,7 @@ extends RefCounted
 
 const SAVE_PATH := "user://save_game.json"
 const UNLOCKED_SKILLS_KEY := "unlocked_skills"
+const PARTY_MEMBERS_KEY := "party_members"
 ## Tăng lên khi đổi cấu trúc file, để bản game sau còn biết đường đọc file cũ.
 const FORMAT_VERSION := 1
 const VERSION_KEY := "version"
@@ -43,11 +44,32 @@ static func load_skills() -> Array:
 
 
 static func save_skills(skill_ids: Array) -> void:
-	var data := {
-		VERSION_KEY: FORMAT_VERSION,
-		UNLOCKED_SKILLS_KEY: skill_ids,
-	}
+	var data := _read_file()
+	data[VERSION_KEY] = FORMAT_VERSION
+	data[UNLOCKED_SKILLS_KEY] = skill_ids
+	_write_file(data)
 
+
+static func load_party_members() -> Array:
+	var stored: Variant = _read_file().get(PARTY_MEMBERS_KEY, [])
+	if not stored is Array:
+		push_warning("Save file has a malformed party list, ignoring it")
+		return []
+	var members := []
+	for member_id: Variant in stored:
+		if member_id == "serelyn":
+			members.append(member_id)
+	return members
+
+
+static func save_party_members(member_ids: Array) -> void:
+	var data := _read_file()
+	data[VERSION_KEY] = FORMAT_VERSION
+	data[PARTY_MEMBERS_KEY] = member_ids
+	_write_file(data)
+
+
+static func _write_file(data: Dictionary) -> void:
 	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if not file:
 		push_error("Could not write %s: %s" % [SAVE_PATH, FileAccess.get_open_error()])

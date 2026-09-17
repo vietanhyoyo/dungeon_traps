@@ -37,6 +37,8 @@ var _unlocked_skills := {}
 ## skill_id -> true cho kỹ năng đã hoàn thành màn và được ghi vào file save. Nạp
 ## lại ở mỗi lần mở game nên màn nào cũng dùng được, kể cả chơi lại từ level 1.
 var _saved_skills := {}
+## Thành viên đã gia nhập đội, lưu trong file save ngay sau hội thoại.
+var _party_members := {}
 
 
 func _ready() -> void:
@@ -44,6 +46,8 @@ func _ready() -> void:
 
 	for skill_id in SaveGame.load_skills():
 		_saved_skills[skill_id] = true
+	for member_id in SaveGame.load_party_members():
+		_party_members[member_id] = true
 
 	_game_over_sound_player = AudioStreamPlayer.new()
 	_game_over_sound_player.stream = GAME_OVER_SOUND
@@ -137,6 +141,17 @@ func has_skill(skill_id: String) -> bool:
 	return _saved_skills.has(skill_id) or _unlocked_skills.has(skill_id)
 
 
+func recruit_party_member(member_id: String) -> void:
+	if _party_members.has(member_id):
+		return
+	_party_members[member_id] = true
+	SaveGame.save_party_members(_party_members.keys())
+
+
+func has_party_member(member_id: String) -> bool:
+	return _party_members.has(member_id)
+
+
 ## Người chơi đi hết một màn (qua được cửa). Kỹ năng nhặt trong màn đó bây giờ
 ## mới được ghi ra file, nên nhặt xong rồi chết hoặc thoát giữa chừng thì không
 ## tính: phần thưởng là của người chơi hết màn.
@@ -172,6 +187,8 @@ func clear_level_progress(scene_path := "") -> void:
 		_unlocked_skills.clear()
 		_saved_skills.clear()
 		SaveGame.save_skills([])
+		_party_members.clear()
+		SaveGame.save_party_members([])
 		_checkpoint_scene_path = ""
 		_checkpoint_position = Vector2.ZERO
 		return

@@ -73,6 +73,7 @@ var is_sliding = false
 var is_hurt = false
 var is_dead = false
 var movement_locked = false
+var is_controlled := true
 var use_attack_1 = true
 var was_on_floor = false
 var last_fall_speed = 0.0
@@ -115,6 +116,13 @@ func _physics_process(delta: float) -> void:
 	if movement_locked:
 		velocity = Vector2.ZERO
 		running_sound.stop()
+		return
+
+	if not is_controlled:
+		velocity.x = 0.0
+		if not is_on_floor():
+			velocity += get_gravity() * delta
+		move_and_slide()
 		return
 
 	# Chạm đất sẽ hồi lại một lần lướt trên không và một cú lộn vòng cho cú nhảy
@@ -270,6 +278,24 @@ func update_horizontal_movement() -> float:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 
 	return direction
+
+
+func set_controlled(value: bool) -> void:
+	is_controlled = value
+	if value:
+		add_to_group(&"player")
+		return
+
+	remove_from_group(&"player")
+	running_sound.stop()
+	slide_sound.stop()
+	attack_sound.stop()
+	if is_sliding:
+		stop_slide()
+	is_attacking = false
+	clear_attack_hitbox()
+	velocity.x = 0.0
+	animated_sprite.play("idle")
 
 
 # Đòn mới được phép cắt ngang đòn đang chạy, miễn là đòn đó đã kịp vung ra.

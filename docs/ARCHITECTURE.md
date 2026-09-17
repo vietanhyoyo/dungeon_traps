@@ -1,6 +1,6 @@
 # Dungeon Traps - Project Architecture
 
-Updated: 2026-09-08
+Updated: 2026-09-17
 
 This document describes the actual architecture and runtime behavior of the project.
 
@@ -58,7 +58,7 @@ flowchart TD
 - Autoload `Music`: scene `nodes/music.tscn`, an `AudioStreamPlayer` autoplaying `background_music.mp3` globally on the `Music` bus.
 - Autoload `GameState`: `scripts/game_state.gd`.
 - Global group: `player`.
-- Input actions: `move_left` (A/←), `move_right` (D/→), `jump` (↑), `attack` (C), `slide` (X).
+- Input actions: `move_left` (A/←), `move_right` (D/→), `jump` (↑), `attack` (C), `slide` (X), `interact` (E), `switch_character` (Z, level 6).
 
 `default_bus_layout.tres` defines the `Music` bus (-6 dB) and the `SFX` bus (0 dB), both routed to `Master`.
 
@@ -73,13 +73,14 @@ A level contains:
 - Trap, door and torch instances, grouped under plain `Node` list holders: `FireList`, `ThornList`, `BowTrapList`, `PendulumList`, `TorchList`, `SlimeList`, `BatList`, `StarList`, `ChestList`. Các holder này không phải `Node2D` nên không có transform, đưa instance vào list không làm đổi vị trí.
 - Instance-specific configuration such as `Door.next_scene_path`.
 
-Levels hold no death/restart logic, no movement logic, and no global state. Chỉ `level_4` có script ở node gốc (`scripts/level_4_controller.gd`), dành riêng cho kịch bản của màn đó — xem mục Level 4 Bat Ambush.
+Levels hold no death/restart logic, no character movement logic, and no global state. `level_4` có script kịch bản ở node gốc (`scripts/level_4_controller.gd`); `level_6` dùng `scripts/level_6_controller.gd` để chuyển nhân vật và camera.
 
 ### Reusable Gameplay Scenes
 
 | Scene | Owning logic |
 | --- | --- |
 | `characters/asura.tscn` | `scripts/actors/asura_controller.gd` |
+| `characters/serelyn.tscn` | `scripts/actors/serelyn_controller.gd` |
 | `traps/fire_trap.tscn` | `scripts/fire_trap.gd` |
 | `traps/thorn.tscn` | `scripts/thorn_trap.gd` |
 | `traps/pendulum_trap.tscn` | `scripts/pendulum_trap.gd` |
@@ -320,16 +321,33 @@ cú lộn phải kết thúc gọn thì mới không cảm giác khựng giữa 
 
 Bảng nhân vật trong `pause_menu.tscn` có sẵn hàng `SkillList/SpinJumpAttack` và `SkillList/WallJump` nhưng đều để `visible = false`; `_pause()` bật từng hàng lên theo `GameState.has_skill()`.
 
+### Serelyn / Party
+
+`level_6.tscn` đặt `characters/serelyn.tscn` trên sàn gần điểm xuất phát. Khi
+Asura vào vùng tương tác, nhấn E để mở ba câu hội thoại; game tạm dừng trong lúc
+đọc. Sau khi đóng hội thoại, `GameState.recruit_party_member("serelyn")` ghi
+thành viên vào `user://save_game.json`. Nếu Serelyn đã gia nhập từ lần chơi
+trước, có thể chuyển nhân vật ngay khi vào level 6.
+
+`scripts/level_6_controller.gd` xử lý phím Z để chuyển điều khiển, camera và
+`PointLight2D` đang gắn với Asura sang Serelyn hoặc chuyển về Asura. Chỉ
+`CharacterBody2D` đang điều khiển thuộc nhóm `player`, nên bẫy,
+cửa và vật phẩm dùng đúng nhân vật hiện tại. Nhân vật còn lại vẫn đứng trên sàn.
+Serelyn là `CharacterBody2D` với `AnimatedSprite2D` chứa idle 5 khung và run 6 khung, chỉ nhận di chuyển
+trái/phải; nhảy và tấn công chưa có. Phím Z bị khóa khi đang hội thoại, tạm dừng
+hoặc game over.
+
 ### Save File
 
 `scripts/save_game.gd` (`class_name SaveGame`) là toàn bộ phần đọc/ghi đĩa của
-game: một file JSON ở `user://save_game.json`, chỉ chứa danh sách skill_id đã
-kiếm được.
+game: một file JSON ở `user://save_game.json`, chứa kỹ năng đã kiếm được và
+thành viên đã gia nhập đội.
 
 ```json
 {
 	"version": 1,
-	"unlocked_skills": ["spin_jump_attack"]
+	"unlocked_skills": ["spin_jump_attack"],
+	"party_members": ["serelyn"]
 }
 ```
 
@@ -337,9 +355,9 @@ kiếm được.
 file của bản trước khi cấu trúc đổi. File ghi kèm tab xuống dòng nên mở ra sửa
 tay lúc test rất nhanh.
 
-`SaveGame` chỉ có hai hàm static công khai, `load_skills()` và `save_skills()`,
-và không biết gì về luật chơi. `GameState` là node duy nhất gọi tới nó — phần
-còn lại của game hỏi `GameState.has_skill()` chứ không bao giờ chạm vào file.
+`SaveGame` có các hàm static đọc/ghi kỹ năng và thành viên; khi ghi một danh sách,
+nó giữ nguyên danh sách còn lại. `GameState` là node duy nhất gọi tới nó — phần
+còn lại của game hỏi `GameState.has_skill()` hoặc `has_party_member()`.
 
 `user://` nằm ngoài thư mục project (trên Linux là
 `~/.local/share/godot/app_userdata/<tên project>/`), nên file save không bao giờ

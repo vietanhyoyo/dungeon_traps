@@ -3,6 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://cwgqa60xyqnyj" path="res://nodes/characters/asura.tscn" id="1_asura"]
 [ext_resource type="PackedScene" uid="uid://deqd3mnvbeh2d" path="res://nodes/camera.tscn" id="2_camera"]
 [ext_resource type="PackedScene" uid="uid://cd230y5iqj4bd" path="res://nodes/save_point.tscn" id="3_save"]
+[ext_resource type="Script" path="res://scripts/level_6_controller.gd" id="3_party_controller"]
 [ext_resource type="PackedScene" uid="uid://b3smmvaulqe1" path="res://nodes/tile_map_32.tscn" id="4_tilemap"]
 [ext_resource type="Texture2D" uid="uid://bcxnn1f6qiuev" path="res://assets/sprites/mapp32.png" id="5_mapp32"]
 [ext_resource type="Texture2D" uid="uid://dycf3v8rcuox" path="res://assets/sprites/background-level6.png" id="7_bg6"]
@@ -12,6 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://cqwyfrn5xy0ei" path="res://nodes/enemies/bat.tscn" id="12_bat"]
 [ext_resource type="PackedScene" path="res://nodes/star_hud.tscn" id="13_star_hud"]
 [ext_resource type="PackedScene" uid="uid://cg8mbcubeyje8" path="res://nodes/items/star.tscn" id="14_star"]
+[ext_resource type="PackedScene" path="res://nodes/characters/serelyn.tscn" id="15_serelyn"]
 [ext_resource type="PackedScene" path="res://nodes/ui/pause_menu.tscn" id="16_pause"]
 [ext_resource type="PackedScene" uid="uid://cx1l83kjowuj3" path="res://nodes/traps/cracked-brick.tscn" id="19_cracked_brick"]
 [ext_resource type="PackedScene" path="res://nodes/platforms/pushable_steel_crate.tscn" id="20_esukw"]
@@ -141,6 +143,7 @@ physics_layer_0/collision_layer = 1
 sources/0 = SubResource("TileSetAtlasSource_60xir")
 
 [node name="Level6" type="Node2D" unique_id=1714466604]
+script = ExtResource("3_party_controller")
 
 [node name="Background" type="Sprite2D" parent="." unique_id=1427486112]
 modulate = Color(0.78, 0.78, 0.86, 1)
@@ -162,6 +165,9 @@ limit_left = 0
 limit_top = 0
 limit_right = 6120
 limit_bottom = 1502
+
+[node name="Serelyn" parent="." unique_id=1025394537 instance=ExtResource("15_serelyn")]
+position = Vector2(3048, 208)
 
 [node name="SavePoint3" parent="." unique_id=1681321708 instance=ExtResource("3_save")]
 position = Vector2(2001, 608)
