@@ -3,7 +3,9 @@
 [ext_resource type="Script" uid="uid://qdl2441g107o" path="res://scripts/actors/serelyn_controller.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://cyrf1ku2imlx6" path="res://assets/sprites/serelyn/Serelyn-idle.png" id="2_idle"]
 [ext_resource type="FontFile" uid="uid://dm58qjkkxqjox" path="res://assets/fonts/PixelOperator8-Bold.ttf" id="3_font"]
+[ext_resource type="Texture2D" uid="uid://cp23nwwu6diuk" path="res://assets/sprites/serelyn/Serelyn-jump.png" id="3_w1owa"]
 [ext_resource type="Texture2D" uid="uid://cj00ht47kjqv" path="res://assets/sprites/serelyn/Serelyn-run.png" id="4_run"]
+[ext_resource type="Texture2D" uid="uid://cf3x8ht5y5hqd" path="res://assets/sprites/serelyn/Serelyn-slide.png" id="5_o18wq"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_idle_0"]
 atlas = ExtResource("2_idle")
@@ -24,6 +26,14 @@ region = Rect2(288, 0, 96, 96)
 [sub_resource type="AtlasTexture" id="AtlasTexture_idle_4"]
 atlas = ExtResource("2_idle")
 region = Rect2(384, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o18wq"]
+atlas = ExtResource("3_w1owa")
+region = Rect2(96, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gnoaf"]
+atlas = ExtResource("3_w1owa")
+region = Rect2(0, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_run_0"]
 atlas = ExtResource("4_run")
@@ -49,6 +59,26 @@ region = Rect2(384, 0, 96, 96)
 atlas = ExtResource("4_run")
 region = Rect2(480, 0, 96, 96)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_m1rsf"]
+atlas = ExtResource("5_o18wq")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w77op"]
+atlas = ExtResource("5_o18wq")
+region = Rect2(96, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xwkjk"]
+atlas = ExtResource("5_o18wq")
+region = Rect2(192, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6j8w8"]
+atlas = ExtResource("5_o18wq")
+region = Rect2(288, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qwi7m"]
+atlas = ExtResource("5_o18wq")
+region = Rect2(384, 0, 96, 96)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_serelyn"]
 animations = [{
 "frames": [{
@@ -73,6 +103,22 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_o18wq")
+}],
+"loop": 1,
+"name": &"jump_down",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gnoaf")
+}],
+"loop": 1,
+"name": &"jump_up",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_run_0")
 }, {
 "duration": 1.0,
@@ -92,6 +138,26 @@ animations = [{
 }],
 "loop": 1,
 "name": &"run",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m1rsf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w77op")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xwkjk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6j8w8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qwi7m")
+}],
+"loop": 0,
+"name": &"slide",
 "speed": 10.0
 }]
 
@@ -123,9 +189,8 @@ script = ExtResource("1_script")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=625656299]
 texture_filter = 1
-position = Vector2(-7, 0)
 sprite_frames = SubResource("SpriteFrames_serelyn")
-animation = &"idle"
+animation = &"slide"
 autoplay = "idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=782152036]

@@ -333,8 +333,12 @@ trước, có thể chuyển nhân vật ngay khi vào level 6.
 `PointLight2D` đang gắn với Asura sang Serelyn hoặc chuyển về Asura. Chỉ
 `CharacterBody2D` đang điều khiển thuộc nhóm `player`, nên bẫy,
 cửa và vật phẩm dùng đúng nhân vật hiện tại. Nhân vật còn lại vẫn đứng trên sàn.
-Serelyn là `CharacterBody2D` với `AnimatedSprite2D` chứa idle 5 khung và run 6 khung, chỉ nhận di chuyển
-trái/phải; nhảy và tấn công chưa có. Phím Z bị khóa khi đang hội thoại, tạm dừng
+Serelyn là `CharacterBody2D` với `AnimatedSprite2D` chứa idle 5 khung, run 6 khung,
+`jump_up` và `jump_down`; khi được điều khiển, nhân vật nhận di chuyển trái/phải
+và nhảy bằng phím `jump`. Phím `slide` lướt theo hướng đang nhìn trong 0,4 giây
+trên mặt đất; trong lúc lướt, capsule va
+chạm được hạ thấp, animation `slide` và hiệu ứng bụi được phát. Khi rơi đủ nhanh
+để tiếp đất, Serelyn cũng tạo bụi như Asura. Serelyn chưa có tấn công. Phím Z bị khóa khi đang hội thoại, tạm dừng
 hoặc game over.
 
 ### Save File
