@@ -20,13 +20,16 @@ const DEBRIS_DROP := 20.0
 # Chỉ tính là đẩy khi tì vào mặt gần thẳng đứng. Chạm mép nóc hộp cho ra normal
 # xiên, không lọc thì đứng trên góc hộp cũng đẩy được chính cái hộp đó.
 const PUSH_NORMAL_MIN := 0.7
-# Layer 3 là lớp quái; AttackHitbox của nhân vật chỉ mask lớp này.
+# Layer 3 là lớp vật có thể bị tấn công; AttackHitbox và mũi tên của Serelyn
+# đều mask lớp này.
 const HITTABLE_LAYER := 3
 
 ## Tốc độ hộp trượt ngang lúc bị đẩy.
 @export var push_speed := 120.0
 ## Bật lên thì nhân vật chém vỡ được hộp (hộp gỗ).
 @export var breakable := false
+## Giữ hộp đứng yên khi đang được dây treo; bỏ giữ thì hộp rơi theo trọng lực.
+@export var suspended := false
 
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
@@ -39,7 +42,7 @@ var _is_broken := false
 
 func _ready() -> void:
 	if breakable:
-		# Đứng trên layer 3 thì AttackHitbox mới quét trúng hộp.
+		# Đứng trên layer 3 thì đòn cận chiến và mũi tên mới quét trúng hộp.
 		set_collision_layer_value(HITTABLE_LAYER, true)
 		add_to_group(&"breakable")
 
@@ -48,6 +51,10 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if suspended:
+		velocity = Vector2.ZERO
+		return
+
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 
@@ -80,13 +87,13 @@ static func push_touching(body: CharacterBody2D, direction: float) -> void:
 
 func push(direction: float) -> void:
 	# Hộp đang rơi thì không đẩy ngang được, tránh "ném" hộp bay qua hố.
-	if _is_broken or not is_on_floor():
+	if _is_broken or suspended or not is_on_floor():
 		return
 
 	_push_direction = signf(direction)
 
 
-## Nhân vật chém trúng. Hộp không breakable (hộp sắt) thì không hề hấn gì.
+## Đòn tấn công trúng hộp. Hộp không breakable (hộp sắt) thì không hề hấn gì.
 func break_apart() -> void:
 	if _is_broken or not breakable:
 		return

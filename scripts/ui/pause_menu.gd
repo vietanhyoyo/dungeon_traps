@@ -1,22 +1,46 @@
 extends CanvasLayer
 
 const LEVEL_SELECT_SCENE := "res://nodes/ui/level_select.tscn"
+const SERELYN_IDLE_SPRITE := preload("res://assets/sprites/serelyn/Serelyn-idle.png")
+const SERELYN_ARROW_SPRITE := preload("res://assets/sprites/serelyn/Serelyn-arrow.png")
+const SERELYN_CONTROLLER_SCRIPT := preload("res://scripts/actors/serelyn_controller.gd")
 
 @onready var menu_button: Button = $MenuButton
 @onready var overlay: Control = $Overlay
 @onready var resume_button: Button = $Overlay/Center/Panel/VBox/ResumeButton
 @onready var restart_button: Button = $Overlay/Center/Panel/VBox/RestartButton
 @onready var select_button: Button = $Overlay/Center/Panel/VBox/SelectButton
+@onready var portrait: TextureRect = $Overlay/Center/Panel/VBox/Header/PortraitFrame/Portrait
+@onready var character_name_label: Label = $Overlay/Center/Panel/VBox/Header/Info/Name
+@onready var class_label: Label = $Overlay/Center/Panel/VBox/Header/Info/Class
+@onready var health_label: Label = $Overlay/Center/Panel/VBox/Header/Info/Health
+@onready var attack_icon: TextureRect = $Overlay/Center/Panel/VBox/SkillList/Attack/IconFrame/Icon
+@onready var attack_name_label: Label = $Overlay/Center/Panel/VBox/SkillList/Attack/Text/Name
+@onready var attack_desc_label: Label = $Overlay/Center/Panel/VBox/SkillList/Attack/Text/Desc
+@onready var slide_name_label: Label = $Overlay/Center/Panel/VBox/SkillList/Slide/Text/Name
+@onready var slide_desc_label: Label = $Overlay/Center/Panel/VBox/SkillList/Slide/Text/Desc
 @onready var spin_jump_attack_skill: HBoxContainer = $Overlay/Center/Panel/VBox/SkillList/SpinJumpAttack
 @onready var wall_jump_skill: HBoxContainer = $Overlay/Center/Panel/VBox/SkillList/WallJump
 
 var is_paused := false
+var asura_portrait: Texture2D
+var asura_attack_icon: Texture2D
+var serelyn_portrait: AtlasTexture
+var serelyn_attack_icon: AtlasTexture
 
 
 func _ready() -> void:
 	# Menu phải chạy cả khi SceneTree bị pause, nếu không sẽ không bấm được gì.
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	overlay.visible = false
+	asura_portrait = portrait.texture
+	asura_attack_icon = attack_icon.texture
+	serelyn_portrait = AtlasTexture.new()
+	serelyn_portrait.atlas = SERELYN_IDLE_SPRITE
+	serelyn_portrait.region = Rect2(32, 32, 32, 32)
+	serelyn_attack_icon = AtlasTexture.new()
+	serelyn_attack_icon.atlas = SERELYN_ARROW_SPRITE
+	serelyn_attack_icon.region = Rect2(0, 0, 64, 64)
 
 	# Nút hamburger mở bảng thông tin nhân vật (cũng là menu tạm dừng).
 	menu_button.pressed.connect(_pause)
@@ -42,13 +66,43 @@ func _pause() -> void:
 		return
 
 	is_paused = true
+	_update_character_info()
 	# Kỹ năng mở khoá từ rương chỉ hiện trong bảng sau khi thực sự nhận được.
-	spin_jump_attack_skill.visible = GameState.has_skill(Skills.SPIN_JUMP_ATTACK)
+	spin_jump_attack_skill.visible = not _is_serelyn_selected() \
+		and GameState.has_skill(Skills.SPIN_JUMP_ATTACK)
 	wall_jump_skill.visible = GameState.has_skill(Skills.WALL_DOUBLE_JUMP)
 	overlay.visible = true
 	menu_button.visible = false
 	get_tree().paused = true
 	resume_button.grab_focus()
+
+
+func _is_serelyn_selected() -> bool:
+	var player := get_tree().get_first_node_in_group(&"player")
+	return player != null and player.get_script() == SERELYN_CONTROLLER_SCRIPT
+
+
+func _update_character_info() -> void:
+	if _is_serelyn_selected():
+		portrait.texture = serelyn_portrait
+		attack_icon.texture = serelyn_attack_icon
+		character_name_label.text = "SERELYN"
+		class_label.text = "Archer"
+		health_label.text = "One hit and you are down"
+		attack_name_label.text = "Bow Attack"
+		attack_desc_label.text = "Aimed arrow shot at enemies in view"
+		slide_name_label.text = "Slide"
+		slide_desc_label.text = "Low dash, one extra dash in mid-air"
+	else:
+		portrait.texture = asura_portrait
+		attack_icon.texture = asura_attack_icon
+		character_name_label.text = "ASURA"
+		class_label.text = "Swordsman"
+		health_label.text = "One hit and you are down"
+		attack_name_label.text = "Attack"
+		attack_desc_label.text = "Sword combo, air slash in mid-air"
+		slide_name_label.text = "Slide"
+		slide_desc_label.text = "Low dash, one extra dash in mid-air"
 
 
 func _resume() -> void:

@@ -94,6 +94,9 @@ Levels hold no death/restart logic, no character movement logic, and no global s
 | `enemies/slime.tscn` | `scripts/slime.gd` (only used by the legacy `game.tscn`) |
 | `items/coin.tscn` | `scripts/coin.gd` (only used by the legacy `game.tscn`) |
 | `platforms/pushable_wooden_crate.tscn`, `platforms/pushable_steel_crate.tscn` | `scripts/pushable_crate.gd` (`class_name PushableCrate`) |
+| `platforms/hanging_steel_crate.tscn` | `scripts/hanging_steel_crate.gd` + `scripts/cuttable_rope.gd` |
+| `effects/character_transform_effect.tscn` | `scripts/character_transform_effect.gd` |
+| `ui/character_hud.tscn` | `scripts/ui/character_hud.gd` |
 | `platform.tscn`, `tile_map_32.tscn` | No script |
 
 A reusable scene that needs to change global state calls an autoload or emits a signal; it never changes the scene itself.
@@ -179,7 +182,7 @@ Hai scene hộp 32x32 dùng chung `scripts/pushable_crate.gd`, gốc là `Charac
 Hộp nằm trên layer 1 (world), mask 1, nên nhân vật đứng lên nóc như mặt đất và slime/đạn coi nó là tường. Hộp có trọng lực, đẩy ra khỏi mép thì rơi.
 
 ```text
-asura_controller.gd, nhánh di chuyển thường, sau move_and_slide()
+asura_controller.gd hoặc serelyn_controller.gd, nhánh di chuyển thường, sau move_and_slide()
   -> nếu is_on_floor() và có bấm hướng: PushableCrate.push_touching(self, direction)
 push_touching: duyệt slide collision, collider là PushableCrate
   -> bỏ qua nếu normal.x * direction > -PUSH_NORMAL_MIN (0.7): không phải mặt bên phía trước
@@ -191,7 +194,7 @@ PushableCrate._physics_process
 
 Hộp chỉ trượt trong bước physics được đẩy, nên buông phím là dừng ngay. Nhảy vào hộp giữa không trung, lướt (slide) hay đang chém đều không đẩy. Đứng trên nóc hộp không đẩy được chính nó nhờ ngưỡng `PUSH_NORMAL_MIN`.
 
-**Hộp gỗ vỡ khi bị chém.** `breakable = true` làm `_ready()` bật thêm layer 3 (lớp mà `AttackHitbox` mask) và thêm hộp vào group `breakable`. `hit_enemy()` của nhân vật gọi `break_apart()` cho group này thay vì `die()`: tắt va chạm ngay (người đứng trên nóc rơi xuống luôn), phát tiếng poof trên một `AudioStreamPlayer2D` gắn vào `current_scene`, cắt ảnh hộp thành bốn góc văng theo cung parabol rồi `queue_free()`. Hộp sắt không có layer 3 nên đòn chém đi xuyên qua.
+**Hộp gỗ vỡ khi bị chém hoặc bị tên bắn trúng.** `breakable = true` làm `_ready()` bật thêm layer 3 (lớp mà `AttackHitbox` và mũi tên của Serelyn quét) và thêm hộp vào group `breakable`. `hit_enemy()` của Asura gọi `break_apart()` cho group này thay vì `die()`; `SerelynArrow` cũng gọi cùng hàm khi ray trúng group `breakable`: tắt va chạm ngay (người đứng trên nóc rơi xuống luôn), phát tiếng poof trên một `AudioStreamPlayer2D` gắn vào `current_scene`, cắt ảnh hộp thành bốn góc văng theo cung parabol rồi `queue_free()`. Hộp sắt không có layer 3 nên đòn chém đi xuyên qua, nhưng vẫn chặn mũi tên như vật cản layer 1.
 
 **Hộp sắt dập lửa.** `FireSensor` (Area2D, layer 0, mask 1, shape 20x30) nối `area_entered`; area nào có `extinguish()` thì gọi. Sensor hẹp hơn thân hộp để lửa chỉ tắt khi hộp đã phủ lên ngọn lửa. Bẫy lửa nấp chờ chưa bật damage shape thì sensor chưa thấy, nên hộp đặt sẵn trên bẫy nấp chờ sẽ dập lửa ngay khi bẫy bùng lên. Hộp gỗ không có sensor, đi qua lửa không có tác dụng gì.
 
@@ -315,7 +318,10 @@ Chưa mở rương thì `jump_attack` cũ vẫn bấm liên tiếp thoải mái 
 suốt đòn đánh, nên animation dài bao nhiêu là nhân vật treo lơ lửng bấy nhiêu —
 cú lộn phải kết thúc gọn thì mới không cảm giác khựng giữa không trung.
 
-`asura_controller.gd` chỉ cho phép nhảy tường khi `GameState.has_skill(Skills.WALL_DOUBLE_JUMP)`. Mỗi lần bám vào một mặt tường mới (hoặc chạm đất) sẽ hồi lại một cú nhảy tường, nên có thể leo nối tiếp qua nhiều tường nhưng không thể bay vô hạn trên cùng một mặt tường.
+`asura_controller.gd` và `serelyn_controller.gd` chỉ cho phép nhảy tường khi
+`GameState.has_skill(Skills.WALL_DOUBLE_JUMP)`. Mỗi lần bám vào một mặt tường mới
+(hoặc chạm đất) sẽ hồi lại một cú nhảy tường, nên cả hai nhân vật có thể leo nối
+tiếp qua nhiều tường nhưng không thể bay vô hạn trên cùng một mặt tường.
 
 `WALL_JUMP_VELOCITY = JUMP_VELOCITY`: cú nhảy tường gán đè `velocity.y` chứ không cộng dồn, nên bật cao đúng bằng cú nhảy từ mặt đất. Lúc đạp tường, `spawn_wall_dust()` thả một `effects/landing_dust.tscn` ngay trên mặt tường (lệch `WALL_DUST_REACH` sang phía tường, `flip_h` để luồng bụi thổi ra xa tường).
 
@@ -323,23 +329,49 @@ Bảng nhân vật trong `pause_menu.tscn` có sẵn hàng `SkillList/SpinJumpAt
 
 ### Serelyn / Party
 
-`level_6.tscn` đặt `characters/serelyn.tscn` trên sàn gần điểm xuất phát. Khi
-Asura vào vùng tương tác, nhấn E để mở ba câu hội thoại; game tạm dừng trong lúc
-đọc. Sau khi đóng hội thoại, `GameState.recruit_party_member("serelyn")` ghi
-thành viên vào `user://save_game.json`. Nếu Serelyn đã gia nhập từ lần chơi
-trước, có thể chuyển nhân vật ngay khi vào level 6.
+`level_6.tscn` đặt Serelyn làm NPC gần điểm xuất phát. Khi Asura đến gần, nhấn
+E để mở ba câu hội thoại; game tạm dừng trong lúc đọc. Sau câu cuối,
+`GameState.recruit_party_member("serelyn")` ghi thành viên vào `user://save_game.json`.
+Khi vào level 6 lần sau, trạng thái này được đọc lại, Serelyn không hiện như NPC
+và không thể mở hội thoại lần nữa.
 
-`scripts/level_6_controller.gd` xử lý phím Z để chuyển điều khiển, camera và
-`PointLight2D` đang gắn với Asura sang Serelyn hoặc chuyển về Asura. Chỉ
-`CharacterBody2D` đang điều khiển thuộc nhóm `player`, nên bẫy,
-cửa và vật phẩm dùng đúng nhân vật hiện tại. Nhân vật còn lại vẫn đứng trên sàn.
+`scripts/level_6_controller.gd` chỉ nhận phím Z sau hội thoại. Khi chuyển, nhân
+vật được chọn xuất hiện ngay tại chỗ nhân vật đang chơi, căn theo đáy capsule
+để không lọt vào sàn. Camera và `PointLight2D` đi theo nhân vật mới; nhân vật
+cũ được ẩn và tắt va chạm. Mỗi lần chuyển có vòng sáng màu riêng và khóa Z đến
+khi hiệu ứng kết thúc. `ui/character_hud.tscn` hiển thị hai ô vuông cắt phần đầu
+từ ảnh idle và làm sáng viền ô của nhân vật đang điều khiển ở góc màn hình.
 Serelyn là `CharacterBody2D` với `AnimatedSprite2D` chứa idle 5 khung, run 6 khung,
 `jump_up` và `jump_down`; khi được điều khiển, nhân vật nhận di chuyển trái/phải
 và nhảy bằng phím `jump`. Phím `slide` lướt theo hướng đang nhìn trong 0,4 giây
 trên mặt đất; trong lúc lướt, capsule va
 chạm được hạ thấp, animation `slide` và hiệu ứng bụi được phát. Khi rơi đủ nhanh
-để tiếp đất, Serelyn cũng tạo bụi như Asura. Serelyn chưa có tấn công. Phím Z bị khóa khi đang hội thoại, tạm dừng
+để tiếp đất, Serelyn cũng tạo bụi như Asura. Phím C phát animation `attack` trên
+mặt đất hoặc `jump_attack` khi đang ở trên không; khi animation kết thúc, Serelyn
+bắn `characters/serelyn_arrow.tscn` theo hướng đang nhìn. Tên bay ngang, mang đèn
+xanh lá, quét va chạm với địa hình và enemy. Khi tung chiêu, Serelyn chọn enemy
+gần nhất trong camera và cùng phía với hướng nhìn để ngắm tên; góc bắn lên được
+giới hạn trong 40 độ, còn góc bắn xuống vẫn giới hạn trong 15 độ. Với mục tiêu
+cao hơn tối đa 15 độ, animation `attack_high` được dùng; mục tiêu cao hơn nữa
+dùng `attack_high2`. Mũi tên được sinh cao hơn để khớp với tay và dây cung trong
+hai animation này. Nếu enemy ở thấp hơn, animation `attack_low` được dùng và
+mũi tên được sinh thấp hơn. Mũi tên cũng làm vỡ thùng gỗ `breakable` khi va
+chạm; thùng sắt vẫn chặn mũi tên nhưng không bị phá.
+Khi trúng enemy trong camera, tên tạo cùng
+`effects/hit_effect.tscn` như đòn chém của Asura rồi gọi `die()`. Phím Z bị khóa khi đang hội thoại, tạm dừng
 hoặc game over.
+
+Serelyn dùng chung kỹ năng `wall_double_jump` với Asura. Khi mở bảng menu bằng
+nút hamburger hoặc phím ESC, phần thông tin nhân vật tự đổi theo nhân vật đang
+điều khiển: portrait, tên, class và mô tả đòn đánh của Serelyn được hiển thị
+giống trang thông tin của Asura.
+
+`level_6.tscn` dùng `platforms/hanging_steel_crate.tscn` cho node
+`HangingSteelCrate`.
+Gốc scene là điểm neo trên trần; `rope_length` đặt khoảng cách từ neo đến mép
+trên của hộp. Dây nằm trên collision layer 4 để raycast của tên nhận được,
+phát tín hiệu khi trúng tên; scene cắt dây rồi bỏ trạng thái `suspended` của
+hộp sắt, cho hộp rơi và tiếp tục đẩy được sau khi chạm sàn.
 
 ### Save File
 
@@ -451,6 +483,7 @@ New gameplay sprites must lower their `modulate` in line with the table above; o
 | `items/coin.tscn` | 0 | 2 |
 | `platforms/pushable_steel_crate.tscn` | 1 | 1 |
 | `platforms/pushable_steel_crate.tscn` `FireSensor` | 0 | 1 |
+| `platforms/hanging_steel_crate.tscn` `Rope` | 4 | 0 |
 | `platforms/pushable_wooden_crate.tscn` | 1 + 3 (bật lúc chạy) | 1 |
 
 Layer meanings:
@@ -460,6 +493,7 @@ Layer meanings:
 | 1 | World / TileMap / Platform / Pushable crate |
 | 2 | Player |
 | 3 | Enemies và vật chém vỡ được (`AttackHitbox` chỉ mask lớp này) |
+| 4 | Dây có thể bị tên của Serelyn bắn đứt |
 
 Conventions:
 

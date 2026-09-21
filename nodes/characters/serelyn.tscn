@@ -1,11 +1,61 @@
 [gd_scene format=3 uid="uid://c1iep1balm26c"]
 
 [ext_resource type="Script" uid="uid://qdl2441g107o" path="res://scripts/actors/serelyn_controller.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://duev1y7w4tu2n" path="res://assets/sprites/serelyn/Serelyn-attack.png" id="2_gnoaf"]
 [ext_resource type="Texture2D" uid="uid://cyrf1ku2imlx6" path="res://assets/sprites/serelyn/Serelyn-idle.png" id="2_idle"]
 [ext_resource type="FontFile" uid="uid://dm58qjkkxqjox" path="res://assets/fonts/PixelOperator8-Bold.ttf" id="3_font"]
 [ext_resource type="Texture2D" uid="uid://cp23nwwu6diuk" path="res://assets/sprites/serelyn/Serelyn-jump.png" id="3_w1owa"]
+[ext_resource type="Texture2D" uid="uid://ckrjp75d7rcv6" path="res://assets/sprites/serelyn/Serelyn-jump-attack.png" id="4_m1rsf"]
 [ext_resource type="Texture2D" uid="uid://cj00ht47kjqv" path="res://assets/sprites/serelyn/Serelyn-run.png" id="4_run"]
 [ext_resource type="Texture2D" uid="uid://cf3x8ht5y5hqd" path="res://assets/sprites/serelyn/Serelyn-slide.png" id="5_o18wq"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s2pmx"]
+atlas = ExtResource("2_gnoaf")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q6bqh"]
+atlas = ExtResource("2_gnoaf")
+region = Rect2(96, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xa3sf"]
+atlas = ExtResource("2_gnoaf")
+region = Rect2(192, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_attack_high_0"]
+atlas = ExtResource("2_gnoaf")
+region = Rect2(288, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_attack_high_1"]
+atlas = ExtResource("2_gnoaf")
+region = Rect2(384, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_attack_high_2"]
+atlas = ExtResource("2_gnoaf")
+region = Rect2(480, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lw8y7"]
+atlas = ExtResource("2_gnoaf")
+region = Rect2(0, 96, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0q05b"]
+atlas = ExtResource("2_gnoaf")
+region = Rect2(96, 96, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4rh0k"]
+atlas = ExtResource("2_gnoaf")
+region = Rect2(192, 96, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jdyjg"]
+atlas = ExtResource("2_gnoaf")
+region = Rect2(576, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_smm4c"]
+atlas = ExtResource("2_gnoaf")
+region = Rect2(672, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jiib1"]
+atlas = ExtResource("2_gnoaf")
+region = Rect2(768, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_idle_0"]
 atlas = ExtResource("2_idle")
@@ -26,6 +76,18 @@ region = Rect2(288, 0, 96, 96)
 [sub_resource type="AtlasTexture" id="AtlasTexture_idle_4"]
 atlas = ExtResource("2_idle")
 region = Rect2(384, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_codfd"]
+atlas = ExtResource("4_m1rsf")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_51nij"]
+atlas = ExtResource("4_m1rsf")
+region = Rect2(96, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_21jmk"]
+atlas = ExtResource("4_m1rsf")
+region = Rect2(192, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_o18wq"]
 atlas = ExtResource("3_w1owa")
@@ -83,6 +145,62 @@ region = Rect2(384, 0, 96, 96)
 animations = [{
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_s2pmx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_q6bqh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xa3sf")
+}],
+"loop": 0,
+"name": &"attack",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_attack_high_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_attack_high_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_attack_high_2")
+}],
+"loop": 0,
+"name": &"attack_high",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lw8y7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0q05b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4rh0k")
+}],
+"loop": 0,
+"name": &"attack_high2",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jdyjg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_smm4c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jiib1")
+}],
+"loop": 0,
+"name": &"attack_low",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_idle_0")
 }, {
 "duration": 1.0,
@@ -100,6 +218,20 @@ animations = [{
 "loop": 1,
 "name": &"idle",
 "speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_codfd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_51nij")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_21jmk")
+}],
+"loop": 0,
+"name": &"jump_attack",
+"speed": 12.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -190,7 +322,7 @@ script = ExtResource("1_script")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=625656299]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_serelyn")
-animation = &"slide"
+animation = &"attack_high2"
 autoplay = "idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=782152036]
@@ -212,7 +344,7 @@ offset_bottom = -61.0
 theme_override_colors/font_color = Color(1, 0.9, 0.25, 1)
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 16
-text = "E - Trò chuyện"
+text = "E - Talk"
 horizontal_alignment = 1
 
 [node name="DialogueLayer" type="CanvasLayer" parent="." unique_id=1176208226]
@@ -269,5 +401,5 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.72, 0.7, 0.76, 1)
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 14
-text = "E - Tiếp tục"
+text = "E - Continue"
 horizontal_alignment = 2

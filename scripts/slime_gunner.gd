@@ -100,7 +100,7 @@ func _physics_process(delta: float) -> void:
 	if player != null:
 		_face_towards(player.global_position.x)
 
-	if not is_instance_valid(_target):
+	if not is_instance_valid(_target) or not _target.is_in_group(&"player"):
 		_target = null
 		return
 
@@ -127,7 +127,8 @@ func _fire() -> void:
 	# animation_finished: tín hiệu đó đang có sẵn một handler trả sprite về "idle",
 	# await chung một chỗ thì thứ tự chạy phụ thuộc thứ tự kết nối.
 	await get_tree().create_timer(_attack_animation_length() / animated_sprite.speed_scale, false).timeout
-	if is_dead or not is_inside_tree() or not is_instance_valid(_target):
+	if is_dead or not is_inside_tree() or not is_instance_valid(_target) \
+			or not _target.is_in_group(&"player"):
 		_is_firing = false
 		return
 
@@ -193,10 +194,9 @@ func _solve_launch_velocity(target: Vector2) -> Vector2:
 	return Vector2(cos(angle) * direction, -sin(angle)) * speed
 
 
-## Player là global group nên tra một lần rồi giữ lại; chỉ tìm lại khi node cũ
-## đã bị xoá (chết và hồi sinh ở save point).
+## Tìm lại sau khi biến hình, vì nhân vật cũ vẫn tồn tại nhưng rời nhóm player.
 func _find_player() -> Node2D:
-	if not is_instance_valid(_player):
+	if not is_instance_valid(_player) or not _player.is_in_group(&"player"):
 		_player = get_tree().get_first_node_in_group(&"player") as Node2D
 	return _player
 

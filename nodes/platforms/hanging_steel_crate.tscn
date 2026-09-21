@@ -1,0 +1,33 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/hanging_steel_crate.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/cuttable_rope.gd" id="2_rope_script"]
+[ext_resource type="PackedScene" path="res://nodes/platforms/pushable_steel_crate.tscn" id="3_crate"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_rope"]
+size = Vector2(4, 96)
+
+[node name="HangingSteelCrate" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Anchor" type="Polygon2D" parent="."]
+color = Color(0.37, 0.4, 0.44, 1)
+polygon = PackedVector2Array(-6, -4, 6, -4, 6, 3, -6, 3)
+
+[node name="Rope" type="StaticBody2D" parent="."]
+collision_layer = 8
+collision_mask = 0
+script = ExtResource("2_rope_script")
+
+[node name="Line2D" type="Line2D" parent="Rope"]
+points = PackedVector2Array(0, 0, 0, 96)
+width = 2.0
+default_color = Color(0.48, 0.29, 0.14, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Rope"]
+position = Vector2(0, 48)
+shape = SubResource("RectangleShape2D_rope")
+
+[node name="SteelCrate" parent="." instance=ExtResource("3_crate")]
+position = Vector2(0, 112)
+suspended = true
