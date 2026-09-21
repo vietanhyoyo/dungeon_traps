@@ -342,10 +342,11 @@ cũ được ẩn và tắt va chạm. Mỗi lần chuyển có vòng sáng màu
 khi hiệu ứng kết thúc. `ui/character_hud.tscn` hiển thị hai ô vuông cắt phần đầu
 từ ảnh idle và làm sáng viền ô của nhân vật đang điều khiển ở góc màn hình.
 Serelyn là `CharacterBody2D` với `AnimatedSprite2D` chứa idle 5 khung, run 6 khung,
-`jump_up` và `jump_down`; khi được điều khiển, nhân vật nhận di chuyển trái/phải
+`jump_up`, `jump_down`, `hust` và `death`; khi được điều khiển, nhân vật nhận di chuyển trái/phải
 và nhảy bằng phím `jump`. Phím `slide` lướt theo hướng đang nhìn trong 0,4 giây
-trên mặt đất; trong lúc lướt, capsule va
-chạm được hạ thấp, animation `slide` và hiệu ứng bụi được phát. Khi rơi đủ nhanh
+trên mặt đất hoặc trên không; lần lướt trên không chỉ dùng được một lần mỗi lần
+rời mặt đất. Trong lúc lướt, capsule va chạm được hạ thấp, animation `slide`
+hoặc `slide-air` được phát và hiệu ứng bụi được tạo khi lướt trên mặt đất. Khi rơi đủ nhanh
 để tiếp đất, Serelyn cũng tạo bụi như Asura. Phím C phát animation `attack` trên
 mặt đất hoặc `jump_attack` khi đang ở trên không; khi animation kết thúc, Serelyn
 bắn `characters/serelyn_arrow.tscn` theo hướng đang nhìn. Tên bay ngang, mang đèn
@@ -360,6 +361,12 @@ chạm; thùng sắt vẫn chặn mũi tên nhưng không bị phá.
 Khi trúng enemy trong camera, tên tạo cùng
 `effects/hit_effect.tscn` như đòn chém của Asura rồi gọi `die()`. Phím Z bị khóa khi đang hội thoại, tạm dừng
 hoặc game over.
+
+Khi bị trúng đòn, Serelyn khóa điều khiển trong 0,4 giây và giữ animation `hust`
+trước khi GameState chuyển sang trạng thái chết. Khi chết, Serelyn phát animation
+`death`, bật lên rồi rơi theo trọng lực như Asura; collision layer/mask và
+`CollisionShape2D` được tắt để không tương tác
+thêm trong lúc game-over.
 
 Serelyn dùng chung kỹ năng `wall_double_jump` với Asura. Khi mở bảng menu bằng
 nút hamburger hoặc phím ESC, phần thông tin nhân vật tự đổi theo nhân vật đang

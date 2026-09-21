@@ -9,6 +9,8 @@ const SLIDE_SPEED := 240.0
 const SLIDE_DURATION := 0.4
 const SLIDE_COLLISION_HEIGHT := 34.0
 const WALL_JUMP_VELOCITY := JUMP_VELOCITY
+const DEATH_JUMP_VELOCITY := -420.0
+const HURT_DURATION := 0.4
 const WALL_DUST_REACH := 17.0
 const WALL_DUST_HEIGHT := 4.0
 const LANDING_DUST_MIN_SPEED := 180.0
@@ -48,6 +50,7 @@ var is_controlled := false
 var is_dead := false
 var is_hurt := false
 var is_sliding := false
+var air_slide_used := false
 var is_attacking := false
 var attack_animation: StringName = &"attack"
 var slide_direction := 1.0
@@ -77,13 +80,20 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	if is_dead or get_tree().paused:
+	if is_dead:
+		velocity += get_gravity() * delta
+		position += velocity * delta
+		return
+	if get_tree().paused:
+		return
+	if is_hurt:
 		return
 
 	# Giống Asura: mỗi lần chạm đất hoặc bám sang một mặt tường mới sẽ hồi lại
 	# một cú nhảy tường. Kỹ năng dùng chung được lưu trong GameState.
 	if is_on_floor():
 		wall_jump_used = false
+		air_slide_used = false
 	var touching_wall := is_on_wall() and not is_on_floor()
 	if touching_wall and not was_on_wall:
 		wall_jump_used = false
@@ -137,7 +147,9 @@ func _physics_process(delta: float) -> void:
 		was_on_floor = is_on_floor()
 		return
 
-	if is_controlled and Input.is_action_just_pressed("slide") and is_on_floor():
+	var can_slide := is_on_floor() or not air_slide_used
+	if is_controlled and not is_attacking \
+			and Input.is_action_just_pressed("slide") and can_slide:
 		start_slide()
 		return
 
@@ -295,13 +307,16 @@ func start_slide() -> void:
 	if not is_controlled:
 		return
 
+	var started_in_air := not is_on_floor()
+	if started_in_air:
+		air_slide_used = true
 	is_sliding = true
 	slide_time_left = SLIDE_DURATION
 	slide_direction = -1.0 if sprite.flip_h else 1.0
 	velocity = Vector2(slide_direction * SLIDE_SPEED, 0.0)
 	set_slide_collision(true)
-	sprite.play("slide")
-	if is_on_floor():
+	sprite.play(&"slide-air" if started_in_air else &"slide")
+	if not started_in_air:
 		spawn_landing_dust()
 
 
@@ -345,8 +360,18 @@ func spawn_landing_dust() -> void:
 func take_hit() -> void:
 	if is_hurt or is_dead:
 		return
+
+	is_attacking = false
+	is_sliding = false
+	set_slide_collision(false)
 	is_hurt = true
 	set_controlled(false)
+	velocity = Vector2.ZERO
+
+	if sprite.sprite_frames.has_animation(&"hust"):
+		sprite.play(&"hust")
+
+	await get_tree().create_timer(HURT_DURATION).timeout
 
 
 func die() -> void:
@@ -354,8 +379,12 @@ func die() -> void:
 		return
 	is_dead = true
 	set_controlled(false)
+	velocity = Vector2(0.0, DEATH_JUMP_VELOCITY)
 	collision_layer = 0
 	collision_mask = 0
+	body_collision.set_deferred("disabled", true)
+	if sprite.sprite_frames.has_animation(&"death"):
+		sprite.play(&"death")
 	var camera := get_node_or_null("Camera2D") as Camera2D
 	if camera:
 		camera.reparent(get_tree().current_scene, true)
