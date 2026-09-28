@@ -38,9 +38,6 @@ const ATTACK_RELEASE_FRAME := 4
 ## Giới hạn co giãn animation "attack": windup quá ngắn thì cả động tác rụt gai
 ## chỉ còn là một cái giật, quá dài thì slime đứng đơ giữa chừng.
 const ATTACK_SPEED_SCALE_RANGE := Vector2(0.5, 4.0)
-## Đung đưa nhàn rỗi, chỉ để con quái không đứng chết cứng trên trần.
-const SWAY_ANGLE := 0.055
-const SWAY_DURATION := 1.9
 
 @export_group("Phóng gai")
 ## Số gai trong một vòng, chia đều 360 độ.
@@ -87,13 +84,7 @@ var _cooldown := 0.0
 var _is_firing := false
 ## Hướng vòng gai, chốt lúc bắt đầu động tác và giữ tới khung bung gai.
 var _pending_ring_angle := 0.0
-## Tween đung đưa nhàn rỗi. Giữ lại để lúc chết còn dừng được: animation chết vẽ
-## cảnh cái thân rụng khỏi trần, mà pivot thì xoay quanh đúng chỗ dính trần đó -
-## để nó đung đưa tiếp thì giọt nước đang rơi lại lắc lư theo một cái cuống
-## không còn nữa.
-var _sway_tween: Tween = null
 
-@onready var pivot: Node2D = $Pivot
 @onready var animated_sprite: AnimatedSprite2D = $Pivot/AnimatedSprite2D
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var detection_area: Area2D = $DetectionArea
@@ -116,7 +107,6 @@ func _ready() -> void:
 	detection_area.body_exited.connect(_on_detection_body_exited)
 	animated_sprite.frame_changed.connect(_on_frame_changed)
 	animated_sprite.animation_finished.connect(_on_animation_finished)
-	_start_sway()
 
 
 func _physics_process(delta: float) -> void:
@@ -208,16 +198,6 @@ func _spawn_ring(base_angle: float) -> void:
 		spike.launch(origin + direction * SPAWN_RADIUS, direction * thorn_speed)
 
 
-## Đung đưa qua lại quanh chỗ dính trần. Chỉ là hiệu ứng nhìn - hitbox nằm ở gốc
-## node nên không nhúc nhích theo, biên độ có 0.055 rad thì lệch chưa tới 2px.
-func _start_sway() -> void:
-	_sway_tween = create_tween().set_loops()
-	_sway_tween.tween_property(pivot, "rotation", SWAY_ANGLE, SWAY_DURATION) \
-		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	_sway_tween.tween_property(pivot, "rotation", -SWAY_ANGLE, SWAY_DURATION) \
-		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-
-
 func _apply_detection_radius() -> void:
 	if detection_shape == null:
 		return
@@ -259,9 +239,6 @@ func die() -> void:
 	# _on_frame_changed kịp nhả ra một vòng gai từ cái xác.
 	animated_sprite.speed_scale = 1.0
 	animated_sprite.pause()
-	# Thân sắp rụng khỏi trần nên không còn gì để đung đưa quanh cái cuống nữa.
-	if _sway_tween and _sway_tween.is_valid():
-		_sway_tween.kill()
 
 	await _play_hit_flash()
 

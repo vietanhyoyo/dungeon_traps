@@ -1,6 +1,7 @@
 extends CharacterBody2D
 
 const SPEED = 180.0
+const TRANSFORM_MOMENTUM_DECELERATION := 900.0
 const JUMP_VELOCITY = -320.0
 const SLIDE_SPEED = 240.0
 const SLIDE_DURATION = 0.4
@@ -74,6 +75,7 @@ var is_hurt = false
 var is_dead = false
 var movement_locked = false
 var is_controlled := true
+var _preserving_transform_momentum := false
 var use_attack_1 = true
 var was_on_floor = false
 var last_fall_speed = 0.0
@@ -208,8 +210,9 @@ func _physics_process(delta: float) -> void:
 		# Jump attack dùng cùng điều khiển ngang như lúc nhảy thường: giữ hướng
 		# để tiếp tục bay, thả hướng thì giảm vận tốc ngang về 0.
 		if is_jump_attack():
-			update_horizontal_movement()
+			update_horizontal_movement(delta)
 		else:
+			_preserving_transform_momentum = false
 			velocity.x = 0
 		running_sound.stop()
 		update_attack_hitbox()
@@ -230,7 +233,7 @@ func _physics_process(delta: float) -> void:
 		elif can_wall_jump():
 			start_wall_jump()
 
-	var direction := update_horizontal_movement()
+	var direction := update_horizontal_movement(delta)
 
 	move_and_slide()
 
@@ -247,8 +250,11 @@ func _physics_process(delta: float) -> void:
 	was_on_floor = is_on_floor()
 
 	# Play animations
+	var animation_direction := direction
+	if animation_direction == 0.0 and _preserving_transform_momentum:
+		animation_direction = signf(velocity.x)
 	if is_on_floor():
-		if direction == 0:
+		if animation_direction == 0.0:
 			animated_sprite.play("idle")
 			running_sound.stop()
 		else:
@@ -264,7 +270,7 @@ func _physics_process(delta: float) -> void:
 
 
 ## Điều khiển ngang dùng chung cho trạng thái di chuyển và jump attack.
-func update_horizontal_movement() -> float:
+func update_horizontal_movement(delta: float) -> float:
 	var direction := Input.get_axis("move_left", "move_right")
 
 	if direction > 0:
@@ -274,18 +280,25 @@ func update_horizontal_movement() -> float:
 
 	if direction:
 		velocity.x = direction * SPEED
+		_preserving_transform_momentum = false
+	elif _preserving_transform_momentum:
+		velocity.x = move_toward(velocity.x, 0.0, TRANSFORM_MOMENTUM_DECELERATION * delta)
+		if is_zero_approx(velocity.x):
+			_preserving_transform_momentum = false
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 
 	return direction
 
 
-func set_controlled(value: bool) -> void:
+func set_controlled(value: bool, preserve_momentum := false) -> void:
 	is_controlled = value
 	if value:
+		_preserving_transform_momentum = preserve_momentum
 		add_to_group(&"player")
 		return
 
+	_preserving_transform_momentum = false
 	remove_from_group(&"player")
 	running_sound.stop()
 	slide_sound.stop()
@@ -400,6 +413,7 @@ func spawn_wall_dust(wall_normal: Vector2) -> void:
 
 
 func start_slide() -> void:
+	_preserving_transform_momentum = false
 	var started_in_air := not is_on_floor()
 	if started_in_air:
 		air_slide_used = true

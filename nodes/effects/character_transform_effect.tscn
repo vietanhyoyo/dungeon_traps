@@ -1,7 +1,15 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/character_transform_effect.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://jbgo5ybpo85i" path="res://assets/sprites/effects/character_transform.png" id="2_sprite"]
 
 [node name="CharacterTransformEffect" type="Node2D"]
 z_index = 20
 script = ExtResource("1_script")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("2_sprite")
+hframes = 4
+vframes = 2

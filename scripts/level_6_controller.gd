@@ -73,11 +73,10 @@ func _switch_character() -> void:
 	controlling_serelyn = not controlling_serelyn
 	if controlling_serelyn:
 		serelyn.sprite.flip_h = facing_left
-		serelyn.set_controlled(true)
+		serelyn.set_controlled(true, true)
 	else:
 		asura.animated_sprite.flip_h = facing_left
-		asura.set_controlled(true)
-	camera.reset_smoothing()
+		asura.set_controlled(true, true)
 	character_hud.set_state(controlling_serelyn, true)
 
 	var effect: CharacterTransformEffect = TransformEffect.instantiate()

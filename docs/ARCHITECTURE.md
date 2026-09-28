@@ -120,18 +120,12 @@ Sounds actually referenced by scenes: `running.mp3` and `sword_attack.mp3` (Asur
 
 ## Main Flows
 
-### Player Movement
+### Player Characters
 
-`asura.tscn` is a `CharacterBody2D` in the `player` group, on layer 2 with mask 1, driven by `scripts/actors/asura_controller.gd`.
-
-The script handles gravity, jumping, left/right movement, ground/air sliding, sprite flipping, attacks (alternating `attack`/`attack2` on the ground, `jump_attack` — or `jump_attack2` once the spin skill is unlocked — while airborne), the idle/run/jump_up/jump_down/slide/death animations, landing dust when fall speed exceeds `LANDING_DUST_MIN_SPEED`, and `die()`. Air slide is limited to once per airborne period and resets when the player touches the floor.
-
-Things to be aware of:
-
-- During an attack, `velocity.x` is forced to 0.
-- On death the script does not use `move_and_slide()`; it applies gravity and adds the result straight to `position`, producing the pop-up-then-fall effect.
-- `die()` clears the collision layer/mask and disables the `CollisionShape2D`.
-- `die()` is the contract `GameState` relies on — a player character must implement it.
+Character scenes own their movement, combat, animation and death behavior. The
+character-specific details are documented separately: [Asura](characters/asura.md)
+and [Serelyn](characters/serelyn.md). Both player characters implement `die()`,
+the contract used by `GameState` during the shared game-over flow.
 
 ### Game Over
 
@@ -295,89 +289,23 @@ Kỹ năng được `unlock_skill()` ngay lúc rương mở chứ không phải 
 
 | Skill | Rương trao | Hiệu ứng |
 | --- | --- | --- |
-| `spin_jump_attack` | `level_3` | Đòn chém trên không đổi sang cú lộn vòng: animation `jump_attack2` và vùng sát thương rộng hơn. |
+| `spin_jump_attack` | `level_3` | Chi tiết hiệu ứng trong [tài liệu Asura](characters/asura.md). |
 | `wall_double_jump` | `level_4` | Đang trên không và chạm tường thì nhấn `jump` (mũi tên lên) được nhảy thêm một lần. |
 
-`get_jump_attack_anim()` là chỗ duy nhất quyết định đòn trên không dùng animation
-nào; `get_attack_shape()` đã tự map `jump_attack2` sang `SpinShape` nên chỉ cần
-đổi tên animation là cả hình lẫn tầm đánh đổi theo. Không có kỹ năng thì đòn cũ
-`jump_attack` (3 khung, `JumpShape` 52x78) giữ nguyên; có kỹ năng thì
-`jump_attack2` (4 khung 110x110, nhân vật lộn trọn một vòng) dùng `SpinShape`
-84x96 đặt ở `(14, -3)` — vươn ra sau lưng chứ không chỉ về phía trước, đúng với
-đường kiếm quét vòng tròn trong ảnh.
-
-Cú lộn vòng chỉ dùng được **một lần mỗi lần rời mặt đất**: `spin_attack_used`
-được đặt lúc bấm và chỉ hồi lại khi `is_on_floor()`, cùng chỗ hồi `air_slide_used`
-và `wall_jump_used`. Bấm tiếp giữa không trung thì không ra đòn nào cả — kể cả
-`jump_attack` cũ, vì có kỹ năng rồi thì `get_jump_attack_anim()` không còn trả về
-animation đó nữa. Nhảy tường không hồi lại lượt lộn vòng, phải chạm đất mới có.
-Chưa mở rương thì `jump_attack` cũ vẫn bấm liên tiếp thoải mái như trước.
-
-`jump_attack2` chạy ở `speed = 16.0` (0.25s trọn vòng lộn), nhanh hơn hẳn
-`jump_attack` cũ ở 10.0. Không phải chỉ để nhìn cho đã: `velocity.x` bị ép về 0
-suốt đòn đánh, nên animation dài bao nhiêu là nhân vật treo lơ lửng bấy nhiêu —
-cú lộn phải kết thúc gọn thì mới không cảm giác khựng giữa không trung.
-
-`asura_controller.gd` và `serelyn_controller.gd` chỉ cho phép nhảy tường khi
-`GameState.has_skill(Skills.WALL_DOUBLE_JUMP)`. Mỗi lần bám vào một mặt tường mới
-(hoặc chạm đất) sẽ hồi lại một cú nhảy tường, nên cả hai nhân vật có thể leo nối
-tiếp qua nhiều tường nhưng không thể bay vô hạn trên cùng một mặt tường.
-
-`WALL_JUMP_VELOCITY = JUMP_VELOCITY`: cú nhảy tường gán đè `velocity.y` chứ không cộng dồn, nên bật cao đúng bằng cú nhảy từ mặt đất. Lúc đạp tường, `spawn_wall_dust()` thả một `effects/landing_dust.tscn` ngay trên mặt tường (lệch `WALL_DUST_REACH` sang phía tường, `flip_h` để luồng bụi thổi ra xa tường).
+Chi tiết cách từng nhân vật triển khai đòn đánh và kỹ năng nằm trong
+[tài liệu Asura](characters/asura.md) và [tài liệu Serelyn](characters/serelyn.md).
 
 Bảng nhân vật trong `pause_menu.tscn` có sẵn hàng `SkillList/SpinJumpAttack` và `SkillList/WallJump` nhưng đều để `visible = false`; `_pause()` bật từng hàng lên theo `GameState.has_skill()`.
 
-### Serelyn / Party
+### Level 6 Recruitment And Character Switching
 
-`level_6.tscn` đặt Serelyn làm NPC gần điểm xuất phát và chứa `DialogueLayer`;
-scene Serelyn chỉ giữ logic hội thoại. Khi Asura đến gần, nhấn E để mở ba câu;
-game tạm dừng trong lúc đọc. Nhấn Esc để ẩn khung và tiếp tục chơi; nhấn E gần
-Serelyn để mở lại từ câu đang đọc. Sau câu cuối,
-`GameState.recruit_party_member("serelyn")` ghi thành viên vào `user://save_game.json`.
-Khi vào level 6 lần sau, trạng thái này được đọc lại, Serelyn không hiện như NPC
-và không thể mở hội thoại lần nữa.
+`level_6.tscn` đặt Serelyn làm NPC gần điểm xuất phát và chứa `DialogueLayer`.
+`scripts/level_6_controller.gd` quản lý việc tuyển thành viên và chuyển nhân
+vật bằng Z; camera, `PointLight2D` và `ui/character_hud.tscn` theo nhân vật đang
+được điều khiển. Chi tiết hội thoại và hành vi của từng nhân vật nằm trong
+[tài liệu Serelyn](characters/serelyn.md) và [tài liệu Asura](characters/asura.md).
 
-`scripts/level_6_controller.gd` chỉ nhận phím Z sau hội thoại. Khi chuyển, nhân
-vật được chọn xuất hiện ngay tại chỗ nhân vật đang chơi, căn theo đáy capsule
-để không lọt vào sàn. Camera và `PointLight2D` đi theo nhân vật mới; nhân vật
-cũ được ẩn và tắt va chạm. Mỗi lần chuyển có vòng sáng màu riêng và khóa Z đến
-khi hiệu ứng kết thúc. `ui/character_hud.tscn` hiển thị hai ô vuông cắt phần đầu
-từ ảnh idle và làm sáng viền ô của nhân vật đang điều khiển ở góc màn hình.
-Serelyn là `CharacterBody2D` với `AnimatedSprite2D` chứa idle 5 khung, run 6 khung,
-`jump_up`, `jump_down`, `hust` và `death`; khi được điều khiển, nhân vật nhận di chuyển trái/phải
-và nhảy bằng phím `jump`. Phím `slide` lướt theo hướng đang nhìn trong 0,4 giây
-trên mặt đất hoặc trên không; lần lướt trên không chỉ dùng được một lần mỗi lần
-rời mặt đất. Trong lúc lướt, capsule va chạm được hạ thấp, animation `slide`
-hoặc `slide-air` được phát và hiệu ứng bụi được tạo khi lướt trên mặt đất. Khi rơi đủ nhanh
-để tiếp đất, Serelyn cũng tạo bụi như Asura. Phím C phát animation `attack` trên
-mặt đất hoặc `jump_attack` khi đang ở trên không; khi animation kết thúc, Serelyn
-bắn `characters/serelyn_arrow.tscn` theo hướng đang nhìn. Tên bay ngang, mang đèn
-xanh lá, quét va chạm với địa hình và enemy. Khi tung chiêu, Serelyn chọn enemy
-gần nhất trong camera, cùng phía với hướng nhìn, nằm trong tầm bắn và có đường
-bay không bị địa hình hay vật khác chặn. Tia ngắm thử nhiều điểm trên hitbox;
-SlimeGunner có thêm vùng trúng tên ở phần thân trên để bắn được khi phần đó lộ
-ra khỏi mép sàn. Serelyn kiểm tra từ vị trí sinh tên tương ứng với animation
-rồi giữ mục tiêu đó đến lúc bắn. Góc bắn lên được
-giới hạn trong 40 độ, còn góc bắn xuống vẫn giới hạn trong 15 độ. Với mục tiêu
-cao hơn tối đa 15 độ, animation `attack_high` được dùng; mục tiêu cao hơn nữa
-dùng `attack_high2`. Mũi tên được sinh cao hơn để khớp với tay và dây cung trong
-hai animation này. Nếu enemy ở thấp hơn, animation `attack_low` được dùng và
-mũi tên được sinh thấp hơn. Mũi tên cũng làm vỡ thùng gỗ `breakable` khi va
-chạm; thùng sắt vẫn chặn mũi tên nhưng không bị phá.
-Khi trúng enemy trong camera, tên tạo cùng
-`effects/hit_effect.tscn` như đòn chém của Asura rồi gọi `die()`. Phím Z bị khóa khi đang hội thoại, tạm dừng
-hoặc game over.
-
-Khi bị trúng đòn, Serelyn khóa điều khiển trong 0,4 giây và giữ animation `hust`
-trước khi GameState chuyển sang trạng thái chết. Khi chết, Serelyn phát animation
-`death`, bật lên rồi rơi theo trọng lực như Asura; collision layer/mask và
-`CollisionShape2D` được tắt để không tương tác
-thêm trong lúc game-over.
-
-Serelyn dùng chung kỹ năng `wall_double_jump` với Asura. Khi mở bảng menu bằng
-nút hamburger hoặc phím ESC, phần thông tin nhân vật tự đổi theo nhân vật đang
-điều khiển: portrait, tên, class và mô tả đòn đánh của Serelyn được hiển thị
-giống trang thông tin của Asura.
+### Hanging Steel Crate
 
 `level_6.tscn` dùng `platforms/hanging_steel_crate.tscn` cho node
 `HangingSteelCrate`.

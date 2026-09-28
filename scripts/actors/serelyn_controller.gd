@@ -4,6 +4,7 @@ signal conversation_finished
 
 const MEMBER_ID := "serelyn"
 const SPEED := 180.0
+const TRANSFORM_MOMENTUM_DECELERATION := 900.0
 const JUMP_VELOCITY := -320.0
 const SLIDE_SPEED := 240.0
 const SLIDE_DURATION := 0.4
@@ -25,7 +26,7 @@ const HIGH_ARROW_SPAWN_OFFSET := Vector2(30.0, -2.0)
 # attack_low kéo cung thấp hơn đòn thường, nên điểm sinh tên cũng hạ xuống theo.
 const LOW_ARROW_SPAWN_OFFSET := Vector2(30.0, 19.0)
 const HIGH2_ARROW_ANGLE_THRESHOLD := deg_to_rad(15.0)
-const MAX_UPWARD_ARROW_ANGLE := deg_to_rad(40.0)
+const MAX_UPWARD_ARROW_ANGLE := deg_to_rad(60.0)
 const MAX_DOWNWARD_ARROW_ANGLE := deg_to_rad(15.0)
 const TALK_LINES := [
 	["Asura", "Hello, Serelyn!"],
@@ -34,6 +35,10 @@ const TALK_LINES := [
 ]
 
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
+@onready var running_sound: AudioStreamPlayer2D = $RunningSound
+@onready var bow_shot_sound: AudioStreamPlayer2D = $BowShotSound
+@onready var ground_slide_sound: AudioStreamPlayer2D = $GroundSlideSound
+@onready var air_slide_sound: AudioStreamPlayer2D = $AirSlideSound
 @onready var talk_area: Area2D = $TalkArea
 @onready var prompt: Label = $Prompt
 @export_node_path("CanvasLayer") var dialogue_layer_path: NodePath
@@ -49,6 +54,7 @@ var dialogue_open := false
 var conversation_completed := false
 var line_index := 0
 var is_controlled := false
+var _preserving_transform_momentum := false
 var is_dead := false
 var is_hurt := false
 var is_sliding := false
@@ -87,12 +93,17 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	if is_dead:
+		running_sound.stop()
 		velocity += get_gravity() * delta
 		position += velocity * delta
 		return
 	if get_tree().paused:
+		running_sound.stop()
+		ground_slide_sound.stop()
+		air_slide_sound.stop()
 		return
 	if is_hurt:
+		running_sound.stop()
 		return
 
 	# Giống Asura: mỗi lần chạm đất hoặc bám sang một mặt tường mới sẽ hồi lại
@@ -106,11 +117,13 @@ func _physics_process(delta: float) -> void:
 	was_on_wall = touching_wall
 
 	if is_sliding:
+		_preserving_transform_momentum = false
 		var cancel_slide := Input.is_action_just_pressed("move_left") or \
 			Input.is_action_just_pressed("move_right")
 		if cancel_slide:
 			stop_slide()
 		else:
+			running_sound.stop()
 			slide_time_left -= delta
 			velocity = Vector2(slide_direction * SLIDE_SPEED, 0.0)
 			move_and_slide()
@@ -148,6 +161,8 @@ func _physics_process(delta: float) -> void:
 		sprite.play(attack_animation)
 
 	if is_attacking:
+		_preserving_transform_momentum = false
+		running_sound.stop()
 		velocity.x = 0.0
 		move_and_slide()
 		if not was_on_floor and is_on_floor() and last_fall_speed > LANDING_DUST_MIN_SPEED:
@@ -168,7 +183,15 @@ func _physics_process(delta: float) -> void:
 		elif _can_wall_jump():
 			_start_wall_jump()
 
-	velocity.x = direction * SPEED
+	if direction != 0.0:
+		velocity.x = direction * SPEED
+		_preserving_transform_momentum = false
+	elif _preserving_transform_momentum:
+		velocity.x = move_toward(velocity.x, 0.0, TRANSFORM_MOMENTUM_DECELERATION * delta)
+		if is_zero_approx(velocity.x):
+			_preserving_transform_momentum = false
+	else:
+		velocity.x = 0.0
 	if direction != 0.0:
 		sprite.flip_h = direction < 0.0
 	move_and_slide()
@@ -180,15 +203,22 @@ func _physics_process(delta: float) -> void:
 		spawn_landing_dust()
 		last_fall_speed = 0.0
 	was_on_floor = is_on_floor()
-	_update_animation(direction)
+	var animation_direction := direction
+	if animation_direction == 0.0 and _preserving_transform_momentum:
+		animation_direction = signf(velocity.x)
+	_update_animation(animation_direction)
+	_sync_running_sound(animation_direction)
 
 
-func set_controlled(value: bool) -> void:
+func set_controlled(value: bool, preserve_momentum := false) -> void:
 	is_controlled = value
 	if value:
+		_preserving_transform_momentum = preserve_momentum
 		add_to_group(&"player")
 	else:
+		_preserving_transform_momentum = false
 		remove_from_group(&"player")
+		running_sound.stop()
 		is_attacking = false
 		_attack_target = null
 		_attack_aim_local = Vector2.ZERO
@@ -212,6 +242,7 @@ func _on_animation_finished() -> void:
 		var arrow: SerelynArrow = ARROW_SCENE.instantiate()
 		get_tree().current_scene.add_child(arrow)
 		arrow.launch(origin, _get_arrow_direction(origin, facing))
+		bow_shot_sound.play()
 	_attack_target = null
 	_attack_aim_local = Vector2.ZERO
 	_update_animation(0.0)
@@ -353,7 +384,11 @@ func _is_inside_camera(target: Node2D) -> bool:
 		return false
 	var view_size := get_viewport_rect().size / camera.zoom.abs()
 	var view_center := camera.get_screen_center_position()
-	return Rect2(view_center - view_size * 0.5, view_size).has_point(target.global_position)
+	var view_rect := Rect2(view_center - view_size * 0.5, view_size)
+	for point in _get_target_points(target):
+		if view_rect.has_point(point):
+			return true
+	return false
 
 
 func _set_running(value: bool) -> void:
@@ -373,14 +408,28 @@ func _update_animation(direction: float) -> void:
 		sprite.play(animation)
 
 
+func _sync_running_sound(direction: float) -> void:
+	if not is_controlled or is_dead or is_hurt or is_sliding or is_attacking \
+			or not is_on_floor() or direction == 0.0:
+		running_sound.stop()
+	elif not running_sound.playing:
+		running_sound.play()
+
+
 func start_slide() -> void:
 	if not is_controlled:
 		return
 
+	_preserving_transform_momentum = false
 	var started_in_air := not is_on_floor()
 	if started_in_air:
 		air_slide_used = true
 	is_sliding = true
+	running_sound.stop()
+	if started_in_air:
+		air_slide_sound.play()
+	else:
+		ground_slide_sound.play()
 	slide_time_left = SLIDE_DURATION
 	slide_direction = -1.0 if sprite.flip_h else 1.0
 	velocity = Vector2(slide_direction * SLIDE_SPEED, 0.0)
@@ -392,6 +441,8 @@ func start_slide() -> void:
 
 func stop_slide() -> void:
 	is_sliding = false
+	ground_slide_sound.stop()
+	air_slide_sound.stop()
 	slide_time_left = 0.0
 	velocity.x = 0.0
 	set_slide_collision(false)
@@ -433,6 +484,9 @@ func take_hit() -> void:
 
 	is_attacking = false
 	is_sliding = false
+	running_sound.stop()
+	ground_slide_sound.stop()
+	air_slide_sound.stop()
 	set_slide_collision(false)
 	is_hurt = true
 	set_controlled(false)
