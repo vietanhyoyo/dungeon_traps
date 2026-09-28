@@ -329,8 +329,10 @@ Bảng nhân vật trong `pause_menu.tscn` có sẵn hàng `SkillList/SpinJumpAt
 
 ### Serelyn / Party
 
-`level_6.tscn` đặt Serelyn làm NPC gần điểm xuất phát. Khi Asura đến gần, nhấn
-E để mở ba câu hội thoại; game tạm dừng trong lúc đọc. Sau câu cuối,
+`level_6.tscn` đặt Serelyn làm NPC gần điểm xuất phát và chứa `DialogueLayer`;
+scene Serelyn chỉ giữ logic hội thoại. Khi Asura đến gần, nhấn E để mở ba câu;
+game tạm dừng trong lúc đọc. Nhấn Esc để ẩn khung và tiếp tục chơi; nhấn E gần
+Serelyn để mở lại từ câu đang đọc. Sau câu cuối,
 `GameState.recruit_party_member("serelyn")` ghi thành viên vào `user://save_game.json`.
 Khi vào level 6 lần sau, trạng thái này được đọc lại, Serelyn không hiện như NPC
 và không thể mở hội thoại lần nữa.
@@ -351,7 +353,11 @@ hoặc `slide-air` được phát và hiệu ứng bụi được tạo khi lư�
 mặt đất hoặc `jump_attack` khi đang ở trên không; khi animation kết thúc, Serelyn
 bắn `characters/serelyn_arrow.tscn` theo hướng đang nhìn. Tên bay ngang, mang đèn
 xanh lá, quét va chạm với địa hình và enemy. Khi tung chiêu, Serelyn chọn enemy
-gần nhất trong camera và cùng phía với hướng nhìn để ngắm tên; góc bắn lên được
+gần nhất trong camera, cùng phía với hướng nhìn, nằm trong tầm bắn và có đường
+bay không bị địa hình hay vật khác chặn. Tia ngắm thử nhiều điểm trên hitbox;
+SlimeGunner có thêm vùng trúng tên ở phần thân trên để bắn được khi phần đó lộ
+ra khỏi mép sàn. Serelyn kiểm tra từ vị trí sinh tên tương ứng với animation
+rồi giữ mục tiêu đó đến lúc bắn. Góc bắn lên được
 giới hạn trong 40 độ, còn góc bắn xuống vẫn giới hạn trong 15 độ. Với mục tiêu
 cao hơn tối đa 15 độ, animation `attack_high` được dùng; mục tiêu cao hơn nữa
 dùng `attack_high2`. Mũi tên được sinh cao hơn để khớp với tay và dây cung trong

@@ -52,12 +52,21 @@ func _ready() -> void:
 func _input(event: InputEvent) -> void:
 	if not event.is_action_pressed("ui_cancel"):
 		return
+	if _has_open_dialogue():
+		return
 
 	get_viewport().set_input_as_handled()
 	if is_paused:
 		_resume()
 	else:
 		_pause()
+
+
+func _has_open_dialogue() -> bool:
+	for actor in get_tree().get_nodes_in_group(&"dialogue_actors"):
+		if actor.get("dialogue_open"):
+			return true
+	return false
 
 
 func _pause() -> void:

@@ -4,6 +4,7 @@ class_name SerelynArrow
 const SPEED := 900.0
 const LIFETIME := 3.0
 const HIT_MASK := 1 | 4 | 8 # Địa hình, enemy, vật phá được và dây cắt được.
+const ARROW_AREA_MASK := 16 # Vùng trúng tên mở rộng của enemy, không ảnh hưởng va chạm thân.
 const ARROW_TIP_OFFSET := 17.0
 const HIT_EFFECT_SCENE := preload("res://nodes/effects/hit_effect.tscn")
 
@@ -31,16 +32,15 @@ func _physics_process(delta: float) -> void:
 
 	var motion := direction * SPEED * delta
 	# Quét hết quãng đường mỗi frame để tên không xuyên qua slime khi bay nhanh.
-	var query := PhysicsRayQueryParameters2D.create(global_position, global_position + motion)
-	query.collision_mask = HIT_MASK
-	var hit := get_world_2d().direct_space_state.intersect_ray(query)
+	var hit := raycast_path(get_world_2d().direct_space_state, global_position, global_position + motion)
 	if not hit.is_empty():
 		global_position = hit["position"]
 		var target := hit["collider"] as Node
-		if target != null and target.is_in_group(&"enemy") and target.has_method("die"):
-			if target is Node2D and _is_inside_camera(target):
+		var enemy := enemy_for_collider(target)
+		if enemy != null:
+			if _is_inside_camera(enemy):
 				_spawn_hit_effect()
-				target.die()
+				enemy.die()
 		elif target != null and target.is_in_group(&"breakable") \
 				and target.has_method("break_apart"):
 			_spawn_hit_effect()
@@ -51,6 +51,39 @@ func _physics_process(delta: float) -> void:
 		return
 
 	global_position += motion
+
+
+static func raycast_path(space: PhysicsDirectSpaceState2D, origin: Vector2, endpoint: Vector2) -> Dictionary:
+	var body_query := PhysicsRayQueryParameters2D.create(origin, endpoint)
+	body_query.collision_mask = HIT_MASK
+	var body_hit := space.intersect_ray(body_query)
+
+	var area_query := PhysicsRayQueryParameters2D.create(origin, endpoint)
+	area_query.collision_mask = ARROW_AREA_MASK
+	area_query.collide_with_bodies = false
+	area_query.collide_with_areas = true
+	var area_hit := space.intersect_ray(area_query)
+
+	if area_hit.is_empty():
+		return body_hit
+	if body_hit.is_empty() or origin.distance_squared_to(area_hit["position"]) \
+			< origin.distance_squared_to(body_hit["position"]):
+		return area_hit
+	return body_hit
+
+
+static func enemy_for_collider(collider: Object) -> Node2D:
+	var node := collider as Node
+	if node == null:
+		return null
+	if node.is_in_group(&"enemy") and node.has_method("die"):
+		return node as Node2D
+	var area := node as Area2D
+	if area != null and (area.collision_layer & ARROW_AREA_MASK) != 0:
+		var owner_node := area.get_parent()
+		if owner_node.is_in_group(&"enemy") and owner_node.has_method("die"):
+			return owner_node as Node2D
+	return null
 
 
 func _is_inside_camera(target: Node2D) -> bool:

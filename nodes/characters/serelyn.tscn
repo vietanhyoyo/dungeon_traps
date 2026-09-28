@@ -367,18 +367,6 @@ height = 62.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_talk"]
 radius = 72.0
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dialog"]
-bg_color = Color(0.035, 0.025, 0.08, 0.96)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.93, 0.82, 0.1, 1)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-
 [node name="Serelyn" type="CharacterBody2D" unique_id=25910059]
 process_mode = 3
 modulate = Color(0.545, 0.545, 0.545, 1)
@@ -414,60 +402,3 @@ theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 16
 text = "E - Talk"
 horizontal_alignment = 1
-
-[node name="DialogueLayer" type="CanvasLayer" parent="." unique_id=1176208226]
-layer = 30
-
-[node name="Dialog" type="Control" parent="DialogueLayer" unique_id=39139689]
-layout_mode = 3
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -260.0
-offset_top = -128.0
-offset_right = 260.0
-offset_bottom = -18.0
-grow_horizontal = 2
-grow_vertical = 0
-mouse_filter = 2
-
-[node name="Panel" type="PanelContainer" parent="DialogueLayer/Dialog" unique_id=1497313876]
-layout_mode = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_dialog")
-
-[node name="Margin" type="MarginContainer" parent="DialogueLayer/Dialog/Panel" unique_id=1818650030]
-layout_mode = 2
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 10
-
-[node name="Lines" type="VBoxContainer" parent="DialogueLayer/Dialog/Panel/Margin" unique_id=127375283]
-layout_mode = 2
-theme_override_constants/separation = 3
-
-[node name="Speaker" type="Label" parent="DialogueLayer/Dialog/Panel/Margin/Lines" unique_id=494393632]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.9, 0.25, 1)
-theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 18
-
-[node name="Line" type="Label" parent="DialogueLayer/Dialog/Panel/Margin/Lines" unique_id=1358022680]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 18
-autowrap_mode = 3
-
-[node name="Hint" type="Label" parent="DialogueLayer/Dialog/Panel/Margin/Lines" unique_id=429117696]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.72, 0.7, 0.76, 1)
-theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 14
-text = "E - Continue"
-horizontal_alignment = 2

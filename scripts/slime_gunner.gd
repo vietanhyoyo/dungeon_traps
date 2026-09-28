@@ -253,6 +253,7 @@ func die() -> void:
 		return
 
 	is_dead = true
+	$ArrowHitArea.set_deferred("collision_layer", 0)
 	_target = null
 	velocity = Vector2.ZERO
 	animated_sprite.speed_scale = 1.0

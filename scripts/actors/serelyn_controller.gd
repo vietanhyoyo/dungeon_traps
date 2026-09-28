@@ -36,9 +36,11 @@ const TALK_LINES := [
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var talk_area: Area2D = $TalkArea
 @onready var prompt: Label = $Prompt
-@onready var dialog: Control = $DialogueLayer/Dialog
-@onready var speaker_label: Label = $DialogueLayer/Dialog/Panel/Margin/Lines/Speaker
-@onready var line_label: Label = $DialogueLayer/Dialog/Panel/Margin/Lines/Line
+@export_node_path("CanvasLayer") var dialogue_layer_path: NodePath
+@onready var dialogue_layer: CanvasLayer = get_node(dialogue_layer_path) as CanvasLayer
+@onready var dialog: Control = dialogue_layer.get_node("Dialog") as Control
+@onready var speaker_label: Label = dialog.get_node("Panel/Margin/Lines/Speaker") as Label
+@onready var line_label: Label = dialog.get_node("Panel/Margin/Lines/Line") as Label
 @onready var body_collision: CollisionShape2D = $CollisionShape2D
 @onready var dust_scene = preload("res://nodes/effects/landing_dust.tscn")
 
@@ -52,6 +54,8 @@ var is_hurt := false
 var is_sliding := false
 var air_slide_used := false
 var is_attacking := false
+var _attack_target: Node2D
+var _attack_aim_local := Vector2.ZERO
 var attack_animation: StringName = &"attack"
 var slide_direction := 1.0
 var slide_time_left := 0.0
@@ -64,9 +68,11 @@ var last_fall_speed := 0.0
 
 
 func _ready() -> void:
+	add_to_group(&"dialogue_actors")
 	sprite.animation_finished.connect(_on_animation_finished)
 	talk_area.body_entered.connect(_on_body_entered)
 	talk_area.body_exited.connect(_on_body_exited)
+	dialogue_layer.visible = false
 	dialog.visible = false
 	prompt.visible = false
 	body_collision.shape = body_collision.shape.duplicate()
@@ -119,17 +125,20 @@ func _physics_process(delta: float) -> void:
 	var direction := Input.get_axis("move_left", "move_right") if is_controlled else 0.0
 	if is_controlled and not is_attacking and Input.is_action_just_pressed("attack"):
 		is_attacking = true
+		var facing := -1.0 if sprite.flip_h else 1.0
+		var attack_origin := global_position + Vector2(ARROW_SPAWN_OFFSET.x * facing, ARROW_SPAWN_OFFSET.y)
+		var target_info := _find_arrow_target(attack_origin, facing, is_on_floor())
+		_attack_target = target_info.get("target") as Node2D
+		_attack_aim_local = target_info.get("local_point", Vector2.ZERO)
 		if is_on_floor():
-			var facing := -1.0 if sprite.flip_h else 1.0
-			var attack_origin := global_position + Vector2(ARROW_SPAWN_OFFSET.x * facing, ARROW_SPAWN_OFFSET.y)
-			var target := _find_arrow_target(attack_origin, facing)
+			var target := _attack_target
 			if target == null:
 				attack_animation = &"attack"
-			elif target.global_position.y < attack_origin.y:
-				var target_angle := _get_arrow_target_angle(attack_origin, target)
+			elif target.to_global(_attack_aim_local).y < attack_origin.y:
+				var target_angle := _get_arrow_target_angle(attack_origin, target.to_global(_attack_aim_local))
 				attack_animation = &"attack_high2" \
 					if absf(target_angle) > HIGH2_ARROW_ANGLE_THRESHOLD else &"attack_high"
-			elif target.global_position.y > attack_origin.y:
+			elif target.to_global(_attack_aim_local).y > attack_origin.y:
 				attack_animation = &"attack_low"
 			else:
 				attack_animation = &"attack"
@@ -181,6 +190,8 @@ func set_controlled(value: bool) -> void:
 	else:
 		remove_from_group(&"player")
 		is_attacking = false
+		_attack_target = null
+		_attack_aim_local = Vector2.ZERO
 		wall_jump_used = false
 		was_on_wall = false
 		attack_animation = &"attack"
@@ -201,6 +212,8 @@ func _on_animation_finished() -> void:
 		var arrow: SerelynArrow = ARROW_SCENE.instantiate()
 		get_tree().current_scene.add_child(arrow)
 		arrow.launch(origin, _get_arrow_direction(origin, facing))
+	_attack_target = null
+	_attack_aim_local = Vector2.ZERO
 	_update_animation(0.0)
 
 
@@ -241,40 +254,97 @@ func _spawn_wall_dust(wall_normal: Vector2) -> void:
 
 
 func _get_arrow_direction(origin: Vector2, facing: float) -> Vector2:
-	var target := _find_arrow_target(origin, facing)
-	if target == null:
+	var target := _attack_target
+	if not is_instance_valid(target) or not target.is_inside_tree() \
+			or not _is_inside_camera(target):
+		return Vector2(facing, 0.0)
+	var body := target as CollisionObject2D
+	if body == null or (body.collision_layer & 4) == 0:
+		return Vector2(facing, 0.0)
+	var aim_point := target.to_global(_attack_aim_local)
+	if (aim_point.x - origin.x) * facing <= 0.0:
 		return Vector2(facing, 0.0)
 
 	# Chỉ thay đổi độ cao của đường bay; chiều ngang vẫn giữ đúng hướng nhìn.
 	var angle := clampf(
-		_get_arrow_target_angle(origin, target),
+		_get_arrow_target_angle(origin, aim_point),
 		-MAX_UPWARD_ARROW_ANGLE,
 		MAX_DOWNWARD_ARROW_ANGLE
 	)
 	return Vector2(facing * cos(angle), sin(angle)).normalized()
 
 
-func _get_arrow_target_angle(origin: Vector2, target: Node2D) -> float:
-	var offset := target.global_position - origin
+func _get_arrow_target_angle(origin: Vector2, aim_point: Vector2) -> float:
+	var offset := aim_point - origin
 	return atan2(offset.y, absf(offset.x))
 
 
-func _find_arrow_target(origin: Vector2, facing: float) -> Node2D:
+func _find_arrow_target(origin: Vector2, facing: float, use_animation_origin := false) -> Dictionary:
 	var nearest: Node2D
+	var nearest_point := Vector2.ZERO
 	var nearest_distance := INF
 	for candidate in get_tree().get_nodes_in_group(&"enemy"):
 		var enemy := candidate as Node2D
-		if enemy == null or not enemy.has_method("die") or not _is_inside_camera(enemy):
+		if enemy == null or not enemy.has_method("die") \
+				or not _is_inside_camera(enemy):
 			continue
-		var offset := enemy.global_position - origin
-		# Không tự động quay mũi tên về phía sau lưng nhân vật.
-		if offset.x * facing <= 0.0:
+		var visible_point := _find_shootable_point(enemy, origin, facing, use_animation_origin)
+		if visible_point.is_empty():
 			continue
 		var distance := origin.distance_squared_to(enemy.global_position)
 		if distance < nearest_distance:
 			nearest = enemy
+			nearest_point = visible_point["point"]
 			nearest_distance = distance
-	return nearest
+	if nearest == null:
+		return {}
+	return {"target": nearest, "local_point": nearest.to_local(nearest_point)}
+
+
+func _find_shootable_point(enemy: Node2D, origin: Vector2, facing: float, use_animation_origin: bool) -> Dictionary:
+	for aim_point in _get_target_points(enemy):
+		var shot_origin := _get_targeting_origin(aim_point, facing) if use_animation_origin else origin
+		var offset := aim_point - shot_origin
+		if offset.x * facing <= 0.0:
+			continue
+		var angle := _get_arrow_target_angle(shot_origin, aim_point)
+		if angle < -MAX_UPWARD_ARROW_ANGLE or angle > MAX_DOWNWARD_ARROW_ANGLE:
+			continue
+		if offset.length() > SerelynArrow.SPEED * SerelynArrow.LIFETIME:
+			continue
+		var hit := SerelynArrow.raycast_path(
+			get_world_2d().direct_space_state, shot_origin, aim_point
+		)
+		if SerelynArrow.enemy_for_collider(hit.get("collider")) == enemy:
+			return {"point": aim_point}
+	return {}
+
+
+func _get_target_points(enemy: Node2D) -> Array[Vector2]:
+	var points: Array[Vector2] = [enemy.global_position]
+	for path in ["CollisionShape2D", "ArrowHitArea/CollisionShape2D"]:
+		var shape_node := enemy.get_node_or_null(path) as CollisionShape2D
+		if shape_node == null or shape_node.disabled or shape_node.shape == null:
+			continue
+		var rect := shape_node.shape.get_rect()
+		for fraction in [
+			Vector2(0.5, 0.5), Vector2(0.5, 0.2),
+			Vector2(0.25, 0.3), Vector2(0.75, 0.3),
+			Vector2(0.25, 0.5), Vector2(0.75, 0.5),
+			Vector2(0.5, 0.8),
+		]:
+			points.append(shape_node.to_global(rect.position + rect.size * fraction))
+	return points
+
+
+func _get_targeting_origin(aim_point: Vector2, facing: float) -> Vector2:
+	var offset := ARROW_SPAWN_OFFSET
+	var default_origin_y := global_position.y + ARROW_SPAWN_OFFSET.y
+	if aim_point.y < default_origin_y:
+		offset = HIGH_ARROW_SPAWN_OFFSET
+	elif aim_point.y > default_origin_y:
+		offset = LOW_ARROW_SPAWN_OFFSET
+	return global_position + Vector2(offset.x * facing, offset.y)
 
 
 func _is_inside_camera(target: Node2D) -> bool:
@@ -392,7 +462,14 @@ func die() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if not event.is_action_pressed("interact") or (event is InputEventKey and event.echo):
+	if event is InputEventKey and event.echo:
+		return
+	if event.is_action_pressed("ui_cancel"):
+		if dialogue_open:
+			_hide_dialogue()
+			get_viewport().set_input_as_handled()
+		return
+	if not event.is_action_pressed("interact"):
 		return
 	if GameState.is_game_over() or conversation_completed:
 		return
@@ -431,11 +508,19 @@ func _has_player_in_talk_area() -> bool:
 
 func _start_dialogue() -> void:
 	dialogue_open = true
-	line_index = 0
+	dialogue_layer.visible = true
 	dialog.visible = true
 	prompt.visible = false
 	_show_line()
 	get_tree().paused = true
+
+
+func _hide_dialogue() -> void:
+	dialogue_open = false
+	dialog.visible = false
+	dialogue_layer.visible = false
+	get_tree().paused = false
+	prompt.visible = _has_player_in_talk_area()
 
 
 func _next_line() -> void:
@@ -444,6 +529,7 @@ func _next_line() -> void:
 		dialogue_open = false
 		conversation_completed = true
 		dialog.visible = false
+		dialogue_layer.visible = false
 		prompt.visible = false
 		nearby_player = null
 		_hide_as_npc()
