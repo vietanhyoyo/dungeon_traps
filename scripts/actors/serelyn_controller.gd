@@ -42,10 +42,13 @@ const TALK_LINES := [
 @onready var talk_area: Area2D = $TalkArea
 @onready var prompt: Label = $Prompt
 @export_node_path("CanvasLayer") var dialogue_layer_path: NodePath
-@onready var dialogue_layer: CanvasLayer = get_node(dialogue_layer_path) as CanvasLayer
-@onready var dialog: Control = dialogue_layer.get_node("Dialog") as Control
-@onready var speaker_label: Label = dialog.get_node("Panel/Margin/Lines/Speaker") as Label
-@onready var line_label: Label = dialog.get_node("Panel/Margin/Lines/Line") as Label
+@onready var dialogue_layer: CanvasLayer = _get_dialogue_layer()
+@onready var dialog: Control = dialogue_layer.get_node_or_null("Dialog") as Control \
+	if dialogue_layer != null else null
+@onready var speaker_label: Label = dialog.get_node_or_null("Panel/Margin/Lines/Speaker") as Label \
+	if dialog != null else null
+@onready var line_label: Label = dialog.get_node_or_null("Panel/Margin/Lines/Line") as Label \
+	if dialog != null else null
 @onready var body_collision: CollisionShape2D = $CollisionShape2D
 @onready var dust_scene = preload("res://nodes/effects/landing_dust.tscn")
 
@@ -74,12 +77,17 @@ var last_fall_speed := 0.0
 
 
 func _ready() -> void:
-	add_to_group(&"dialogue_actors")
+	if _has_dialogue_ui():
+		add_to_group(&"dialogue_actors")
 	sprite.animation_finished.connect(_on_animation_finished)
 	talk_area.body_entered.connect(_on_body_entered)
 	talk_area.body_exited.connect(_on_body_exited)
-	dialogue_layer.visible = false
-	dialog.visible = false
+	if dialogue_layer != null:
+		dialogue_layer.visible = false
+	if dialog != null:
+		dialog.visible = false
+	if not _has_dialogue_ui():
+		talk_area.set_deferred("monitoring", false)
 	prompt.visible = false
 	body_collision.shape = body_collision.shape.duplicate()
 	var capsule := body_collision.shape as CapsuleShape2D
@@ -235,6 +243,17 @@ func set_controlled(value: bool, preserve_momentum := false) -> void:
 			stop_slide()
 		velocity.x = 0.0
 		_set_running(false)
+
+
+func _get_dialogue_layer() -> CanvasLayer:
+	if dialogue_layer_path.is_empty():
+		return null
+	return get_node_or_null(dialogue_layer_path) as CanvasLayer
+
+
+func _has_dialogue_ui() -> bool:
+	return dialogue_layer != null and dialog != null \
+		and speaker_label != null and line_label != null
 
 
 func _on_animation_finished() -> void:
@@ -567,6 +586,8 @@ func _has_player_in_talk_area() -> bool:
 
 
 func _start_dialogue() -> void:
+	if not _has_dialogue_ui():
+		return
 	dialogue_open = true
 	dialogue_layer.visible = true
 	dialog.visible = true
@@ -577,8 +598,10 @@ func _start_dialogue() -> void:
 
 func _hide_dialogue() -> void:
 	dialogue_open = false
-	dialog.visible = false
-	dialogue_layer.visible = false
+	if dialog != null:
+		dialog.visible = false
+	if dialogue_layer != null:
+		dialogue_layer.visible = false
 	get_tree().paused = false
 	prompt.visible = _has_player_in_talk_area()
 
@@ -588,8 +611,10 @@ func _next_line() -> void:
 	if line_index >= TALK_LINES.size():
 		dialogue_open = false
 		conversation_completed = true
-		dialog.visible = false
-		dialogue_layer.visible = false
+		if dialog != null:
+			dialog.visible = false
+		if dialogue_layer != null:
+			dialogue_layer.visible = false
 		prompt.visible = false
 		nearby_player = null
 		_hide_as_npc()
@@ -609,5 +634,7 @@ func _hide_as_npc() -> void:
 
 
 func _show_line() -> void:
+	if speaker_label == null or line_label == null:
+		return
 	speaker_label.text = TALK_LINES[line_index][0]
 	line_label.text = TALK_LINES[line_index][1]

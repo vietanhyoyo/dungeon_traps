@@ -666,7 +666,7 @@ patrol_distance = 180.0
 
 [node name="Bat2" parent="BatList" unique_id=849394515 instance=ExtResource("12_bat")]
 z_index = 5
-position = Vector2(3492, 954)
+position = Vector2(3493, 951)
 patrol_distance = 180.0
 
 [node name="Bat4" parent="BatList" unique_id=711855517 instance=ExtResource("12_bat")]
@@ -1028,7 +1028,7 @@ position = Vector2(2515, 320)
 [node name="PendulumList" type="Node" parent="." unique_id=1742554006]
 
 [node name="Pendulum" parent="PendulumList" unique_id=1566493129 instance=ExtResource("23_fqa0r")]
-position = Vector2(2936, 287)
+position = Vector2(2937, 285)
 
 [node name="Pendulum2" parent="PendulumList" unique_id=1238800461 instance=ExtResource("23_fqa0r")]
 position = Vector2(3954.0002, 47)
