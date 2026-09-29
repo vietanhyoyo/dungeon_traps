@@ -2,7 +2,7 @@ extends CanvasLayer
 
 @export_range(1, 99, 1) var total_stars := 3
 
-@onready var counter_label: Label = $Panel/Margin/HBox/Counter
+@onready var counter_label: Label = $HBox/Counter
 
 var collected_stars := 0
 

@@ -34,9 +34,10 @@ Action `slide` làm Serelyn lướt theo hướng đang nhìn trong 0,4 giây, t
 Serelyn cũng tạo bụi tiếp đất như Asura.
 
 Nhấn C để phát `attack` trên mặt đất hoặc `jump_attack` khi đang ở trên không.
-Khi animation kết thúc, Serelyn bắn `characters/serelyn_arrow.tscn` theo hướng
-đang nhìn. Tên bay ngang, có đèn xanh lá và kiểm tra va chạm với địa hình cũng
-như enemy.
+Trong `jump_attack`, điều khiển trái/phải giống lúc nhảy thường: Serelyn di
+chuyển và quay mặt theo hướng đang bấm, rồi dừng ngang khi thả nút. Khi animation
+kết thúc, cô bắn `characters/serelyn_arrow.tscn` theo hướng đang nhìn. Tên bay
+ngang, có đèn xanh lá và kiểm tra va chạm với địa hình cũng như enemy.
 
 ## Ngắm Và Bắn Tên
 

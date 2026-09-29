@@ -157,13 +157,19 @@ func _physics_process(delta: float) -> void:
 				attack_animation = &"attack"
 		else:
 			attack_animation = &"jump_attack"
-		velocity.x = 0.0
 		sprite.play(attack_animation)
 
 	if is_attacking:
 		_preserving_transform_momentum = false
 		running_sound.stop()
-		velocity.x = 0.0
+		if attack_animation == &"jump_attack":
+			if direction != 0.0:
+				velocity.x = direction * SPEED
+				sprite.flip_h = direction < 0.0
+			else:
+				velocity.x = 0.0
+		else:
+			velocity.x = 0.0
 		move_and_slide()
 		if not was_on_floor and is_on_floor() and last_fall_speed > LANDING_DUST_MIN_SPEED:
 			spawn_landing_dust()

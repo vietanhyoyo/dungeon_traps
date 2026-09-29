@@ -29,6 +29,7 @@
 [ext_resource type="PackedScene" uid="uid://ddq2qqo23k2o0" path="res://nodes/traps/thorn.tscn" id="28_k83a1"]
 [ext_resource type="PackedScene" path="res://nodes/traps/bow_trap.tscn" id="29_ntafr"]
 [ext_resource type="FontFile" uid="uid://dm58qjkkxqjox" path="res://assets/fonts/PixelOperator8-Bold.ttf" id="30_dialog_font"]
+[ext_resource type="PackedScene" path="res://nodes/torch.tscn" id="30_ixcvs"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_8pcmo"]
 polygon = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
@@ -1069,3 +1070,44 @@ position = Vector2(3924, 944)
 
 [node name="BowTrap3" parent="BowTrapList" unique_id=112188613 instance=ExtResource("29_ntafr")]
 position = Vector2(4689, 752)
+
+[node name="TorchList" type="Node" parent="." unique_id=857873405]
+
+[node name="Torch" parent="TorchList" unique_id=467234160 instance=ExtResource("30_ixcvs")]
+position = Vector2(232, 698)
+
+[node name="Torch2" parent="TorchList" unique_id=440384742 instance=ExtResource("30_ixcvs")]
+position = Vector2(673, 703)
+
+[node name="Torch3" parent="TorchList" unique_id=1194972737 instance=ExtResource("30_ixcvs")]
+position = Vector2(1087, 690)
+
+[node name="Torch4" parent="TorchList" unique_id=1391533088 instance=ExtResource("30_ixcvs")]
+position = Vector2(1572, 526)
+
+[node name="Torch5" parent="TorchList" unique_id=390069650 instance=ExtResource("30_ixcvs")]
+position = Vector2(1904, 432)
+
+[node name="Torch6" parent="TorchList" unique_id=1773775788 instance=ExtResource("30_ixcvs")]
+position = Vector2(2851, 138)
+
+[node name="Torch7" parent="TorchList" unique_id=956946572 instance=ExtResource("30_ixcvs")]
+position = Vector2(3664, 688)
+
+[node name="Torch8" parent="TorchList" unique_id=1436281418 instance=ExtResource("30_ixcvs")]
+position = Vector2(2911, 660)
+
+[node name="Torch9" parent="TorchList" unique_id=1282706070 instance=ExtResource("30_ixcvs")]
+position = Vector2(2760, 944)
+
+[node name="Torch10" parent="TorchList" unique_id=1169271501 instance=ExtResource("30_ixcvs")]
+position = Vector2(3584, 960)
+
+[node name="Torch11" parent="TorchList" unique_id=746256720 instance=ExtResource("30_ixcvs")]
+position = Vector2(4496, 1167)
+
+[node name="Torch12" parent="TorchList" unique_id=46132016 instance=ExtResource("30_ixcvs")]
+position = Vector2(4725, 688)
+
+[node name="Torch13" parent="TorchList" unique_id=845519025 instance=ExtResource("30_ixcvs")]
+position = Vector2(3639, 175)

@@ -2,7 +2,6 @@ extends CanvasLayer
 
 const LEVEL_SELECT_SCENE := "res://nodes/ui/level_select.tscn"
 const SERELYN_IDLE_SPRITE := preload("res://assets/sprites/serelyn/Serelyn-idle.png")
-const SERELYN_ARROW_SPRITE := preload("res://assets/sprites/serelyn/Serelyn-arrow.png")
 const SERELYN_CONTROLLER_SCRIPT := preload("res://scripts/actors/serelyn_controller.gd")
 
 @onready var menu_button: Button = $MenuButton
@@ -38,9 +37,7 @@ func _ready() -> void:
 	serelyn_portrait = AtlasTexture.new()
 	serelyn_portrait.atlas = SERELYN_IDLE_SPRITE
 	serelyn_portrait.region = Rect2(32, 32, 32, 32)
-	serelyn_attack_icon = AtlasTexture.new()
-	serelyn_attack_icon.atlas = SERELYN_ARROW_SPRITE
-	serelyn_attack_icon.region = Rect2(0, 0, 64, 64)
+	serelyn_attack_icon = Skills.make_icon(Skills.SPIN_JUMP_ATTACK)
 
 	# Nút hamburger mở bảng thông tin nhân vật (cũng là menu tạm dừng).
 	menu_button.pressed.connect(_pause)
