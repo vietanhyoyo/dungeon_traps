@@ -11,7 +11,6 @@ extends Node2D
 ## bức tường chết không đi qua được.
 @export var deadly_after_landing := false
 
-@onready var marker: Sprite2D = $Marker
 @onready var trigger_area: Area2D = $TriggerArea
 # Kéo hai Marker2D này trong editor để chỉnh đường rơi của quả cầu.
 # SpawnPoint là nơi quả cầu hiện ra (đặt sát trần), LandPoint là nơi nó đáp
@@ -59,11 +58,6 @@ func _on_trigger_body_entered(body: Node2D) -> void:
 
 	_has_triggered = true
 	trigger_area.set_deferred("monitoring", false)
-
-	# Nhấn nhẹ dấu khắc xuống để người chơi kịp nhận ra mình vừa đạp phải bẫy.
-	var press_tween := create_tween()
-	press_tween.tween_property(marker, "scale", Vector2(1.12, 0.82), 0.08)
-	press_tween.tween_property(marker, "scale", Vector2.ONE, 0.12)
 
 	ball.position = spawn_point.position
 	ball.visible = true

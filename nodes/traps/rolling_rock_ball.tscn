@@ -1,0 +1,79 @@
+[gd_scene format=3 uid="uid://cshcxibddghu1"]
+
+[ext_resource type="Texture2D" uid="uid://cch46p7fikcul" path="res://assets/sprites/traps/rolling-rock-ball.png" id="1_atlas"]
+[ext_resource type="Script" uid="uid://dilpnxm1a6cfw" path="res://scripts/rolling_rock_ball.gd" id="2_script"]
+[ext_resource type="AudioStream" uid="uid://cbm78b8xkokdu" path="res://assets/sounds/boulder_drop.ogg" id="3_landing_sound"]
+[ext_resource type="AudioStream" uid="uid://7j8tiaxo8d48" path="res://assets/sounds/move_boulder.ogg" id="4_rolling_sound"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_trigger"]
+atlas = ExtResource("1_atlas")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_trigger"]
+size = Vector2(61, 21)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ball"]
+atlas = ExtResource("1_atlas")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_light"]
+atlas = ExtResource("1_atlas")
+region = Rect2(256, 0, 128, 128)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ball"]
+radius = 42.0
+
+[node name="RollingRockBall" type="Node2D" unique_id=1947845275]
+z_index = 4
+script = ExtResource("2_script")
+
+[node name="TriggerSprite" type="Sprite2D" parent="." unique_id=1177457001]
+position = Vector2(0, -20)
+texture = SubResource("AtlasTexture_trigger")
+
+[node name="TriggerArea" type="Area2D" parent="." unique_id=733170243]
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerArea" unique_id=872563331]
+visible = false
+position = Vector2(0.5, -38.5)
+shape = SubResource("RectangleShape2D_trigger")
+
+[node name="Ball" type="CharacterBody2D" parent="." unique_id=774693187]
+visible = false
+z_index = 7
+z_as_relative = false
+modulate = Color(0.6317153, 0.63171524, 0.63171524, 1)
+collision_layer = 0
+safe_margin = 0.1
+
+[node name="BallSprite" type="Sprite2D" parent="Ball" unique_id=980897030]
+texture = SubResource("AtlasTexture_ball")
+
+[node name="LightOverlay" type="Sprite2D" parent="Ball" unique_id=322523336]
+z_index = 1
+texture = SubResource("AtlasTexture_light")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ball" unique_id=884574406]
+shape = SubResource("CircleShape2D_ball")
+
+[node name="Hazard" type="Area2D" parent="Ball" unique_id=327388377]
+collision_layer = 0
+collision_mask = 2
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ball/Hazard" unique_id=659801615]
+shape = SubResource("CircleShape2D_ball")
+
+[node name="LandingSound" type="AudioStreamPlayer2D" parent="Ball" unique_id=644201752]
+stream = ExtResource("3_landing_sound")
+volume_db = -8.0
+bus = &"SFX"
+
+[node name="RollingSound" type="AudioStreamPlayer2D" parent="Ball" unique_id=1709379448]
+stream = ExtResource("4_rolling_sound")
+volume_db = -7.0
+bus = &"SFX"

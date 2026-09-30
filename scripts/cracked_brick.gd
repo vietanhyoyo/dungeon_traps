@@ -4,6 +4,8 @@ extends StaticBody2D
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var trigger_area: Area2D = $TriggerArea
 
+@export_range(0.0, 5.0, 0.1) var break_delay := 1.5
+
 var _is_breaking := false
 
 
@@ -23,6 +25,10 @@ func _on_trigger_area_body_entered(body: Node2D) -> void:
 
 	_is_breaking = true
 	trigger_area.set_deferred("monitoring", false)
+	await get_tree().create_timer(break_delay).timeout
+	if not is_instance_valid(self) or not is_inside_tree():
+		return
+
 	animated_sprite.play(&"broken")
 	await animated_sprite.animation_finished
 

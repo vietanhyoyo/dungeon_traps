@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://8osth2vx03rl"
-path="res://.godot/imported/bg-1-layer-3.png-070e2587325dc3a51940f0a7a62e2798.ctex"
+uid="uid://cch46p7fikcul"
+path="res://.godot/imported/rolling-rock-ball.png-817199ecdd602a5fff9536d921f55dad.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/bg-1-layer-3.png"
-dest_files=["res://.godot/imported/bg-1-layer-3.png-070e2587325dc3a51940f0a7a62e2798.ctex"]
+source_file="res://assets/sprites/traps/rolling-rock-ball.png"
+dest_files=["res://.godot/imported/rolling-rock-ball.png-817199ecdd602a5fff9536d921f55dad.ctex"]
 
 [params]
 

@@ -90,6 +90,7 @@ res://
   docs/
     PROJECT.md
     ARCHITECTURE.md
+    level_7_parallax_backgrounds.md
   export_html/
   nodes/
     characters/

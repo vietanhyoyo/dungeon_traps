@@ -18,6 +18,8 @@
 [ext_resource type="PackedScene" path="res://nodes/items/treasure_chest.tscn" id="18_tl6wg"]
 [ext_resource type="PackedScene" path="res://nodes/ui/pause_menu.tscn" id="20_pause"]
 [ext_resource type="PackedScene" path="res://nodes/traps/bow_trap.tscn" id="21_bow_trap"]
+[ext_resource type="PackedScene" path="res://nodes/decor/decor-skull.tscn" id="21_omsdy"]
+[ext_resource type="PackedScene" path="res://nodes/decor/decor-grass.tscn" id="22_hqtwb"]
 [ext_resource type="PackedScene" path="res://nodes/platforms/pushable_steel_crate.tscn" id="22_steel_crate"]
 [ext_resource type="PackedScene" path="res://nodes/platforms/pushable_wooden_crate.tscn" id="23_wooden_crate"]
 
@@ -924,3 +926,14 @@ layer_0/tile_data = PackedInt32Array(327894, 65537, 0, 327895, 196609, 0, -65319
 [node name="TreasureChest" parent="." unique_id=1754038271 instance=ExtResource("18_tl6wg")]
 position = Vector2(7265, -417)
 skill_id = "spin_jump_attack"
+
+[node name="DecorList" type="Node2D" parent="." unique_id=1639187640]
+
+[node name="decor-skull" parent="DecorList" unique_id=485629792 instance=ExtResource("21_omsdy")]
+position = Vector2(88, -80)
+
+[node name="decor-skull2" parent="DecorList" unique_id=304548882 instance=ExtResource("21_omsdy")]
+position = Vector2(1809, -144)
+
+[node name="decor-grass" parent="DecorList" unique_id=1286206178 instance=ExtResource("22_hqtwb")]
+position = Vector2(750, -49)

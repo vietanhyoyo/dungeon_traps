@@ -91,6 +91,7 @@ res://
   docs/
     PROJECT.md
     ARCHITECTURE.md
+    level_7_parallax_backgrounds.md
   export_html/       # Output export Web (không sửa tay)
   nodes/             # Toàn bộ scene .tscn
     characters/
@@ -190,6 +191,7 @@ Xem checklist đầy đủ trong [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 - [docs/PROJECT.md](docs/PROJECT.md) — tổng quan dự án, cấu hình, luồng gameplay.
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — kiến trúc, ranh giới trách nhiệm, quy ước và định hướng refactor.
+- [docs/level_7_parallax_backgrounds.md](docs/level_7_parallax_backgrounds.md) — cấu hình và cách thêm/chỉnh các lớp parallax của Level 7.
 
 ## Asset Và License
 
