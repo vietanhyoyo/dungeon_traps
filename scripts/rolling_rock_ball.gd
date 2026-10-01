@@ -15,7 +15,7 @@ const DUST_HALF_SIZE := 16.0
 @onready var trigger_area: Area2D = $TriggerArea
 @onready var trigger_shape: CollisionShape2D = $TriggerArea/CollisionShape2D
 @onready var ball: CharacterBody2D = $Ball
-@onready var ball_sprite: Sprite2D = $Ball/BallSprite
+@onready var ball_sprite: AnimatedSprite2D = $Ball/BallSprite
 @onready var hazard: Area2D = $Ball/Hazard
 @onready var landing_sound: AudioStreamPlayer2D = $Ball/LandingSound
 @onready var rolling_sound: AudioStreamPlayer2D = $Ball/RollingSound
@@ -25,12 +25,14 @@ var _player_side_at_trigger := -1.0
 var _roll_direction := -1.0
 var _has_triggered := false
 var _is_falling := false
+var _is_breaking := false
 var _is_rolling := false
 
 
 func _ready() -> void:
 	trigger_area.body_entered.connect(_on_trigger_body_entered)
 	hazard.body_entered.connect(_on_hazard_body_entered)
+	ball_sprite.animation_finished.connect(_on_break_animation_finished)
 	ball.visible = false
 	hazard.monitoring = false
 	set_physics_process(false)
@@ -39,6 +41,8 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if _is_game_over():
 		rolling_sound.stop()
+		# Giữ nguyên frame hiện tại khi va chạm kết thúc màn; stop() sẽ reset về frame đầu.
+		ball_sprite.pause()
 		set_physics_process(false)
 		return
 
@@ -50,7 +54,7 @@ func _physics_process(delta: float) -> void:
 			ball.collision_mask = 1
 			hazard.set_deferred("monitoring", true)
 		if ball.is_on_floor():
-			_start_rolling()
+			_start_breaking()
 			_spawn_landing_dust()
 		return
 
@@ -68,11 +72,11 @@ func _physics_process(delta: float) -> void:
 	elif was_on_floor and not ball.is_on_floor():
 		rolling_sound.stop()
 
-	# Chỉ xoay phần hình quả cầu. Lớp sáng là node anh em nên giữ nguyên hướng.
+	# Xoay riêng quả cầu theo quãng đường lăn; lớp bóng đổ giữ nguyên hướng.
 	var traveled_x := ball.global_position.x - previous_x
 	ball_sprite.rotation += traveled_x / ball_radius
 
-	if ball.is_on_wall():
+	if ball.is_on_wall() and absf(traveled_x) < 0.25:
 		_is_rolling = false
 		ball.velocity = Vector2.ZERO
 		rolling_sound.stop()
@@ -107,14 +111,20 @@ func _on_trigger_body_entered(body: Node2D) -> void:
 	ball.collision_mask = 0
 	ball.z_index = 7
 	ball.visible = true
+	ball_sprite.stop()
+	ball_sprite.animation = &"break"
+	ball_sprite.frame = 0
+	ball_sprite.frame_progress = 0.0
+	ball_sprite.rotation = 0.0
 	_is_falling = true
 	set_physics_process(true)
 
 
-func _start_rolling() -> void:
+func _start_breaking() -> void:
 	_is_falling = false
-	_is_rolling = true
-	_start_rolling_sound()
+	_is_breaking = true
+	ball.velocity = Vector2.ZERO
+	hazard.set_deferred("monitoring", false)
 
 	var target_x := ball.global_position.x + _player_side_at_trigger
 	if is_instance_valid(_target_player):
@@ -122,7 +132,23 @@ func _start_rolling() -> void:
 
 	var offset_to_player := target_x - ball.global_position.x
 	_roll_direction = signf(offset_to_player) if absf(offset_to_player) > 1.0 else _player_side_at_trigger
+	ball_sprite.play(&"break")
+
+
+func _on_break_animation_finished() -> void:
+	if not _is_breaking or _is_game_over():
+		return
+	_is_breaking = false
+	ball_sprite.stop()
+	ball_sprite.frame = ball_sprite.sprite_frames.get_frame_count(&"break") - 1
+	_start_rolling()
+
+
+func _start_rolling() -> void:
+	_is_rolling = true
 	ball.velocity.x = _roll_direction * rolling_speed
+	hazard.set_deferred("monitoring", true)
+	_start_rolling_sound()
 
 
 func _get_offscreen_spawn_position() -> Vector2:

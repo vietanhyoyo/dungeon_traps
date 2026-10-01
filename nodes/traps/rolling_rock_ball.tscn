@@ -12,13 +12,59 @@ region = Rect2(0, 0, 128, 128)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_trigger"]
 size = Vector2(61, 21)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ball"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_ball_frame_1"]
 atlas = ExtResource("1_atlas")
 region = Rect2(128, 0, 128, 128)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_light"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_ball_frame_2"]
 atlas = ExtResource("1_atlas")
 region = Rect2(256, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ball_frame_3"]
+atlas = ExtResource("1_atlas")
+region = Rect2(384, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ball_frame_4"]
+atlas = ExtResource("1_atlas")
+region = Rect2(512, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ball_frame_5"]
+atlas = ExtResource("1_atlas")
+region = Rect2(640, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ball_frame_6"]
+atlas = ExtResource("1_atlas")
+region = Rect2(768, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_shadow"]
+atlas = ExtResource("1_atlas")
+region = Rect2(896, 0, 128, 128)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ball"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ball_frame_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ball_frame_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ball_frame_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ball_frame_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ball_frame_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ball_frame_6")
+}],
+"loop": false,
+"name": &"break",
+"speed": 20.0
+}]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ball"]
 radius = 42.0
@@ -49,12 +95,13 @@ modulate = Color(0.6317153, 0.63171524, 0.63171524, 1)
 collision_layer = 0
 safe_margin = 0.1
 
-[node name="BallSprite" type="Sprite2D" parent="Ball" unique_id=980897030]
-texture = SubResource("AtlasTexture_ball")
+[node name="BallSprite" type="AnimatedSprite2D" parent="Ball" unique_id=980897030]
+sprite_frames = SubResource("SpriteFrames_ball")
+animation = &"break"
 
-[node name="LightOverlay" type="Sprite2D" parent="Ball" unique_id=322523336]
+[node name="ShadowOverlay" type="Sprite2D" parent="Ball" unique_id=322523336]
 z_index = 1
-texture = SubResource("AtlasTexture_light")
+texture = SubResource("AtlasTexture_shadow")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Ball" unique_id=884574406]
 shape = SubResource("CircleShape2D_ball")
