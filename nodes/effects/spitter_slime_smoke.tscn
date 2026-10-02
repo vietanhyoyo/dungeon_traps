@@ -1,0 +1,119 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/spitter_slime_smoke.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/sprites/effects/spitter-slime-smoke.png" id="2_smoke"]
+[ext_resource type="PackedScene" uid="uid://dhq0pa6na6p7k" path="res://nodes/killzone.tscn" id="3_killzone"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_expand_0"]
+atlas = ExtResource("2_smoke")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_expand_1"]
+atlas = ExtResource("2_smoke")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_expand_2"]
+atlas = ExtResource("2_smoke")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_expand_3"]
+atlas = ExtResource("2_smoke")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_expand_4"]
+atlas = ExtResource("2_smoke")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dissipate_0"]
+atlas = ExtResource("2_smoke")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dissipate_1"]
+atlas = ExtResource("2_smoke")
+region = Rect2(192, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dissipate_2"]
+atlas = ExtResource("2_smoke")
+region = Rect2(224, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dissipate_3"]
+atlas = ExtResource("2_smoke")
+region = Rect2(256, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_smoke"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_expand_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_expand_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_expand_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_expand_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_expand_4")
+}],
+"loop": 0,
+"name": &"expand",
+"speed": 16.5
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dissipate_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dissipate_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dissipate_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dissipate_3")
+}],
+"loop": 0,
+"name": &"dissipate",
+"speed": 16.5
+}]
+
+[sub_resource type="Gradient" id="Gradient_toxic_smoke_glow"]
+offsets = PackedFloat32Array(0, 0.25, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.55, 0.55, 0.55, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_toxic_smoke_glow"]
+gradient = SubResource("Gradient_toxic_smoke_glow")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_smoke"]
+radius = 22.0
+
+[node name="SpitterSlimeSmoke" type="Node2D"]
+z_index = 5
+script = ExtResource("1_script")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -16)
+scale = Vector2(1.5, 1.5)
+modulate = Color(1, 1, 1, 0.7)
+sprite_frames = SubResource("SpriteFrames_smoke")
+animation = &"expand"
+autoplay = "expand"
+
+[node name="Glow" type="PointLight2D" parent="."]
+position = Vector2(0, -16)
+color = Color(0.25, 1, 0.4, 1)
+energy = 1.2
+texture = SubResource("GradientTexture2D_toxic_smoke_glow")
+texture_scale = 1.35
+
+[node name="Killzone" parent="." instance=ExtResource("3_killzone")]
+position = Vector2(0, -16)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Killzone"]
+shape = SubResource("CircleShape2D_smoke")

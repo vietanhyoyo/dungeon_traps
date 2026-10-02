@@ -10,7 +10,7 @@ const DUST_HALF_SIZE := 16.0
 @export var max_fall_speed := 1600.0
 @export var rolling_speed := 120.0
 @export var ball_radius := 42.0
-@export var fall_delay := 1.0
+@export var fall_delay := 0.5
 
 @onready var trigger_area: Area2D = $TriggerArea
 @onready var trigger_shape: CollisionShape2D = $TriggerArea/CollisionShape2D
