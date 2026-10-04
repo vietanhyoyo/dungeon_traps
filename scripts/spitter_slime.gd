@@ -43,6 +43,7 @@ var _direction := 1
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var muzzle: Marker2D = $Muzzle
 @onready var shoot_sound: AudioStreamPlayer2D = $ShootSound
+@onready var move_sound: AudioStreamPlayer2D = $MoveSound
 @onready var floor_probe: RayCast2D = $FloorProbe
 
 
@@ -86,6 +87,7 @@ func _start_patrol() -> void:
 	_state = State.PATROL
 	_phase_timer = _random_duration(patrol_duration_min, patrol_duration_max)
 	_play_animation(&"move")
+	move_sound.play()
 
 
 func _process_patrol(delta: float) -> void:
@@ -105,12 +107,15 @@ func _process_patrol(delta: float) -> void:
 
 	animated_sprite.flip_h = _direction > 0
 	_play_animation(&"move")
+	if not move_sound.playing:
+		move_sound.play()
 	velocity.x = _direction * move_speed
 
 
 func _start_attack() -> void:
 	_state = State.ATTACK
 	velocity.x = 0.0
+	move_sound.stop()
 	animated_sprite.play(&"attack")
 
 	var attack_speed := maxf(animated_sprite.sprite_frames.get_animation_speed(&"attack"), 0.01)
@@ -172,6 +177,7 @@ func die() -> void:
 	is_dead = true
 	_state = State.DEAD
 	velocity = Vector2.ZERO
+	move_sound.stop()
 	animated_sprite.pause()
 	collision_shape.set_deferred("disabled", true)
 	_spawn_death_bullets()
