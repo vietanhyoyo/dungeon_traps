@@ -2,13 +2,14 @@ extends Node2D
 
 const AsuraController = preload("res://scripts/actors/asura_controller.gd")
 const SerelynController = preload("res://scripts/actors/serelyn_controller.gd")
+const SERELYN_SCENE: PackedScene = preload("res://nodes/characters/serelyn.tscn")
 const TransformEffect = preload("res://nodes/effects/character_transform_effect.tscn")
 const CAMERA_OFFSET := Vector2(-1.0, 5.0)
 const CAMERA_SWITCH_DURATION := 0.35
 const CHARACTER_SWITCH_COOLDOWN := 5.0
 
 @onready var asura: AsuraController = $Asura
-@onready var serelyn: SerelynController = $Serelyn
+@onready var serelyn: SerelynController = get_node_or_null("Serelyn") as SerelynController
 @onready var camera: Camera2D = $Asura/Camera2D
 @onready var light: PointLight2D = $Asura/PointLight2D
 @onready var character_hud: CharacterHUD = $CharacterHUD
@@ -19,6 +20,18 @@ var _switch_cooldown_remaining := 0.0
 
 
 func _ready() -> void:
+	# Level 7 omits the static NPC. Add Serelyn as a playable form only after
+	# recruitment has been saved; Level 6 still uses its scene NPC for dialogue.
+	if serelyn == null and GameState.has_party_member("serelyn"):
+		serelyn = SERELYN_SCENE.instantiate() as SerelynController
+		serelyn.name = "Serelyn"
+		serelyn.position = asura.position
+		add_child(serelyn)
+
+	if serelyn == null:
+		character_hud.set_state(false, false)
+		return
+
 	serelyn.conversation_finished.connect(_on_serelyn_conversation_finished)
 	if serelyn.conversation_completed:
 		_on_serelyn_conversation_finished()
@@ -30,7 +43,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not event.is_action_pressed("switch_character") \
 			or (event is InputEventKey and event.echo):
 		return
-	if get_tree().paused or GameState.is_game_over() \
+	if serelyn == null or get_tree().paused or GameState.is_game_over() \
 			or not serelyn.conversation_completed \
 			or serelyn.dialogue_open or asura.is_dead or serelyn.is_dead \
 			or asura.movement_locked or serelyn.is_hurt or _is_transforming \

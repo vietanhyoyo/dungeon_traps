@@ -297,12 +297,14 @@ Chi tiết cách từng nhân vật triển khai đòn đánh và kỹ năng n�
 
 Bảng nhân vật trong `pause_menu.tscn` có sẵn hàng `SkillList/SpinJumpAttack` và `SkillList/WallJump` nhưng đều để `visible = false`; `_pause()` bật từng hàng lên theo `GameState.has_skill()`.
 
-### Level 6 Recruitment And Character Switching
+### Serelyn Recruitment And Character Switching
 
 `level_6.tscn` đặt Serelyn làm NPC gần điểm xuất phát và chứa `DialogueLayer`.
 `scripts/level_6_controller.gd` quản lý việc tuyển thành viên và chuyển nhân
 vật bằng Z; camera, `PointLight2D` và `ui/character_hud.tscn` theo nhân vật đang
-được điều khiển. Chi tiết hội thoại và hành vi của từng nhân vật nằm trong
+được điều khiển. Level 7 không đặt Serelyn sẵn trong scene; controller chỉ tạo
+cô ấy tại vị trí Asura nếu trạng thái lưu cho biết đã kết nạp cô ở level 6.
+Chi tiết hội thoại và hành vi của từng nhân vật nằm trong
 [tài liệu Serelyn](characters/serelyn.md) và [tài liệu Asura](characters/asura.md).
 
 ### Hanging Steel Crate

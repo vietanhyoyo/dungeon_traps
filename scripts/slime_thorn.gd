@@ -39,7 +39,7 @@ const ATTACK_RELEASE_FRAME := 4
 ## chỉ còn là một cái giật, quá dài thì slime đứng đơ giữa chừng.
 const ATTACK_SPEED_SCALE_RANGE := Vector2(0.5, 4.0)
 
-@export_group("Phóng gai")
+@export_group("Thorn Attack")
 ## Số gai trong một vòng, chia đều 360 độ.
 @export_range(3, 16, 1) var thorn_count := 8:
 	set(value):

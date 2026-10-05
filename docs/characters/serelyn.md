@@ -21,6 +21,10 @@ và Serelyn. Nhân vật được chọn xuất hiện tại vị trí nhân v�
 ứng kết thúc. `ui/character_hud.tscn` hiển thị portrait cắt từ ảnh idle và làm
 sáng viền của nhân vật đang được điều khiển.
 
+Level 7 không đặt Serelyn làm NPC trong scene. Nếu dữ liệu lưu cho biết cô đã
+được kết nạp, controller tạo dạng nhân vật có thể điều khiển tại vị trí Asura
+khi vào màn; nếu chưa kết nạp thì không tạo Serelyn.
+
 ## Di Chuyển Và Tấn Công
 
 Serelyn là `CharacterBody2D` với `AnimatedSprite2D`. Các animation gồm idle (5

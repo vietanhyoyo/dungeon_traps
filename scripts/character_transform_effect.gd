@@ -3,12 +3,12 @@ class_name CharacterTransformEffect
 
 signal finished
 
-const DURATION := 0.64
+const DURATION := 0.4
 const FRAME_COUNT := 8
 # Khung thứ 7 (đếm từ 1) là lúc nhân vật hiện trở lại.
 const REVEAL_FRAME := 6
 const REVEAL_BRIGHTNESS := 1.4
-const REVEAL_FADE_DURATION := 0.18
+const REVEAL_FADE_DURATION := 0.12
 # Mỗi ô 100x200; tâm vòng teleport ở (50, 150), không phải tâm ô.
 const RING_CENTER_OFFSET := Vector2(0.0, -50.0)
 const RING_DIAMETER := 100.0

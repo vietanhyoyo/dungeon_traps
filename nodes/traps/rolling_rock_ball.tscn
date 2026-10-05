@@ -10,7 +10,7 @@ atlas = ExtResource("1_atlas")
 region = Rect2(0, 0, 128, 128)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_trigger"]
-size = Vector2(61, 21)
+size = Vector2(61, 54)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ball_frame_1"]
 atlas = ExtResource("1_atlas")
@@ -36,10 +36,6 @@ region = Rect2(640, 0, 128, 128)
 atlas = ExtResource("1_atlas")
 region = Rect2(768, 0, 128, 128)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_shadow"]
-atlas = ExtResource("1_atlas")
-region = Rect2(896, 0, 128, 128)
-
 [sub_resource type="SpriteFrames" id="SpriteFrames_ball"]
 animations = [{
 "frames": [{
@@ -61,10 +57,14 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ball_frame_6")
 }],
-"loop": false,
+"loop": 0,
 "name": &"break",
 "speed": 20.0
 }]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_shadow"]
+atlas = ExtResource("1_atlas")
+region = Rect2(896, 0, 128, 128)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ball"]
 radius = 42.0
@@ -83,15 +83,14 @@ collision_mask = 2
 monitorable = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerArea" unique_id=872563331]
-visible = false
-position = Vector2(0.5, -38.5)
+position = Vector2(0.5, -55)
 shape = SubResource("RectangleShape2D_trigger")
 
 [node name="Ball" type="CharacterBody2D" parent="." unique_id=774693187]
 visible = false
+modulate = Color(0.6317153, 0.63171524, 0.63171524, 1)
 z_index = 7
 z_as_relative = false
-modulate = Color(0.6317153, 0.63171524, 0.63171524, 1)
 collision_layer = 0
 safe_margin = 0.1
 
@@ -100,7 +99,7 @@ sprite_frames = SubResource("SpriteFrames_ball")
 animation = &"break"
 
 [node name="ShadowOverlay" type="Sprite2D" parent="Ball" unique_id=322523336]
-z_index = 1
+z_index = 0
 texture = SubResource("AtlasTexture_shadow")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Ball" unique_id=884574406]

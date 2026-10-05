@@ -10,6 +10,10 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
 size = Vector2(26, 24)
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_detection"]
+resource_local_to_scene = true
+radius = 280.0
+
 [sub_resource type="Shader" id="Shader_hit_flash"]
 code = "shader_type canvas_item;
 
@@ -228,3 +232,11 @@ bus = &"SFX"
 position = Vector2(0, 12)
 target_position = Vector2(0, 12)
 collision_mask = 1
+
+[node name="DetectionArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea"]
+visible = false
+shape = SubResource("CircleShape2D_detection")

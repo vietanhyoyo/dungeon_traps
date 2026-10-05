@@ -15,7 +15,7 @@ const DEATH_BURST_ANGLE_MIN_DEGREES := 50.0
 
 enum State { WAIT, PATROL, ATTACK, DEAD }
 
-@export_group("Di chuyển")
+@export_group("Movement")
 @export_range(0.0, 300.0, 1.0, "or_greater") var move_speed := 30.0
 @export_range(0.0, 1000.0, 1.0, "or_greater") var patrol_distance := 64.0:
 	set(value):
@@ -26,7 +26,16 @@ enum State { WAIT, PATROL, ATTACK, DEAD }
 @export_range(0.1, 8.0, 0.1, "or_greater") var patrol_duration_min := 2.0
 @export_range(0.1, 8.0, 0.1, "or_greater") var patrol_duration_max := 3.5
 
-@export_group("Bắn")
+@export_group("Detection")
+## Bán kính phát hiện player; vùng tròn được vẽ trong editor để dễ đặt slime.
+@export_range(32.0, 800.0, 1.0, "or_greater") var detection_radius := 280.0:
+	set(value):
+		detection_radius = value
+		_apply_detection_radius()
+		queue_redraw()
+@export_range(0.0, 3.0, 0.05) var first_shot_delay := 0.6
+
+@export_group("Shooting")
 @export_range(0.1, 8.0, 0.1, "or_greater") var wait_after_attack_min := 1.8
 @export_range(0.1, 8.0, 0.1, "or_greater") var wait_after_attack_max := 3.0
 @export_range(32.0, 500.0, 1.0, "or_greater") var bullet_apex_height := 140.0
@@ -38,9 +47,13 @@ var _state := State.WAIT
 var _phase_timer := 0.0
 var _start_x := 0.0
 var _direction := 1
+var _target: Node2D = null
+var _has_started_attack := false
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
+@onready var detection_area: Area2D = $DetectionArea
+@onready var detection_shape: CollisionShape2D = $DetectionArea/CollisionShape2D
 @onready var muzzle: Marker2D = $Muzzle
 @onready var shoot_sound: AudioStreamPlayer2D = $ShootSound
 @onready var move_sound: AudioStreamPlayer2D = $MoveSound
@@ -51,6 +64,9 @@ func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
 
+	_apply_detection_radius()
+	detection_area.body_entered.connect(_on_detection_body_entered)
+	detection_area.body_exited.connect(_on_detection_body_exited)
 	if animated_sprite.material:
 		animated_sprite.material = animated_sprite.material.duplicate()
 	animated_sprite.animation_finished.connect(_on_animation_finished)
@@ -67,20 +83,35 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity += get_gravity() * delta
 
+	if _has_valid_target():
+		_face_towards(_target.global_position.x)
+
 	match _state:
 		State.WAIT:
 			velocity.x = 0.0
 			_phase_timer -= delta
 			if _phase_timer <= 0.0:
-				_start_patrol()
+				if _has_valid_target():
+					_start_attack()
+				else:
+					_start_patrol()
 		State.PATROL:
-			_process_patrol(delta)
+			if _has_valid_target():
+				_start_attack()
+			else:
+				_process_patrol(delta)
 		State.ATTACK:
 			velocity.x = 0.0
 
 	move_and_slide()
 	if _state == State.PATROL and _phase_timer <= 0.0:
-		_start_attack()
+		if _has_valid_target():
+			_start_attack()
+		else:
+			_state = State.WAIT
+			_phase_timer = _random_duration(wait_before_move_min, wait_before_move_max)
+			move_sound.stop()
+			_play_animation(&"idle")
 
 
 func _start_patrol() -> void:
@@ -112,15 +143,25 @@ func _process_patrol(delta: float) -> void:
 	velocity.x = _direction * move_speed
 
 
+func _face_towards(target_x: float) -> void:
+	var direction := signf(target_x - global_position.x)
+	if is_zero_approx(direction):
+		return
+
+	_direction = int(direction)
+	animated_sprite.flip_h = _direction > 0
+
+
 func _start_attack() -> void:
 	_state = State.ATTACK
+	_has_started_attack = true
 	velocity.x = 0.0
 	move_sound.stop()
 	animated_sprite.play(&"attack")
 
 	var attack_speed := maxf(animated_sprite.sprite_frames.get_animation_speed(&"attack"), 0.01)
 	await get_tree().create_timer(ATTACK_RELEASE_FRAME / attack_speed, false).timeout
-	if is_dead or not is_inside_tree():
+	if is_dead or not is_inside_tree() or not _has_valid_target():
 		return
 
 	var launch_velocity := _get_targeted_launch_velocity(muzzle.global_position)
@@ -131,7 +172,7 @@ func _start_attack() -> void:
 
 
 func _get_targeted_launch_velocity(origin: Vector2) -> Vector2:
-	var player := get_tree().get_first_node_in_group(&"player") as Node2D
+	var player := _target if _has_valid_target() else null
 	var configured_minimum_speed := launch_speed_min if launch_speed_min > 0.0 else 283.0
 	var minimum_speed := minf(configured_minimum_speed, maxf(launch_speed_max, configured_minimum_speed))
 	var vertical_speed := sqrt(2.0 * PROJECTILE_GRAVITY * bullet_apex_height)
@@ -170,6 +211,42 @@ func _random_duration(minimum: float, maximum: float) -> float:
 	return randf_range(minf(minimum, maximum), maxf(minimum, maximum))
 
 
+func _has_valid_target() -> bool:
+	if is_instance_valid(_target) and _target.is_in_group(&"player"):
+		return true
+	_target = null
+	return false
+
+
+func _apply_detection_radius() -> void:
+	if detection_shape == null:
+		return
+
+	var shape := detection_shape.shape as CircleShape2D
+	if shape:
+		shape.radius = detection_radius
+
+
+func _on_detection_body_entered(body: Node2D) -> void:
+	if is_dead or not body.is_in_group(&"player"):
+		return
+
+	_target = body
+	if _state == State.PATROL:
+		_state = State.WAIT
+		_phase_timer = first_shot_delay
+		velocity.x = 0.0
+		move_sound.stop()
+		_play_animation(&"idle")
+	elif _state == State.WAIT and not _has_started_attack:
+		_phase_timer = minf(_phase_timer, first_shot_delay)
+
+
+func _on_detection_body_exited(body: Node2D) -> void:
+	if body == _target:
+		_target = null
+
+
 func die() -> void:
 	if is_dead:
 		return
@@ -180,6 +257,7 @@ func die() -> void:
 	move_sound.stop()
 	animated_sprite.pause()
 	collision_shape.set_deferred("disabled", true)
+	detection_area.set_deferred("monitoring", false)
 	_spawn_death_bullets()
 	_spawn_death_smoke()
 	_play_defeat_sound()
@@ -258,7 +336,12 @@ func _play_hit_flash() -> void:
 
 
 func _draw() -> void:
-	if not Engine.is_editor_hint() or patrol_distance <= 0.0:
+	if not Engine.is_editor_hint():
+		return
+
+	const DETECTION_COLOR := Color(1.0, 0.35, 0.35, 0.7)
+	draw_arc(Vector2.ZERO, detection_radius, 0.0, TAU, 48, DETECTION_COLOR, 1.0)
+	if patrol_distance <= 0.0:
 		return
 
 	const PATROL_COLOR := Color(1.0, 0.85, 0.2, 0.9)
