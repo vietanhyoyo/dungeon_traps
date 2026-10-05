@@ -28,6 +28,18 @@ corner_radius_top_right = 3
 corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 
+[sub_resource type="StyleBoxFlat" id="StyleBox_cooldown_badge"]
+bg_color = Color(0.035, 0.025, 0.08, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.93, 0.82, 0.1, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
 [node name="CharacterHUD" type="CanvasLayer"]
 layer = 12
 script = ExtResource("1_script")
@@ -55,6 +67,27 @@ texture = SubResource("AtlasTexture_asura")
 expand_mode = 1
 stretch_mode = 5
 
+[node name="CooldownBadge" type="PanelContainer" parent="Portraits/AsuraCard/Portrait"]
+visible = false
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -26.0
+offset_top = 2.0
+offset_right = -2.0
+offset_bottom = 26.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_cooldown_badge")
+
+[node name="Countdown" type="Label" parent="Portraits/AsuraCard/Portrait/CooldownBadge"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.04, 0.025, 0.08, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = "5"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="SerelynCard" type="PanelContainer" parent="Portraits"]
 custom_minimum_size = Vector2(56, 56)
 layout_mode = 2
@@ -69,3 +102,24 @@ texture_filter = 1
 texture = SubResource("AtlasTexture_serelyn")
 expand_mode = 1
 stretch_mode = 5
+
+[node name="CooldownBadge" type="PanelContainer" parent="Portraits/SerelynCard/Portrait"]
+visible = false
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -26.0
+offset_top = 2.0
+offset_right = -2.0
+offset_bottom = 26.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_cooldown_badge")
+
+[node name="Countdown" type="Label" parent="Portraits/SerelynCard/Portrait/CooldownBadge"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.04, 0.025, 0.08, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = "5"
+horizontal_alignment = 1
+vertical_alignment = 1

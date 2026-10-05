@@ -1,6 +1,7 @@
 extends CharacterBody2D
 
 const SPEED = 180.0
+const TELEPORT_EFFECT := preload("res://nodes/effects/character_transform_effect.tscn")
 const TRANSFORM_MOMENTUM_DECELERATION := 900.0
 const JUMP_VELOCITY = -320.0
 const SLIDE_SPEED = 240.0
@@ -106,6 +107,15 @@ func _ready() -> void:
 	normal_collision_position = body_collision.position
 	normal_sprite_position = animated_sprite.position
 	clear_attack_hitbox()
+	_play_spawn_effect()
+
+
+func _play_spawn_effect() -> void:
+	if not is_visible_in_tree():
+		return
+	var effect: CharacterTransformEffect = TELEPORT_EFFECT.instantiate()
+	add_child(effect)
+	effect.play(self)
 
 
 func _physics_process(delta: float) -> void:

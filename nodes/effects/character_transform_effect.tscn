@@ -1,7 +1,8 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/character_transform_effect.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://jbgo5ybpo85i" path="res://assets/sprites/effects/character_transform.png" id="2_sprite"]
+[ext_resource type="Texture2D" path="res://assets/sprites/effects/teleport-effect.png" id="2_sprite"]
+[ext_resource type="AudioStream" path="res://assets/sounds/freesound_gamestudio-gameplay-recover-hp-384936.mp3" id="3_sound"]
 
 [node name="CharacterTransformEffect" type="Node2D"]
 z_index = 20
@@ -9,7 +10,12 @@ script = ExtResource("1_script")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture_filter = 1
-scale = Vector2(0.4, 0.4)
+position = Vector2(0, -38.75)
+scale = Vector2(0.775, 0.775)
 texture = ExtResource("2_sprite")
-hframes = 4
-vframes = 2
+hframes = 8
+
+[node name="TeleportSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_sound")
+volume_db = -8.0
+bus = &"SFX"

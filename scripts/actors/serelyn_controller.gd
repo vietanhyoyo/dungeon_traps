@@ -3,6 +3,7 @@ extends CharacterBody2D
 signal conversation_finished
 
 const MEMBER_ID := "serelyn"
+const TELEPORT_EFFECT := preload("res://nodes/effects/character_transform_effect.tscn")
 const SPEED := 180.0
 const TRANSFORM_MOMENTUM_DECELERATION := 900.0
 const JUMP_VELOCITY := -320.0
@@ -97,6 +98,15 @@ func _ready() -> void:
 	if GameState.has_party_member(MEMBER_ID):
 		conversation_completed = true
 		_hide_as_npc()
+	_play_spawn_effect()
+
+
+func _play_spawn_effect() -> void:
+	if not is_visible_in_tree():
+		return
+	var effect: CharacterTransformEffect = TELEPORT_EFFECT.instantiate()
+	add_child(effect)
+	effect.play(self)
 
 
 func _physics_process(delta: float) -> void:

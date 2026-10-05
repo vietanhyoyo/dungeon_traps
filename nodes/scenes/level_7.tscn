@@ -289,17 +289,7 @@ patrol_left = 107.0
 patrol_right = 186.0
 
 [node name="SpitterSlime" parent="SlimeList" unique_id=2095474693 instance=ExtResource("27_spitter_slime")]
-position = Vector2(2191, 784)
-move_speed = null
-patrol_distance = null
-wait_before_move_min = null
-wait_before_move_max = null
-patrol_duration_min = null
-patrol_duration_max = null
-wait_after_attack_min = null
-wait_after_attack_max = null
-launch_speed_min = null
-launch_speed_max = null
+position = Vector2(2159, 773)
 
 [node name="BowTrapList" type="Node" parent="." unique_id=659858173]
 
