@@ -222,11 +222,15 @@ stream = ExtResource("4_shoot")
 volume_db = -13.0
 pitch_scale = 1.0
 bus = &"SFX"
+max_distance = 600.0
+attenuation = 1.4
 
 [node name="MoveSound" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("6_move_sound")
 volume_db = -16.0
 bus = &"SFX"
+max_distance = 600.0
+attenuation = 1.4
 
 [node name="FloorProbe" type="RayCast2D" parent="."]
 position = Vector2(0, 12)

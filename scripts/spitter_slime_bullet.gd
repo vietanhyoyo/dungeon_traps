@@ -7,6 +7,8 @@ const TERRAIN_MASK := 1
 const POP_DURATION := 0.16
 const DEFEAT_SOUND := preload("res://assets/sounds/freesound_community-poof-80161.mp3")
 const DEFEAT_SOUND_OFFSET := 0.5
+const SOUND_MAX_DISTANCE := 600.0
+const SOUND_ATTENUATION := 1.4
 
 var is_dead := false
 var _age := 0.0
@@ -97,6 +99,8 @@ func _play_defeat_sound() -> void:
 	sound_player.bus = &"SFX"
 	sound_player.global_position = global_position
 	sound_player.pitch_scale = 1.4
+	sound_player.max_distance = SOUND_MAX_DISTANCE
+	sound_player.attenuation = SOUND_ATTENUATION
 	get_tree().current_scene.add_child(sound_player)
 	sound_player.finished.connect(sound_player.queue_free)
 	sound_player.play(DEFEAT_SOUND_OFFSET)

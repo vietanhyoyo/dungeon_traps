@@ -8,6 +8,8 @@ const HIT_FLASH_ON_DURATION := 0.04
 const HIT_FLASH_OFF_DURATION := 0.035
 const DEFEAT_SOUND := preload("res://assets/sounds/freesound_community-poof-80161.mp3")
 const DEFEAT_SOUND_OFFSET := 0.5
+const SOUND_MAX_DISTANCE := 600.0
+const SOUND_ATTENUATION := 1.4
 const ATTACK_RELEASE_FRAME := 4
 const PROJECTILE_GRAVITY := 620.0
 const DEATH_BURST_BULLET_COUNT := 5
@@ -315,6 +317,8 @@ func _play_defeat_sound() -> void:
 	var sound_player := AudioStreamPlayer2D.new()
 	sound_player.stream = DEFEAT_SOUND
 	sound_player.bus = &"SFX"
+	sound_player.max_distance = SOUND_MAX_DISTANCE
+	sound_player.attenuation = SOUND_ATTENUATION
 	sound_player.global_position = global_position
 	get_tree().current_scene.add_child(sound_player)
 	sound_player.finished.connect(sound_player.queue_free)
