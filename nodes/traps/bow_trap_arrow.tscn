@@ -1,0 +1,25 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/bow_trap_arrow.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/sprites/traps/bow-trap.png" id="2_bow"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_arrow"]
+atlas = ExtResource("2_bow")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_arrow"]
+size = Vector2(24, 5)
+
+[node name="BowTrapArrow" type="Area2D" groups=["slashable_projectile"]]
+z_index = 4
+collision_layer = 4
+collision_mask = 2
+monitorable = true
+script = ExtResource("1_script")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = SubResource("AtlasTexture_arrow")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = -0.785398
+shape = SubResource("RectangleShape2D_arrow")

@@ -1,49 +1,28 @@
 extends Node2D
 
+const ARROW_SCENE: PackedScene = preload("res://nodes/traps/bow_trap_arrow.tscn")
+
 @export var arrow_speed := 1500.0
 @export var fire_delay := 0.12
-# Thời gian nạp lại sau một phát bắn hụt, trước khi bẫy nhận kích hoạt tiếp.
+# Thời gian nạp lại sau khi mũi tên bay hết hoặc cắm vào địa hình.
 @export var rearm_delay := 0.6
 @export var hit_distance := 10.0
 @export var impact_distance := 14.0
+@export var deflected_arrow_lifetime := 3.0
 
 @onready var trap_sprite: Sprite2D = $TrapSprite
 @onready var trigger_area: Area2D = $TriggerArea
-@onready var arrow: Area2D = $Arrow
-# Kéo hai Marker2D này trong editor để chỉnh nơi mũi tên xuất phát và nơi nó bay tới.
-# SpawnPoint nằm ngoài rìa camera (1152x648) để có quãng bay đủ dài;
-# TargetPoint mặc định đặt ngay chỗ thân player khi đứng trên ô bẫy.
 @onready var spawn_point: Marker2D = $SpawnPoint
 @onready var target_point: Marker2D = $TargetPoint
 @onready var shoot_sound: AudioStreamPlayer2D = $ShootSound
 
-var _target_position := Vector2.ZERO
 var _has_fired := false
 var _has_hit := false
+var _rearm_started := false
 
 
 func _ready() -> void:
 	trigger_area.body_entered.connect(_on_trigger_body_entered)
-	arrow.body_entered.connect(_on_arrow_body_entered)
-	arrow.visible = false
-	arrow.monitoring = false
-	set_physics_process(false)
-
-
-func _physics_process(delta: float) -> void:
-	if _is_game_over():
-		set_physics_process(false)
-		return
-
-	# Mũi tên bay tới điểm đã khoá lúc bắn, không bám theo player nữa.
-	var distance := arrow.global_position.distance_to(_target_position)
-	arrow.global_position = arrow.global_position.move_toward(
-		_target_position,
-		minf(arrow_speed * delta, distance)
-	)
-
-	if distance <= maxf(hit_distance, arrow_speed * delta):
-		_finish_flight()
 
 
 func _on_trigger_body_entered(body: Node2D) -> void:
@@ -51,8 +30,6 @@ func _on_trigger_body_entered(body: Node2D) -> void:
 		return
 
 	_has_fired = true
-	# Khoá điểm ngắm ngay lúc player chạm bẫy; mũi tên không đuổi theo nữa.
-	_target_position = target_point.global_position
 	trigger_area.set_deferred("monitoring", false)
 
 	# Nhấn nhẹ frame 1 xuống để người chơi thấy ô bẫy vừa được kích hoạt.
@@ -62,43 +39,37 @@ func _on_trigger_body_entered(body: Node2D) -> void:
 	press_tween.tween_property(trap_sprite, "scale:y", 0.72, 0.08)
 
 	await get_tree().create_timer(fire_delay).timeout
-	if _is_game_over():
+	if _is_game_over() or not is_inside_tree():
 		return
 
-	arrow.global_position = spawn_point.global_position
-	# Hướng bay cố định ngay lúc bắn. Đầu mũi tên trong frame 2 chĩa chéo
-	# xuống-trái (135 độ) nên phải bù lại góc đó.
-	arrow.global_rotation = (
-		arrow.global_position.direction_to(_target_position).angle() - 3.0 * PI / 4.0
+	# Mỗi lần bắn tạo một projectile riêng để các bẫy và các mũi tên đang cắm
+	# trên tường không dùng chung hoặc ghi đè trạng thái của nhau.
+	var arrow := ARROW_SCENE.instantiate() as BowTrapArrow
+	get_tree().current_scene.add_child(arrow)
+	arrow.launch(
+		spawn_point.global_position,
+		target_point.global_position,
+		arrow_speed,
+		hit_distance,
+		impact_distance,
+		deflected_arrow_lifetime,
+		self
 	)
-	arrow.visible = true
-	arrow.set_deferred("monitoring", true)
 	shoot_sound.play()
-	set_physics_process(true)
 
 
-func _finish_flight() -> void:
-	set_physics_process(false)
-	arrow.global_position = _target_position
-
-	# Chờ một frame vật lý để Area2D kịp báo va chạm ở vị trí cuối,
-	# nếu player đã né đi thì mũi tên chỉ đơn giản cắm xuống rồi biến mất.
-	await get_tree().physics_frame
-	if _has_hit or not is_instance_valid(arrow):
-		return
-
-	for body in arrow.get_overlapping_bodies():
-		if body.is_in_group(&"player"):
-			_hit_player(body)
-			return
-
-	arrow.set_deferred("monitoring", false)
-	arrow.visible = false
+func rearm_after_shot() -> void:
 	_rearm()
 
 
+func register_player_hit() -> void:
+	_has_hit = true
+
+
 func _rearm() -> void:
-	# Bắn hụt thì bẫy nạp lại: player quay lại giẫm lên sẽ bị bắn tiếp.
+	if _rearm_started or _has_hit:
+		return
+	_rearm_started = true
 	await get_tree().create_timer(rearm_delay).timeout
 	if _has_hit or _is_game_over() or not is_inside_tree():
 		return
@@ -109,31 +80,8 @@ func _rearm() -> void:
 	release_tween.tween_property(trap_sprite, "scale:y", 1.0, 0.12)
 
 	_has_fired = false
+	_rearm_started = false
 	trigger_area.set_deferred("monitoring", true)
-
-
-func _on_arrow_body_entered(body: Node2D) -> void:
-	if body.is_in_group(&"player"):
-		_hit_player(body)
-
-
-func _hit_player(player: Node2D) -> void:
-	if _has_hit or not is_instance_valid(player):
-		return
-
-	_has_hit = true
-	set_physics_process(false)
-	arrow.set_deferred("monitoring", false)
-	# Giữ đầu mũi tên ngay trước mặt player thay vì đặt chồng vào tâm nhân vật.
-	var impact_direction := arrow.global_position.direction_to(player.global_position)
-	if impact_direction.length_squared() <= 0.0001:
-		# Ở tốc độ cao, mũi tên có thể đi hết quãng đường trong một frame.
-		impact_direction = Vector2.from_angle(arrow.global_rotation + 3.0 * PI / 4.0)
-	arrow.global_position = player.global_position - impact_direction * impact_distance
-
-	var game_state := get_node_or_null("/root/GameState")
-	if game_state and game_state.has_method("trigger_game_over"):
-		game_state.trigger_game_over(player)
 
 
 func _is_game_over() -> bool:

@@ -29,10 +29,10 @@ const GAME_OVER_CAMERA_DROP_DURATION = 0.4
 const ATTACK_SOUND_OFFSET = 0.2
 # Thời gian giữ animation "hust" trước khi chuyển sang animation chết
 const HURT_DURATION = 0.4
-# Người chơi không cần đợi hết animation mới chém tiếp: đòn mới được cắt ngang
-# đòn cũ ngay khi vùng sát thương của đòn cũ đã bật đủ số bước physics này.
-# Physics server chỉ trả kết quả va chạm ở bước kế tiếp sau khi bật shape, nên
-# phải chờ vài bước thì đòn bị cắt ngang mới chắc chắn kịp gây sát thương.
+# Trên không vẫn cho phép nối đòn sau khi vùng sát thương bật đủ số bước
+# physics; khi đứng đất, đòn phải chạy hết animation mới được chém tiếp.
+# Physics server trả kết quả va chạm ở bước kế tiếp sau khi bật shape, nên
+# phải chờ vài bước để đòn trên không bị cắt ngang kịp gây sát thương.
 const ATTACK_ACTIVE_STEPS = 3
 # Khung bất tử ngay đầu mỗi đòn đánh. Đòn chém là lúc nhân vật phải lao vào sát
 # bẫy/quái, nên cho người chơi một nhịp ngắn để "đánh đổi" mà không chết oan vì
@@ -321,9 +321,14 @@ func set_controlled(value: bool, preserve_momentum := false) -> void:
 	animated_sprite.play("idle")
 
 
-# Đòn mới được phép cắt ngang đòn đang chạy, miễn là đòn đó đã kịp vung ra.
+# Đòn trên không được phép cắt ngang đòn đang chạy sau khi đòn đó đã kịp vung ra.
+# Khi đứng trên sàn, phải chờ animation hiện tại kết thúc.
 func can_start_attack() -> bool:
-	return not is_attacking or attack_active_steps >= ATTACK_ACTIVE_STEPS
+	if not is_attacking:
+		return true
+	if is_on_floor():
+		return false
+	return attack_active_steps >= ATTACK_ACTIVE_STEPS
 
 
 func start_attack(anim: String) -> void:
@@ -492,6 +497,15 @@ func update_attack_hitbox() -> void:
 
 	for body in attack_hitbox.get_overlapping_bodies():
 		hit_enemy(body)
+
+	# Mũi tên của bẫy là Area2D thay vì PhysicsBody2D, nên dò riêng các vùng
+	# projectile có thể bị chém để Asura phá được tên đang bay tới.
+	for area in attack_hitbox.get_overlapping_areas():
+		if not area.is_in_group(&"slashable_projectile"):
+			continue
+		if area.has_method("hit_by_attack"):
+			var facing := -1.0 if animated_sprite.flip_h else 1.0
+			area.hit_by_attack(Vector2(facing, -0.25).normalized())
 
 
 func hit_enemy(body: Node) -> void:
