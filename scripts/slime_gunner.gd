@@ -9,10 +9,10 @@ const HIT_FLASH_OFF_DURATION := 0.035
 const DEFEAT_SOUND := preload("res://assets/sounds/freesound_community-poof-80161.mp3")
 const DEFEAT_SOUND_OFFSET := 0.5
 
-## Vị trí đầu nòng so với gốc node, tính cho lúc slime quay sang phải. Khẩu súng
-## nằm ngang tầm thân slime, không phải cái ăng-ten chĩa lên trên.
-const MUZZLE_OFFSET := Vector2(14, -4)
-## Giới hạn co giãn animation "attack": windup quá ngắn thì ba khung hình chỉ còn
+## Vị trí miệng nòng so với gốc node, tính lúc slime quay sang phải. Nòng súng
+## nhô chéo ra khỏi phía trên đầu nên điểm sinh đạn nằm ngoài mép nòng.
+const MUZZLE_OFFSET := Vector2(20, -17)
+## Giới hạn co giãn animation "attack": windup quá ngắn thì bốn khung hình chỉ còn
 ## là một cái giật, quá dài thì slime đứng đơ giữa chừng.
 const ATTACK_SPEED_SCALE_RANGE := Vector2(0.5, 4.0)
 
@@ -43,7 +43,7 @@ const ATTACK_SPEED_SCALE_RANGE := Vector2(0.5, 4.0)
 ## chỉnh ở đây là chỉnh luôn độ dài động tác báo hiệu.
 @export_range(0.0, 1.0, 0.01) var windup := 0.6
 ## Góc bắn cố định; tốc độ mới là thứ được tính lại theo khoảng cách tới player.
-@export_range(10.0, 80.0, 1.0) var launch_angle_degrees := 45.0
+@export_range(10.0, 80.0, 1.0) var launch_angle_degrees := 60.0
 @export_range(60.0, 1200.0, 10.0, "or_greater") var min_launch_speed := 170.0
 @export_range(60.0, 1200.0, 10.0, "or_greater") var max_launch_speed := 520.0
 
@@ -307,7 +307,7 @@ func _draw() -> void:
 	const DETECTION_COLOR := Color(1.0, 0.35, 0.35, 0.7)
 	draw_arc(Vector2.ZERO, detection_radius, 0.0, TAU, 48, DETECTION_COLOR, 1.0)
 
-	# Vạch chỉ hướng nòng, để lúc đặt trong editor thấy ngay nó bắn về phía nào.
+	# Vạch chỉ hướng bay từ miệng nòng, để lúc đặt trong editor dễ canh.
 	const AIM_COLOR := Color(0.45, 0.8, 1.0, 0.9)
 	var muzzle_position := Vector2(MUZZLE_OFFSET.x * _facing, MUZZLE_OFFSET.y)
 	var angle := deg_to_rad(launch_angle_degrees)

@@ -19,6 +19,7 @@ enum State { WAIT, PATROL, ATTACK, DEAD }
 
 @export_group("Movement")
 @export_range(0.0, 300.0, 1.0, "or_greater") var move_speed := 30.0
+## Quãng tuần tra tính từ vị trí đặt slime về mỗi bên; 100 nghĩa là tổng vùng rộng 200 px.
 @export_range(0.0, 1000.0, 1.0, "or_greater") var patrol_distance := 64.0:
 	set(value):
 		patrol_distance = value
@@ -38,8 +39,6 @@ enum State { WAIT, PATROL, ATTACK, DEAD }
 @export_range(0.0, 3.0, 0.05) var first_shot_delay := 0.6
 
 @export_group("Shooting")
-@export_range(0.1, 8.0, 0.1, "or_greater") var wait_after_attack_min := 1.8
-@export_range(0.1, 8.0, 0.1, "or_greater") var wait_after_attack_max := 3.0
 @export_range(32.0, 500.0, 1.0, "or_greater") var bullet_apex_height := 140.0
 @export_range(100.0, 700.0, 10.0, "or_greater") var launch_speed_min := 283.0
 @export_range(100.0, 700.0, 10.0, "or_greater") var launch_speed_max := 396.0
@@ -51,6 +50,7 @@ var _start_x := 0.0
 var _direction := 1
 var _target: Node2D = null
 var _has_started_attack := false
+var _must_patrol_before_attack := false
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
@@ -85,7 +85,9 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity += get_gravity() * delta
 
-	if _has_valid_target():
+	# Khi đang hoàn tất lượt tuần tra sau một phát bắn, giữ hướng di chuyển.
+	# Nếu quay theo player ở ngoài mép sàn, kiểm tra mép sẽ đảo hướng lại mỗi frame.
+	if _has_valid_target() and not (_state == State.PATROL and _must_patrol_before_attack):
 		_face_towards(_target.global_position.x)
 
 	match _state:
@@ -98,7 +100,7 @@ func _physics_process(delta: float) -> void:
 				else:
 					_start_patrol()
 		State.PATROL:
-			if _has_valid_target():
+			if _has_valid_target() and not _must_patrol_before_attack:
 				_start_attack()
 			else:
 				_process_patrol(delta)
@@ -108,8 +110,10 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 	if _state == State.PATROL and _phase_timer <= 0.0:
 		if _has_valid_target():
+			_must_patrol_before_attack = false
 			_start_attack()
 		else:
+			_must_patrol_before_attack = false
 			_state = State.WAIT
 			_phase_timer = _random_duration(wait_before_move_min, wait_before_move_max)
 			move_sound.stop()
@@ -157,6 +161,7 @@ func _face_towards(target_x: float) -> void:
 func _start_attack() -> void:
 	_state = State.ATTACK
 	_has_started_attack = true
+	_must_patrol_before_attack = false
 	velocity.x = 0.0
 	move_sound.stop()
 	animated_sprite.play(&"attack")
@@ -199,9 +204,8 @@ func _get_targeted_launch_velocity(origin: Vector2) -> Vector2:
 func _on_animation_finished() -> void:
 	if is_dead or _state != State.ATTACK or animated_sprite.animation != &"attack":
 		return
-	_state = State.WAIT
-	_phase_timer = _random_duration(wait_after_attack_min, wait_after_attack_max)
-	animated_sprite.play(&"idle")
+	_must_patrol_before_attack = true
+	_start_patrol()
 
 
 func _play_animation(animation_name: StringName) -> void:

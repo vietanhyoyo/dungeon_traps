@@ -24,7 +24,7 @@
 [ext_resource type="Texture2D" uid="uid://8osth2vx03rl" path="res://assets/sprites/bg-1-layer-3.png" id="24_parallax_background_3"]
 [ext_resource type="PackedScene" uid="uid://dg4n7tp4d7q1y" path="res://nodes/enemies/slime.tscn" id="25_ebxed"]
 [ext_resource type="PackedScene" uid="uid://cshcxibddghu1" path="res://nodes/traps/rolling_rock_ball.tscn" id="25_rolling_rock_ball"]
-[ext_resource type="PackedScene" path="res://nodes/traps/bow_trap.tscn" id="26_0p2j1"]
+[ext_resource type="PackedScene" uid="uid://cewy0sh64816q" path="res://nodes/traps/bow_trap.tscn" id="26_0p2j1"]
 [ext_resource type="PackedScene" uid="uid://dscr153320p4r" path="res://nodes/traps/fire_trap.tscn" id="27_mslwh"]
 [ext_resource type="PackedScene" uid="uid://cpmbitmavgkhg" path="res://nodes/enemies/spitter_slime.tscn" id="27_spitter_slime"]
 [ext_resource type="PackedScene" uid="uid://ddq2qqo23k2o0" path="res://nodes/traps/thorn.tscn" id="28_h833d"]
@@ -252,7 +252,7 @@ centered = false
 script = ExtResource("21_background_fit")
 
 [node name="Asura" parent="." unique_id=1809393430 instance=ExtResource("1_asura")]
-position = Vector2(146, 564)
+position = Vector2(134, 610)
 
 [node name="Camera2D" parent="Asura" unique_id=1065377516 instance=ExtResource("2_camera")]
 limit_left = 0
@@ -432,7 +432,7 @@ patrol_distance = 180.0
 [node name="SpitterSlimeList" type="Node" parent="." unique_id=1459093897]
 
 [node name="SpitterSlime" parent="SpitterSlimeList" unique_id=2095474693 instance=ExtResource("27_spitter_slime")]
-position = Vector2(2159, 773)
+position = Vector2(2202, 774)
 
 [node name="SpitterSlime2" parent="SpitterSlimeList" unique_id=1905290619 instance=ExtResource("27_spitter_slime")]
 position = Vector2(2598, 512)
@@ -537,6 +537,7 @@ position = Vector2(6217, 1216)
 [node name="SlimeGunner1" parent="SlimeGunnerList" unique_id=2077220917 instance=ExtResource("31_od8sf")]
 z_index = 5
 position = Vector2(5363, 1466)
+launch_angle_degrees = 45.0
 
 [node name="CrateList" type="Node" parent="." unique_id=1067915722]
 

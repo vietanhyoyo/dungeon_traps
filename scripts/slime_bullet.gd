@@ -12,6 +12,14 @@ const GRAVITY := 620.0
 const LIFETIME := 5.0
 const POP_DURATION := 0.14
 const POP_SCALE := Vector2(1.9, 1.9)
+const TRAIL_SPACING := 9.0
+const TRAIL_RADII := [4.0, 3.0, 2.0]
+const TRAIL_COLORS := [
+	Color(0.25, 0.75, 1.0, 0.78),
+	Color(0.2, 0.62, 0.95, 0.52),
+	Color(0.15, 0.48, 0.85, 0.3),
+]
+const MAX_TRAIL_HISTORY := 24
 ## Bit 1 = lớp va chạm của tile map, dùng để biết đạn cắm vào tường.
 const TERRAIN_MASK := 1
 const DEFEAT_SOUND := preload("res://assets/sounds/freesound_community-poof-80161.mp3")
@@ -21,6 +29,7 @@ const DEFEAT_SOUND_OFFSET := 0.5
 
 var _is_popping := false
 var _age := 0.0
+var _trail_positions: Array[Vector2] = []
 
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
@@ -32,6 +41,8 @@ var _age := 0.0
 func launch(from: Vector2, initial_velocity: Vector2) -> void:
 	global_position = from
 	velocity = initial_velocity
+	_trail_positions.clear()
+	_trail_positions.append(from)
 
 
 func _physics_process(delta: float) -> void:
@@ -49,6 +60,7 @@ func _physics_process(delta: float) -> void:
 	var terrain_hit := _terrain_hit(motion)
 	if terrain_hit.is_empty():
 		global_position += motion
+		_record_trail_position()
 		return
 
 	# Dời về đúng chỗ chạm tường rồi mới nổ, tránh nổ khi đã lút vào trong gạch.
@@ -65,6 +77,40 @@ func _terrain_hit(motion: Vector2) -> Dictionary:
 	)
 	query.collision_mask = TERRAIN_MASK
 	return get_world_2d().direct_space_state.intersect_ray(query)
+
+
+func _record_trail_position() -> void:
+	_trail_positions.push_front(global_position)
+	if _trail_positions.size() > MAX_TRAIL_HISTORY:
+		_trail_positions.pop_back()
+	queue_redraw()
+
+
+func _draw() -> void:
+	if _is_popping or _trail_positions.is_empty():
+		return
+
+	var trail_index := 0
+	var distance_traveled := 0.0
+	var required_distance := TRAIL_SPACING
+	var newer_position := global_position
+	for older_position in _trail_positions:
+		var segment_length := newer_position.distance_to(older_position)
+		if segment_length > 0.001:
+			while trail_index < TRAIL_RADII.size() and distance_traveled + segment_length >= required_distance:
+				var segment_offset := required_distance - distance_traveled
+				var trail_position := newer_position.lerp(older_position, segment_offset / segment_length)
+				draw_circle(
+					trail_position - global_position,
+					TRAIL_RADII[trail_index],
+					TRAIL_COLORS[trail_index]
+				)
+				trail_index += 1
+				required_distance += TRAIL_SPACING
+			distance_traveled += segment_length
+		newer_position = older_position
+		if trail_index >= TRAIL_RADII.size():
+			break
 
 
 ## Killzone gọi hàm này khi player dính đạn. Cố tình không await bên trong:
@@ -91,6 +137,8 @@ func _pop() -> void:
 		return
 
 	_is_popping = true
+	_trail_positions.clear()
+	queue_redraw()
 	collision_shape.set_deferred("disabled", true)
 	killzone.set_deferred("monitoring", false)
 

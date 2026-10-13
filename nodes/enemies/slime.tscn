@@ -159,7 +159,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"death",
-"speed": 6.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -194,7 +194,7 @@ shape = SubResource("RectangleShape2D_body")
 modulate = Color(0.89925843, 0.8992584, 0.89925843, 1)
 material = SubResource("ShaderMaterial_m3g86")
 sprite_frames = SubResource("SpriteFrames_v5wyi")
-animation = &"attack"
+animation = &"death"
 autoplay = "idle"
 
 [node name="Killzone" parent="." unique_id=58724787 instance=ExtResource("2_n6pvg")]

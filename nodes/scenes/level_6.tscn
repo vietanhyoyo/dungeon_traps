@@ -550,6 +550,7 @@ position = Vector2(2372, 336)
 
 [node name="Door" parent="." unique_id=701868363 instance=ExtResource("8_door")]
 position = Vector2(3610, 208)
+next_scene_path = "res://nodes/scenes/level_7.tscn"
 
 [node name="StarHUD" parent="." unique_id=838283035 instance=ExtResource("13_star_hud")]
 

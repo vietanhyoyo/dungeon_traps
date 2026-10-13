@@ -10,7 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://c4jvx4glbgl2" path="res://nodes/door.tscn" id="8_ghy0c"]
 [ext_resource type="PackedScene" uid="uid://dscr153320p4r" path="res://nodes/traps/fire_trap.tscn" id="9_p4xfq"]
 [ext_resource type="PackedScene" uid="uid://ddq2qqo23k2o0" path="res://nodes/traps/thorn.tscn" id="10_fu5xh"]
-[ext_resource type="PackedScene" path="res://nodes/traps/bow_trap.tscn" id="11_7imj7"]
+[ext_resource type="PackedScene" uid="uid://cewy0sh64816q" path="res://nodes/traps/bow_trap.tscn" id="11_7imj7"]
 [ext_resource type="PackedScene" uid="uid://dg4n7tp4d7q1y" path="res://nodes/enemies/slime.tscn" id="11_ghiv5"]
 [ext_resource type="PackedScene" path="res://nodes/traps/pendulum_trap.tscn" id="12_pendulum"]
 [ext_resource type="PackedScene" path="res://nodes/enemies/bat.tscn" id="12_yotrr"]
@@ -325,12 +325,6 @@ position = Vector2(622, 1496)
 [node name="Fire23" parent="FireList" unique_id=1300888891 instance=ExtResource("9_p4xfq")]
 position = Vector2(2453, 472)
 
-[node name="Fire9" parent="FireList" unique_id=1639543935 instance=ExtResource("9_p4xfq")]
-position = Vector2(1235, 1528)
-
-[node name="Fire10" parent="FireList" unique_id=1501779174 instance=ExtResource("9_p4xfq")]
-position = Vector2(1219, 1528)
-
 [node name="Fire11" parent="FireList" unique_id=442846994 instance=ExtResource("9_p4xfq")]
 position = Vector2(2628, 1464)
 
@@ -526,10 +520,6 @@ position = Vector2(1243, 1224)
 [node name="Thorn10" parent="ThornList" unique_id=2101079139 instance=ExtResource("10_fu5xh")]
 z_index = 10
 position = Vector2(1808, 1288)
-
-[node name="Thorn11" parent="ThornList" unique_id=1206336532 instance=ExtResource("10_fu5xh")]
-z_index = 10
-position = Vector2(1872, 1288)
 
 [node name="Thorn12" parent="ThornList" unique_id=1640149176 instance=ExtResource("10_fu5xh")]
 z_index = 10
