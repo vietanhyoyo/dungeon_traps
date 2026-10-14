@@ -1,16 +1,15 @@
 [gd_scene format=3 uid="uid://l1dhtqji1d6x"]
 
-[ext_resource type="FontFile" uid="uid://njydc2e50off" path="res://assets/fonts/PixelOperator8.ttf" id="1_qkpo1"]
 [ext_resource type="Texture2D" uid="uid://d28tluf6jm21n" path="res://assets/sprites/background5.png" id="2_8pcmo"]
 [ext_resource type="PackedScene" uid="uid://cwgqa60xyqnyj" path="res://nodes/characters/asura.tscn" id="2_flbgy"]
 [ext_resource type="PackedScene" uid="uid://c4jvx4glbgl2" path="res://nodes/door.tscn" id="3_8pcmo"]
 [ext_resource type="PackedScene" path="res://nodes/tile_map_32.tscn" id="3_m4axl"]
 [ext_resource type="PackedScene" path="res://nodes/torch.tscn" id="5_jsomn"]
-[ext_resource type="PackedScene" uid="uid://dscr153320p4r" path="res://nodes/traps/fire_trap.tscn" id="6_jsomn"]
 [ext_resource type="PackedScene" uid="uid://ddq2qqo23k2o0" path="res://nodes/traps/thorn.tscn" id="7_thorn"]
 [ext_resource type="PackedScene" uid="uid://deqd3mnvbeh2d" path="res://nodes/camera.tscn" id="8_camera"]
 [ext_resource type="PackedScene" uid="uid://cg8mbcubeyje8" path="res://nodes/items/star.tscn" id="10_akfln"]
 [ext_resource type="PackedScene" path="res://nodes/star_hud.tscn" id="11_star_hud"]
+[ext_resource type="PackedScene" uid="uid://dhhgace1srtk8" path="res://nodes/traps/iron_spike_trap.tscn" id="13_yggu3"]
 [ext_resource type="PackedScene" path="res://nodes/ui/pause_menu.tscn" id="20_pause"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jsomn"]
@@ -123,20 +122,8 @@ sources/1 = SubResource("TileSetAtlasSource_jsomn")
 
 [node name="Level1" type="Node2D" unique_id=46945069]
 
-[node name="Label" type="Label" parent="." unique_id=27351563]
-z_index = 1
-offset_left = -316.0
-offset_top = -448.0
-offset_right = -55.0
-offset_bottom = -416.0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("1_qkpo1")
-theme_override_font_sizes/font_size = 10
-text = "Purple flames are very dangerous"
-
 [node name="Asura" parent="." unique_id=1107660582 instance=ExtResource("2_flbgy")]
-z_index = 6
-position = Vector2(-268, -367)
+position = Vector2(-301, -457)
 
 [node name="Camera2D" parent="Asura" unique_id=1525755273 instance=ExtResource("8_camera")]
 limit_bottom = 100
@@ -155,53 +142,6 @@ layer_1/tile_data = PackedInt32Array(3, 65536, 0, 4, 65536, 0, 5, 65536, 0, -524
 [node name="Door" parent="." unique_id=265049239 instance=ExtResource("3_8pcmo")]
 position = Vector2(1193, -47)
 next_scene_path = "res://nodes/scenes/level_2.tscn"
-
-[node name="FireList" type="Node" parent="." unique_id=532938640]
-
-[node name="Fire" parent="FireList" unique_id=536643257 instance=ExtResource("6_jsomn")]
-z_index = 10
-position = Vector2(-60, -328)
-
-[node name="TriggerArea" parent="FireList/Fire" index="2" unique_id=437836765]
-position = Vector2(-201, 7)
-
-[node name="Fire2" parent="FireList" unique_id=451724170 instance=ExtResource("6_jsomn")]
-z_index = 10
-position = Vector2(-45, -328)
-
-[node name="TriggerArea" parent="FireList/Fire2" index="2" unique_id=437836765]
-position = Vector2(-212, 7)
-
-[node name="Fire3" parent="FireList" unique_id=1225879783 instance=ExtResource("6_jsomn")]
-z_index = 10
-position = Vector2(-30, -328)
-
-[node name="TriggerArea" parent="FireList/Fire3" index="2" unique_id=437836765]
-position = Vector2(-222, 7)
-
-[node name="Fire4" parent="FireList" unique_id=661282217 instance=ExtResource("6_jsomn")]
-z_index = 10
-position = Vector2(-72, -8)
-
-[node name="Fire5" parent="FireList" unique_id=313097933 instance=ExtResource("6_jsomn")]
-z_index = 10
-position = Vector2(-57, -8)
-
-[node name="Fire6" parent="FireList" unique_id=985938791 instance=ExtResource("6_jsomn")]
-z_index = 10
-position = Vector2(-42, -8)
-
-[node name="Fire7" parent="FireList" unique_id=16160882 instance=ExtResource("6_jsomn")]
-z_index = 10
-position = Vector2(752, -40)
-
-[node name="Fire8" parent="FireList" unique_id=1563526493 instance=ExtResource("6_jsomn")]
-z_index = 10
-position = Vector2(767, -40)
-
-[node name="Fire9" parent="FireList" unique_id=1596194250 instance=ExtResource("6_jsomn")]
-z_index = 10
-position = Vector2(782, -40)
 
 [node name="ThornList" type="Node" parent="." unique_id=1095486781]
 
@@ -269,9 +209,35 @@ position = Vector2(92, -24)
 
 [node name="PauseMenu" parent="." unique_id=2065500747 instance=ExtResource("20_pause")]
 
-[editable path="FireList/Fire"]
-[editable path="FireList/Fire2"]
-[editable path="FireList/Fire3"]
+[node name="IronSpikeList" type="Node" parent="." unique_id=253334907]
+
+[node name="IronSpikeTrap" parent="IronSpikeList" unique_id=785335620 instance=ExtResource("13_yggu3")]
+position = Vector2(-81, -328)
+
+[node name="IronSpikeTrap2" parent="IronSpikeList" unique_id=87185878 instance=ExtResource("13_yggu3")]
+position = Vector2(-62, -328)
+
+[node name="IronSpikeTrap3" parent="IronSpikeList" unique_id=197837789 instance=ExtResource("13_yggu3")]
+position = Vector2(-44, -328)
+
+[node name="IronSpikeTrap4" parent="IronSpikeList" unique_id=121638471 instance=ExtResource("13_yggu3")]
+position = Vector2(-51, -8)
+
+[node name="IronSpikeTrap5" parent="IronSpikeList" unique_id=651620376 instance=ExtResource("13_yggu3")]
+position = Vector2(-36, -8)
+
+[node name="IronSpikeTrap6" parent="IronSpikeList" unique_id=1919287667 instance=ExtResource("13_yggu3")]
+position = Vector2(-21, -8)
+
+[node name="IronSpikeTrap7" parent="IronSpikeList" unique_id=136516288 instance=ExtResource("13_yggu3")]
+position = Vector2(742, -40)
+
+[node name="IronSpikeTrap8" parent="IronSpikeList" unique_id=1042809181 instance=ExtResource("13_yggu3")]
+position = Vector2(757, -40)
+
+[node name="IronSpikeTrap9" parent="IronSpikeList" unique_id=146241034 instance=ExtResource("13_yggu3")]
+position = Vector2(772, -40)
+
 [editable path="ThornList/Thorn"]
 [editable path="ThornList/Thorn2"]
 [editable path="ThornList/Thorn3"]

@@ -6,12 +6,14 @@ const BULLET_SCENE := preload("res://nodes/enemies/slime_bullet.tscn")
 const HIT_FLASH_COUNT := 3
 const HIT_FLASH_ON_DURATION := 0.04
 const HIT_FLASH_OFF_DURATION := 0.035
+const ATTACK_SHOT_POSE_DURATION := 0.06
 const DEFEAT_SOUND := preload("res://assets/sounds/freesound_community-poof-80161.mp3")
 const DEFEAT_SOUND_OFFSET := 0.5
 
-## Vị trí miệng nòng so với gốc node, tính lúc slime quay sang phải. Nòng súng
-## nhô chéo ra khỏi phía trên đầu nên điểm sinh đạn nằm ngoài mép nòng.
-const MUZZLE_OFFSET := Vector2(20, -17)
+## Vị trí tâm miệng nòng ở frame cuối animation attack, tính lúc slime quay sang
+## phải. Điểm này bám theo miệng nòng trong sprite để viên đạn không lệch khỏi
+## tư thế bắn.
+const MUZZLE_OFFSET := Vector2(12, -17)
 ## Giới hạn co giãn animation "attack": windup quá ngắn thì bốn khung hình chỉ còn
 ## là một cái giật, quá dài thì slime đứng đơ giữa chừng.
 const ATTACK_SPEED_SCALE_RANGE := Vector2(0.5, 4.0)
@@ -129,7 +131,7 @@ func _fire() -> void:
 	await get_tree().create_timer(_attack_animation_length() / animated_sprite.speed_scale, false).timeout
 	if is_dead or not is_inside_tree() or not is_instance_valid(_target) \
 			or not _target.is_in_group(&"player"):
-		_is_firing = false
+		_finish_attack()
 		return
 
 	# Ngắm vào chỗ player đang đứng lúc bóp cò rồi thôi. Đạn không đuổi theo,
@@ -141,7 +143,21 @@ func _fire() -> void:
 	bullet.launch(muzzle.global_position, launch_velocity)
 
 	shoot_sound.play()
+	# Giữ frame cuối thêm một nhịp để có ít nhất một hình vẽ thấy đạn rời nòng.
+	await get_tree().create_timer(ATTACK_SHOT_POSE_DURATION, false).timeout
+	_finish_attack()
+
+
+## Để viên đạn xuất hiện khi frame cuối attack vẫn đang được vẽ, animation_finished
+## không trả sprite về idle cho tới khi phát bắn đã được xử lý.
+func _finish_attack() -> void:
 	_is_firing = false
+	if is_dead or not is_inside_tree():
+		return
+
+	animated_sprite.speed_scale = 1.0
+	if animated_sprite.animation == &"attack":
+		animated_sprite.play(&"idle")
 
 
 ## Độ dài animation "attack" ở speed_scale = 1, tính lại từ SpriteFrames thay vì
@@ -161,7 +177,7 @@ func _attack_animation_length() -> float:
 ## "attack" không loop nên cứ chạy hết là quay về nhịp thở bình thường, kể cả khi
 ## player đã ra khỏi tầm giữa chừng và phát đạn bị huỷ.
 func _on_animation_finished() -> void:
-	if is_dead or animated_sprite.animation != &"attack":
+	if is_dead or _is_firing or animated_sprite.animation != &"attack":
 		return
 
 	animated_sprite.speed_scale = 1.0

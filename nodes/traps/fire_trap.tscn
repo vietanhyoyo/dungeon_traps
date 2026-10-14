@@ -67,6 +67,7 @@ size = Vector2(96, 68.536835)
 collision_mask = 2
 monitoring = false
 script = ExtResource("2_jruu2")
+always_active = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=954811269]
 modulate = Color(0.43134022, 0.43134025, 0.43134025, 1)

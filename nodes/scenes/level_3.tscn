@@ -17,10 +17,11 @@
 [ext_resource type="PackedScene" path="res://nodes/enemies/bat.tscn" id="15_bat"]
 [ext_resource type="PackedScene" path="res://nodes/items/treasure_chest.tscn" id="18_tl6wg"]
 [ext_resource type="PackedScene" path="res://nodes/ui/pause_menu.tscn" id="20_pause"]
-[ext_resource type="PackedScene" path="res://nodes/traps/bow_trap.tscn" id="21_bow_trap"]
+[ext_resource type="PackedScene" uid="uid://cewy0sh64816q" path="res://nodes/traps/bow_trap.tscn" id="21_bow_trap"]
 [ext_resource type="PackedScene" path="res://nodes/decor/decor-skull.tscn" id="21_omsdy"]
 [ext_resource type="PackedScene" path="res://nodes/decor/decor-grass.tscn" id="22_hqtwb"]
 [ext_resource type="PackedScene" path="res://nodes/platforms/pushable_steel_crate.tscn" id="22_steel_crate"]
+[ext_resource type="PackedScene" uid="uid://dhhgace1srtk8" path="res://nodes/traps/iron_spike_trap.tscn" id="23_hqtwb"]
 [ext_resource type="PackedScene" path="res://nodes/platforms/pushable_wooden_crate.tscn" id="23_wooden_crate"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_8pcmo"]
@@ -445,7 +446,7 @@ sources/1 = SubResource("TileSetAtlasSource_coome")
 [node name="Level3" type="Node2D" unique_id=46945069]
 
 [node name="Asura" parent="." unique_id=1107660582 instance=ExtResource("1_player")]
-position = Vector2(-169, -316)
+position = Vector2(-169, -193)
 
 [node name="Camera2D" parent="Asura" unique_id=1738643562 instance=ExtResource("2_camera")]
 limit_bottom = 725
@@ -581,12 +582,6 @@ position = Vector2(4127, -208)
 
 [node name="FireList" type="Node" parent="." unique_id=1699640204]
 
-[node name="Fire" parent="FireList" unique_id=536643257 instance=ExtResource("5_fire")]
-position = Vector2(-41, -72)
-
-[node name="Fire3" parent="FireList" unique_id=2091141481 instance=ExtResource("5_fire")]
-position = Vector2(584, -40)
-
 [node name="Fire4" parent="FireList" unique_id=49083012 instance=ExtResource("5_fire")]
 position = Vector2(1215, -40)
 
@@ -610,63 +605,6 @@ position = Vector2(1277, -40)
 
 [node name="Fire26" parent="FireList" unique_id=1686466997 instance=ExtResource("5_fire")]
 position = Vector2(1299, -40)
-
-[node name="Fire16" parent="FireList" unique_id=344414791 instance=ExtResource("5_fire")]
-position = Vector2(2795, 88)
-
-[node name="Fire17" parent="FireList" unique_id=1423675391 instance=ExtResource("5_fire")]
-position = Vector2(2810, 88)
-
-[node name="Fire18" parent="FireList" unique_id=1114157223 instance=ExtResource("5_fire")]
-position = Vector2(2825, 88)
-
-[node name="Fire24" parent="FireList" unique_id=1920885860 instance=ExtResource("5_fire")]
-position = Vector2(4746, -167)
-
-[node name="Fire27" parent="FireList" unique_id=214438948 instance=ExtResource("5_fire")]
-position = Vector2(5241, -408)
-
-[node name="Fire28" parent="FireList" unique_id=1726170890 instance=ExtResource("5_fire")]
-position = Vector2(6056, -472)
-
-[node name="Fire29" parent="FireList" unique_id=438836301 instance=ExtResource("5_fire")]
-position = Vector2(6071, -472)
-
-[node name="Fire30" parent="FireList" unique_id=1694886456 instance=ExtResource("5_fire")]
-position = Vector2(6086, -472)
-
-[node name="Fire10" parent="FireList" unique_id=500171923 instance=ExtResource("5_fire")]
-position = Vector2(2097, -104)
-
-[node name="Fire11" parent="FireList" unique_id=1062694398 instance=ExtResource("5_fire")]
-position = Vector2(2113, -104)
-
-[node name="Fire12" parent="FireList" unique_id=1296434321 instance=ExtResource("5_fire")]
-position = Vector2(2129, -104)
-
-[node name="Fire13" parent="FireList" unique_id=1062060480 instance=ExtResource("5_fire")]
-position = Vector2(3816, -40)
-
-[node name="Fire14" parent="FireList" unique_id=1804054898 instance=ExtResource("5_fire")]
-position = Vector2(3832, -40)
-
-[node name="Fire15" parent="FireList" unique_id=1663596768 instance=ExtResource("5_fire")]
-position = Vector2(3848, -40)
-
-[node name="Fire19" parent="FireList" unique_id=1096961540 instance=ExtResource("5_fire")]
-position = Vector2(3864, -40)
-
-[node name="Fire20" parent="FireList" unique_id=352775616 instance=ExtResource("5_fire")]
-position = Vector2(3880, -40)
-
-[node name="Fire21" parent="FireList" unique_id=1224734930 instance=ExtResource("5_fire")]
-position = Vector2(3896, -40)
-
-[node name="Fire22" parent="FireList" unique_id=493593508 instance=ExtResource("5_fire")]
-position = Vector2(3912, -40)
-
-[node name="Fire23" parent="FireList" unique_id=1808273676 instance=ExtResource("5_fire")]
-position = Vector2(3928, -40)
 
 [node name="CrateList" type="Node" parent="." unique_id=778629871]
 
@@ -937,3 +875,74 @@ position = Vector2(1809, -144)
 
 [node name="decor-grass" parent="DecorList" unique_id=1286206178 instance=ExtResource("22_hqtwb")]
 position = Vector2(750, -49)
+
+[node name="IronSpikeList" type="Node" parent="." unique_id=638067673]
+
+[node name="IronSpikeTrap" parent="IronSpikeList" unique_id=87185878 instance=ExtResource("23_hqtwb")]
+position = Vector2(19, -72)
+
+[node name="IronSpikeTrap2" parent="IronSpikeList" unique_id=1481724417 instance=ExtResource("23_hqtwb")]
+position = Vector2(38, -72)
+
+[node name="IronSpikeTrap3" parent="IronSpikeList" unique_id=1602015657 instance=ExtResource("23_hqtwb")]
+position = Vector2(56, -72)
+
+[node name="IronSpikeTrap5" parent="IronSpikeList" unique_id=727356306 instance=ExtResource("23_hqtwb")]
+position = Vector2(2096, -104)
+
+[node name="IronSpikeTrap6" parent="IronSpikeList" unique_id=1933346032 instance=ExtResource("23_hqtwb")]
+position = Vector2(2115, -104)
+
+[node name="IronSpikeTrap7" parent="IronSpikeList" unique_id=393823316 instance=ExtResource("23_hqtwb")]
+position = Vector2(2133, -104)
+
+[node name="IronSpikeTrap8" parent="IronSpikeList" unique_id=411337938 instance=ExtResource("23_hqtwb")]
+position = Vector2(2793, 87)
+
+[node name="IronSpikeTrap9" parent="IronSpikeList" unique_id=2121717828 instance=ExtResource("23_hqtwb")]
+position = Vector2(2812, 87)
+
+[node name="IronSpikeTrap10" parent="IronSpikeList" unique_id=442774136 instance=ExtResource("23_hqtwb")]
+position = Vector2(2830, 87)
+
+[node name="IronSpikeTrap11" parent="IronSpikeList" unique_id=1646339373 instance=ExtResource("23_hqtwb")]
+position = Vector2(3821, -40)
+
+[node name="IronSpikeTrap12" parent="IronSpikeList" unique_id=1770214367 instance=ExtResource("23_hqtwb")]
+position = Vector2(3840, -40)
+
+[node name="IronSpikeTrap13" parent="IronSpikeList" unique_id=244628325 instance=ExtResource("23_hqtwb")]
+position = Vector2(3858, -40)
+
+[node name="IronSpikeTrap14" parent="IronSpikeList" unique_id=598355892 instance=ExtResource("23_hqtwb")]
+position = Vector2(3877, -40)
+
+[node name="IronSpikeTrap15" parent="IronSpikeList" unique_id=97994794 instance=ExtResource("23_hqtwb")]
+position = Vector2(3896, -40)
+
+[node name="IronSpikeTrap16" parent="IronSpikeList" unique_id=1219188983 instance=ExtResource("23_hqtwb")]
+position = Vector2(3914, -40)
+
+[node name="IronSpikeTrap17" parent="IronSpikeList" unique_id=27929424 instance=ExtResource("23_hqtwb")]
+position = Vector2(4710, -168)
+
+[node name="IronSpikeTrap18" parent="IronSpikeList" unique_id=2001314098 instance=ExtResource("23_hqtwb")]
+position = Vector2(5240, -408)
+
+[node name="IronSpikeTrap19" parent="IronSpikeList" unique_id=1795572258 instance=ExtResource("23_hqtwb")]
+position = Vector2(6056, -472)
+
+[node name="IronSpikeTrap20" parent="IronSpikeList" unique_id=2131321456 instance=ExtResource("23_hqtwb")]
+position = Vector2(6069, -472)
+
+[node name="IronSpikeTrap21" parent="IronSpikeList" unique_id=679959540 instance=ExtResource("23_hqtwb")]
+position = Vector2(6082, -472)
+
+[node name="IronSpikeTrap22" parent="IronSpikeList" unique_id=2055405354 instance=ExtResource("23_hqtwb")]
+position = Vector2(7788, -648)
+
+[node name="IronSpikeTrap23" parent="IronSpikeList" unique_id=321637304 instance=ExtResource("23_hqtwb")]
+position = Vector2(7801, -648)
+
+[node name="IronSpikeTrap4" parent="IronSpikeList" unique_id=1461455392 instance=ExtResource("23_hqtwb")]
+position = Vector2(582, -40)

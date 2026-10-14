@@ -23,7 +23,7 @@ const CATALOG := {
 		"name": "Spin Jump Attack",
 		"description": "Attack in mid-air to somersault with a much wider slash.",
 		"key": "C in air",
-		"icon_index": 3,
+		"icon_index": 4,
 	},
 }
 

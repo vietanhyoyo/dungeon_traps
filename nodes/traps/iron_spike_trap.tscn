@@ -1,0 +1,86 @@
+[gd_scene format=3 uid="uid://dhhgace1srtk8"]
+
+[ext_resource type="Texture2D" uid="uid://b0hcoo8pgtwca" path="res://assets/sprites/traps/iron-spike.png" id="1_texture"]
+[ext_resource type="Script" uid="uid://cycqhhq322068" path="res://scripts/iron_spike_trap.gd" id="2_script"]
+[ext_resource type="AudioStream" path="res://assets/sounds/iron_spike_appear.wav" id="3_appear_sound"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0"]
+atlas = ExtResource("1_texture")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1"]
+atlas = ExtResource("1_texture")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2"]
+atlas = ExtResource("1_texture")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3"]
+atlas = ExtResource("1_texture")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4"]
+atlas = ExtResource("1_texture")
+region = Rect2(64, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_appear"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4")
+}],
+"loop": 0,
+"name": &"appear",
+"speed": 18.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_damage"]
+size = Vector2(12, 12)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_trigger"]
+size = Vector2(96, 68.536835)
+
+[node name="IronSpikeTrap" type="Area2D" unique_id=87185878]
+collision_mask = 2
+monitoring = false
+script = ExtResource("2_script")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1801464597]
+light_mask = 1
+sprite_frames = SubResource("SpriteFrames_appear")
+animation = &"appear"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=574101181]
+position = Vector2(0, 1)
+shape = SubResource("RectangleShape2D_damage")
+disabled = true
+
+[node name="TriggerArea" type="Area2D" parent="." unique_id=1599633972]
+position = Vector2(0, -32)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerArea" unique_id=1844080565]
+visible = false
+position = Vector2(0, -17.75153)
+scale = Vector2(1.83, 1.481)
+shape = SubResource("RectangleShape2D_trigger")
+
+[node name="AppearSound" type="AudioStreamPlayer2D" parent="." unique_id=409872174]
+stream = ExtResource("3_appear_sound")
+volume_db = -14.0
+bus = &"SFX"

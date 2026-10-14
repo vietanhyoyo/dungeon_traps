@@ -34,6 +34,7 @@
 [ext_resource type="PackedScene" path="res://nodes/platforms/pushable_steel_crate.tscn" id="32_qthpr"]
 [ext_resource type="PackedScene" path="res://nodes/platforms/pushable_wooden_crate.tscn" id="33_js3qf"]
 [ext_resource type="PackedScene" path="res://nodes/torch.tscn" id="36_ivi6q"]
+[ext_resource type="PackedScene" uid="uid://dhhgace1srtk8" path="res://nodes/traps/iron_spike_trap.tscn" id="36_w4rxv"]
 [ext_resource type="Texture2D" uid="uid://bdf5mkngf61vt" path="res://assets/sprites/tilemapbackground3.png" id="tilemap_background_3"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_8pcmo"]
@@ -252,7 +253,7 @@ centered = false
 script = ExtResource("21_background_fit")
 
 [node name="Asura" parent="." unique_id=1809393430 instance=ExtResource("1_asura")]
-position = Vector2(134, 610)
+position = Vector2(117, 576)
 
 [node name="Camera2D" parent="Asura" unique_id=1065377516 instance=ExtResource("2_camera")]
 limit_left = 0
@@ -481,18 +482,6 @@ position = Vector2(2251, 528)
 
 [node name="FireList" type="Node" parent="." unique_id=625879593]
 
-[node name="FireTrap" parent="FireList" unique_id=536643257 instance=ExtResource("27_mslwh")]
-position = Vector2(2459, 952)
-
-[node name="FireTrap2" parent="FireList" unique_id=542812835 instance=ExtResource("27_mslwh")]
-position = Vector2(2483, 952)
-
-[node name="FireTrap3" parent="FireList" unique_id=1961971758 instance=ExtResource("27_mslwh")]
-position = Vector2(2507, 952)
-
-[node name="FireTrap4" parent="FireList" unique_id=199531211 instance=ExtResource("27_mslwh")]
-position = Vector2(2531, 952)
-
 [node name="FireTrap6" parent="FireList" unique_id=832592012 instance=ExtResource("27_mslwh")]
 position = Vector2(3940, 1784)
 
@@ -510,15 +499,6 @@ position = Vector2(3918, 1784)
 
 [node name="FireTrap11" parent="FireList" unique_id=1883579670 instance=ExtResource("27_mslwh")]
 position = Vector2(3896, 1784)
-
-[node name="FireTrap12" parent="FireList" unique_id=738882834 instance=ExtResource("27_mslwh")]
-position = Vector2(2865, 1880)
-
-[node name="FireTrap13" parent="FireList" unique_id=1238270602 instance=ExtResource("27_mslwh")]
-position = Vector2(2177, 1624)
-
-[node name="FireTrap5" parent="FireList" unique_id=158869520 instance=ExtResource("27_mslwh")]
-position = Vector2(4895, 1528)
 
 [node name="ThornList" type="Node" parent="." unique_id=588588373]
 
@@ -608,3 +588,35 @@ position = Vector2(2340, 1416)
 
 [node name="Torch" parent="TorchList" unique_id=467234160 instance=ExtResource("36_ivi6q")]
 position = Vector2(716, 1394)
+
+[node name="Torch2" parent="TorchList" unique_id=1546683480 instance=ExtResource("36_ivi6q")]
+position = Vector2(116, 745)
+
+[node name="IronSpikeList" type="Node" parent="." unique_id=2028934018]
+
+[node name="IronSpikeTrap" parent="IronSpikeList" unique_id=87185878 instance=ExtResource("36_w4rxv")]
+position = Vector2(2519, 952)
+
+[node name="IronSpikeTrap2" parent="IronSpikeList" unique_id=49313508 instance=ExtResource("36_w4rxv")]
+position = Vector2(2496, 952)
+
+[node name="IronSpikeTrap3" parent="IronSpikeList" unique_id=190007953 instance=ExtResource("36_w4rxv")]
+position = Vector2(2474, 952)
+
+[node name="IronSpikeTrap4" parent="IronSpikeList" unique_id=533869876 instance=ExtResource("36_w4rxv")]
+position = Vector2(2451, 952)
+
+[node name="IronSpikeTrap5" parent="IronSpikeList" unique_id=511334442 instance=ExtResource("36_w4rxv")]
+position = Vector2(2865, 1880)
+
+[node name="IronSpikeTrap6" parent="IronSpikeList" unique_id=1762827112 instance=ExtResource("36_w4rxv")]
+position = Vector2(2175, 1624)
+
+[node name="IronSpikeTrap8" parent="IronSpikeList" unique_id=1077838093 instance=ExtResource("36_w4rxv")]
+position = Vector2(4893, 1528)
+
+[node name="IronSpikeTrap9" parent="IronSpikeList" unique_id=505054820 instance=ExtResource("36_w4rxv")]
+position = Vector2(4909, 1528)
+
+[node name="IronSpikeTrap7" parent="IronSpikeList" unique_id=1144206409 instance=ExtResource("36_w4rxv")]
+position = Vector2(2163, 1624)

@@ -191,7 +191,7 @@ visible = false
 shape = SubResource("CircleShape2D_detection")
 
 [node name="Muzzle" type="Marker2D" parent="." unique_id=1072558275]
-position = Vector2(-20, -17)
+position = Vector2(-12, -17)
 
 [node name="ShootSound" type="AudioStreamPlayer2D" parent="." unique_id=6903168]
 stream = ExtResource("4_shoot")
