@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://3jl281mp8itb" path="res://scripts/thorn_trap.gd" id="2_trap"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_thorn"]
-size = Vector2(16, 16)
+size = Vector2(12, 15)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_trigger"]
 size = Vector2(96, 384)
@@ -21,7 +21,7 @@ rotation = 3.1415927
 texture = ExtResource("1_thorn")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hazard" unique_id=1960656664]
-visible = false
+position = Vector2(0, -0.5)
 shape = SubResource("RectangleShape2D_thorn")
 
 [node name="TriggerArea" type="Area2D" parent="." unique_id=1071367287]

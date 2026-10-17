@@ -20,9 +20,15 @@ const DEFEAT_SOUND_OFFSET := 0.5
 		patrol_right = value
 		queue_redraw()
 
+## Tắt di chuyển ngang cho các slime chỉ đứng canh tại chỗ.
+@export var movement_enabled := true
+## Quay mặt về phía player khi slime đứng yên.
+@export var face_player_while_stationary := false
+
 var direction = 1
 var is_dead := false
 var is_attacking := false
+var _player: Node2D = null
 
 var _start_x: float = 0.0
 
@@ -41,6 +47,18 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	if Engine.is_editor_hint() or is_dead:
+		return
+	if not movement_enabled:
+		velocity.x = 0.0
+		if is_on_floor():
+			velocity.y = 0.0
+		else:
+			velocity += get_gravity() * delta
+		move_and_slide()
+		if face_player_while_stationary:
+			var player := _find_player()
+			if player != null:
+				_face_towards(player.global_position.x)
 		return
 	if is_attacking:
 		velocity = Vector2.ZERO
@@ -125,16 +143,28 @@ func on_player_touched(player: Node2D) -> void:
 	if is_dead:
 		return
 
-	var player_direction := signf(player.global_position.x - global_position.x)
-	if player_direction != 0.0:
-		direction = int(player_direction)
-		animated_sprite.flip_h = direction > 0
+	_face_towards(player.global_position.x)
 
 	is_attacking = true
 	velocity = Vector2.ZERO
 	if animated_sprite.sprite_frames.has_animation("attack"):
 		animated_sprite.play("attack")
 		await animated_sprite.animation_finished
+
+
+func _find_player() -> Node2D:
+	if not is_instance_valid(_player) or not _player.is_in_group(&"player"):
+		_player = get_tree().get_first_node_in_group(&"player") as Node2D
+	return _player
+
+
+func _face_towards(target_x: float) -> void:
+	var target_direction := signf(target_x - global_position.x)
+	if target_direction == 0.0:
+		return
+	direction = int(target_direction)
+	# Sprite mặc định quay sang trái, nên lật ngang khi mục tiêu ở bên phải.
+	animated_sprite.flip_h = direction > 0
 
 
 # Vẽ vùng tuần tra trong editor cho dễ canh

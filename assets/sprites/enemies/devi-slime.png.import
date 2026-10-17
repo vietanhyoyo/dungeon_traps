@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dfqmm35ijbc4p"
-path="res://.godot/imported/spitter-slime-attack.png-d9ad61f5a7383fc8ebb97d56bcb1df24.ctex"
+uid="uid://j0w7igtqb15m"
+path="res://.godot/imported/devi-slime.png-1637f7490ef5b65218ac4479b56332d1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://nodes/enemies/spitter-slime-attack.png"
-dest_files=["res://.godot/imported/spitter-slime-attack.png-d9ad61f5a7383fc8ebb97d56bcb1df24.ctex"]
+source_file="res://assets/sprites/enemies/devi-slime.png"
+dest_files=["res://.godot/imported/devi-slime.png-1637f7490ef5b65218ac4479b56332d1.ctex"]
 
 [params]
 
