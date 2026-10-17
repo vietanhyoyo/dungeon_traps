@@ -6,6 +6,7 @@ const LIFETIME := 3.0
 const HIT_MASK := 1 | 4 | 8 # Địa hình, enemy, vật phá được và dây cắt được.
 const ARROW_AREA_MASK := 16 # Vùng trúng tên mở rộng của enemy, không ảnh hưởng va chạm thân.
 const ARROW_TIP_OFFSET := 17.0
+const ATTACK_DAMAGE := 1
 const HIT_EFFECT_SCENE := preload("res://nodes/effects/hit_effect.tscn")
 
 var direction := Vector2.RIGHT
@@ -40,7 +41,10 @@ func _physics_process(delta: float) -> void:
 		if enemy != null:
 			if _is_inside_camera(enemy):
 				_spawn_hit_effect()
-				enemy.die()
+				if enemy.has_method("take_damage"):
+					enemy.take_damage(ATTACK_DAMAGE)
+				else:
+					enemy.die()
 		elif target != null and target.is_in_group(&"breakable") \
 				and target.has_method("break_apart"):
 			_spawn_hit_effect()

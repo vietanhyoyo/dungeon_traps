@@ -34,6 +34,7 @@ const HURT_DURATION = 0.4
 # Physics server trả kết quả va chạm ở bước kế tiếp sau khi bật shape, nên
 # phải chờ vài bước để đòn trên không bị cắt ngang kịp gây sát thương.
 const ATTACK_ACTIVE_STEPS = 3
+const ATTACK_DAMAGE := 5
 # Khung bất tử ngay đầu mỗi đòn đánh. Đòn chém là lúc nhân vật phải lao vào sát
 # bẫy/quái, nên cho người chơi một nhịp ngắn để "đánh đổi" mà không chết oan vì
 # chạm phải hitbox của mục tiêu ngay khi vung kiếm.
@@ -522,7 +523,9 @@ func hit_enemy(body: Node) -> void:
 
 	hit_enemies.append(body)
 	spawn_hit_effect(body)
-	if body.has_method("die"):
+	if body.has_method("take_damage"):
+		body.take_damage(ATTACK_DAMAGE)
+	elif body.has_method("die"):
 		body.die()
 
 
