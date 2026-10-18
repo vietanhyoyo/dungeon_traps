@@ -6,7 +6,7 @@ const HIT_FLASH_COUNT := 3
 const HIT_FLASH_ON_DURATION := 0.04
 const HIT_FLASH_OFF_DURATION := 0.035
 const DAMAGE_ATTACK_DELAY := 1.0
-const MAX_DAMAGE_ATTACK_DELAY := 3.0
+const MAX_DAMAGE_ATTACK_DELAY := 2.0
 const DEFEAT_SOUND := preload("res://assets/sounds/freesound_community-poof-80161.mp3")
 const DEFEAT_SOUND_OFFSET := 0.5
 
@@ -29,11 +29,11 @@ const DEFEAT_SOUND_OFFSET := 0.5
 ## Bật đòn lưỡi cho devi-slime. Các slime thường vẫn dùng Killzone như trước.
 @export var attack_on_detection := false
 @export_range(0.1, 10.0, 0.1) var attack_cooldown := 1.25
-@export_range(0.0, 3.0, 0.05) var first_attack_delay := 0.35
+@export_range(0.0, 3.0, 0.05) var first_attack_delay := 0.4
 @export_range(1, 100, 1) var max_health := 1
 
-const TONGUE_HIT_START_FRAME := 7
-const TONGUE_HIT_END_FRAME := 12
+const TONGUE_HIT_START_FRAME := 10
+const TONGUE_HIT_END_FRAME := 10
 
 var direction = 1
 var is_dead := false
@@ -60,10 +60,15 @@ var _start_x: float = 0.0
 	"TongueHitArea/CollisionShape2D"
 ) as CollisionShape2D
 @onready var attack_sprite: AnimatedSprite2D = get_node_or_null("AttackSprite") as AnimatedSprite2D
+@onready var health_bar: ProgressBar = get_node_or_null("HealthBar") as ProgressBar
 
 func _ready() -> void:
 	_start_x = position.x
 	current_health = max_health
+	if health_bar:
+		health_bar.max_value = max_health
+		health_bar.value = current_health
+		health_bar.hide()
 	# Mỗi sprite cần material riêng để một con không làm các instance khác nhấp nháy.
 	if animated_sprite.material:
 		animated_sprite.material = animated_sprite.material.duplicate()
@@ -126,6 +131,9 @@ func take_damage(amount: int = 1) -> void:
 		return
 
 	current_health = maxi(current_health - amount, 0)
+	if health_bar:
+		health_bar.value = current_health
+		health_bar.show()
 	if current_health == 0:
 		die()
 		return
@@ -141,6 +149,8 @@ func die() -> void:
 
 	is_dead = true
 	velocity = Vector2.ZERO
+	if health_bar:
+		health_bar.hide()
 	# Tắt va chạm để không còn giết được người chơi trong lúc đang tan biến
 	collision_shape.set_deferred("disabled", true)
 	if killzone:
@@ -275,7 +285,7 @@ func _begin_detected_attack(target: Node2D) -> void:
 
 
 func _delay_attack_after_damage() -> void:
-	# Chỉ cộng tối đa 3 giây cho chu kỳ này. Khi chạm trần, các hit sau không
+	# Chỉ cộng tối đa 2 giây cho chu kỳ này. Khi chạm trần, các hit sau không
 	# đặt lại timer; cooldown hiện tại tiếp tục đếm tới đòn kế tiếp.
 	var remaining_delay := MAX_DAMAGE_ATTACK_DELAY - _damage_attack_delay_accumulated
 	if remaining_delay <= 0.0:

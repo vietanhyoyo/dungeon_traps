@@ -102,6 +102,22 @@ region = Rect2(2200, 0, 200, 200)
 atlas = ExtResource("3_attack")
 region = Rect2(2400, 0, 200, 200)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_attack_13"]
+atlas = ExtResource("3_attack")
+region = Rect2(2600, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_attack_14"]
+atlas = ExtResource("3_attack")
+region = Rect2(2800, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_attack_15"]
+atlas = ExtResource("3_attack")
+region = Rect2(3000, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_attack_16"]
+atlas = ExtResource("3_attack")
+region = Rect2(3200, 0, 200, 200)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_devi"]
 animations = [{
 "frames": [{
@@ -169,6 +185,18 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_attack_12")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_attack_13")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_attack_14")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_attack_15")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_attack_16")
 }],
 "loop": 0,
 "name": &"attack",
@@ -181,6 +209,17 @@ radius = 128.0
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_tongue_hit"]
 size = Vector2(90, 30)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_health_background"]
+bg_color = Color(0.11, 0.08, 0.08, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.04, 0.03, 0.03, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_health_fill"]
+bg_color = Color(0.82, 0.12, 0.16, 1)
+
 [node name="DeviSlime" type="CharacterBody2D" groups=["enemy"]]
 collision_layer = 4
 collision_mask = 1
@@ -189,8 +228,8 @@ movement_enabled = false
 face_player_while_stationary = true
 attack_on_detection = true
 attack_cooldown = 1.8
-first_attack_delay = 1.0
-max_health = 50
+first_attack_delay = 0.4
+max_health = 80
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 6)
@@ -203,6 +242,20 @@ material = SubResource("ShaderMaterial_hit_flash")
 sprite_frames = SubResource("SpriteFrames_devi")
 animation = &"idle"
 autoplay = "idle"
+
+[node name="HealthBar" type="ProgressBar" parent="."]
+visible = false
+z_index = 2
+offset_left = -24.0
+offset_top = -91.0
+offset_right = 24.0
+offset_bottom = -87.0
+mouse_filter = 2
+show_percentage = false
+max_value = 80.0
+value = 80.0
+theme_override_styles/background = SubResource("StyleBoxFlat_health_background")
+theme_override_styles/fill = SubResource("StyleBoxFlat_health_fill")
 
 [node name="AttackSprite" type="AnimatedSprite2D" parent="."]
 visible = false
