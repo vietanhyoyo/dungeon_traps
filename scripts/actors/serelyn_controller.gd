@@ -387,7 +387,11 @@ func _find_shootable_point(enemy: Node2D, origin: Vector2, facing: float, use_an
 
 
 func _get_target_points(enemy: Node2D) -> Array[Vector2]:
-	var points: Array[Vector2] = [enemy.global_position]
+	var points: Array[Vector2] = []
+	var aim_point := enemy.get_node_or_null("AimPoint") as Node2D
+	if aim_point != null:
+		points.append(aim_point.global_position)
+	points.append(enemy.global_position)
 	for path in ["CollisionShape2D", "ArrowHitArea/CollisionShape2D"]:
 		var shape_node := enemy.get_node_or_null(path) as CollisionShape2D
 		if shape_node == null or shape_node.disabled or shape_node.shape == null:

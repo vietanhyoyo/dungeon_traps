@@ -1,11 +1,16 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://114vfv2uvqgq"]
 
 [ext_resource type="Script" uid="uid://dg8tpc70gfgva" path="res://scripts/slime.gd" id="1_slime"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/devi-slime.png" id="2_devi"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/devi-slime-attack.png" id="3_attack"]
+[ext_resource type="Texture2D" uid="uid://j0w7igtqb15m" path="res://assets/sprites/enemies/devi-slime.png" id="2_devi"]
+[ext_resource type="Texture2D" uid="uid://b3ahoekupdku8" path="res://assets/sprites/enemies/devi-slime-attack.png" id="3_attack"]
+[ext_resource type="Texture2D" uid="uid://3dwpkhc8m3b0" path="res://assets/sprites/enemies/devi-slime-eat.png" id="4_eat"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/devi-slime-death.png" id="5_death"]
+[ext_resource type="AudioStream" path="res://assets/sounds/devi_slime_attack.wav" id="6_attack_sound"]
+[ext_resource type="AudioStream" path="res://assets/sounds/u_xjrmmgxfru-sword-slash-01-266296.mp3" id="7_warning_sound"]
+[ext_resource type="AudioStream" path="res://assets/sounds/freesound_community-eating-sound-effect-36186.mp3" id="8_eat_sound"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
-size = Vector2(48, 20)
+size = Vector2(53, 57)
 
 [sub_resource type="Shader" id="Shader_hit_flash"]
 code = "shader_type canvas_item;
@@ -20,11 +25,47 @@ void fragment() {
 }
 "
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_hit_flash"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_c4etk"]
 resource_local_to_scene = true
 shader = SubResource("Shader_hit_flash")
 shader_parameter/flash_amount = 0.0
 shader_parameter/flash_color = Color(1, 0.96, 0.78, 1)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eat_0"]
+atlas = ExtResource("4_eat")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eat_1"]
+atlas = ExtResource("4_eat")
+region = Rect2(96, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eat_2"]
+atlas = ExtResource("4_eat")
+region = Rect2(192, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eat_3"]
+atlas = ExtResource("4_eat")
+region = Rect2(288, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death_0"]
+atlas = ExtResource("5_death")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death_1"]
+atlas = ExtResource("5_death")
+region = Rect2(96, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death_2"]
+atlas = ExtResource("5_death")
+region = Rect2(192, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death_3"]
+atlas = ExtResource("5_death")
+region = Rect2(288, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death_4"]
+atlas = ExtResource("5_death")
+region = Rect2(384, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_idle_0"]
 atlas = ExtResource("2_devi")
@@ -49,6 +90,86 @@ region = Rect2(384, 0, 96, 96)
 [sub_resource type="AtlasTexture" id="AtlasTexture_idle_5"]
 atlas = ExtResource("2_devi")
 region = Rect2(480, 0, 96, 96)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_devi"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eat_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eat_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eat_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eat_3")
+}],
+"loop": 0,
+"name": &"eat",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death_4")
+}],
+"loop": 0,
+"name": &"death",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_5")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 10.0
+}]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_health_background"]
+bg_color = Color(0.11, 0.08, 0.08, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.04, 0.03, 0.03, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_health_fill"]
+bg_color = Color(0.82, 0.12, 0.16, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ku5i8"]
+resource_local_to_scene = true
+shader = SubResource("Shader_hit_flash")
+shader_parameter/flash_amount = 0.0
+shader_parameter/flash_color = Color(1, 0.96, 0.78, 1)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_attack_0"]
 atlas = ExtResource("3_attack")
@@ -118,32 +239,6 @@ region = Rect2(3000, 0, 200, 200)
 atlas = ExtResource("3_attack")
 region = Rect2(3200, 0, 200, 200)
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_devi"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_0")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_1")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_2")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_3")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_4")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_5")
-}],
-"loop": 1,
-"name": &"idle",
-"speed": 7.0
-}]
-
 [sub_resource type="SpriteFrames" id="SpriteFrames_devi_attack"]
 animations = [{
 "frames": [{
@@ -207,43 +302,33 @@ animations = [{
 radius = 128.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_tongue_hit"]
-size = Vector2(90, 30)
+size = Vector2(81, 30)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_health_background"]
-bg_color = Color(0.11, 0.08, 0.08, 0.95)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.04, 0.03, 0.03, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_health_fill"]
-bg_color = Color(0.82, 0.12, 0.16, 1)
-
-[node name="DeviSlime" type="CharacterBody2D" groups=["enemy"]]
+[node name="DeviSlime" type="CharacterBody2D" unique_id=648557765 groups=["enemy"]]
 collision_layer = 4
-collision_mask = 1
 script = ExtResource("1_slime")
 movement_enabled = false
 face_player_while_stationary = true
 attack_on_detection = true
+eats_arrows = true
 attack_cooldown = 1.8
-first_attack_delay = 0.4
 max_health = 80
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, 6)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1177837588]
+position = Vector2(1.5, -12.5)
 shape = SubResource("RectangleShape2D_body")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1925515940]
+material = SubResource("ShaderMaterial_c4etk")
 position = Vector2(0, -32)
-scale = Vector2(1, 1)
-material = SubResource("ShaderMaterial_hit_flash")
 sprite_frames = SubResource("SpriteFrames_devi")
 animation = &"idle"
 autoplay = "idle"
 
-[node name="HealthBar" type="ProgressBar" parent="."]
+[node name="AimPoint" type="Marker2D" parent="." unique_id=538405659]
+position = Vector2(3, -18)
+
+[node name="HealthBar" type="ProgressBar" parent="." unique_id=1582987354]
 visible = false
 z_index = 2
 offset_left = -24.0
@@ -251,41 +336,63 @@ offset_top = -91.0
 offset_right = 24.0
 offset_bottom = -87.0
 mouse_filter = 2
-show_percentage = false
-max_value = 80.0
-value = 80.0
 theme_override_styles/background = SubResource("StyleBoxFlat_health_background")
 theme_override_styles/fill = SubResource("StyleBoxFlat_health_fill")
+max_value = 80.0
+value = 80.0
+show_percentage = false
 
-[node name="AttackSprite" type="AnimatedSprite2D" parent="."]
+[node name="AttackSprite" type="AnimatedSprite2D" parent="." unique_id=624863184]
 visible = false
+material = SubResource("ShaderMaterial_ku5i8")
 position = Vector2(0, -32)
-material = SubResource("ShaderMaterial_hit_flash")
 sprite_frames = SubResource("SpriteFrames_devi_attack")
 animation = &"attack"
 
-[node name="DetectionArea" type="Area2D" parent="."]
+[node name="AttackSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("6_attack_sound")
+volume_db = -4.0
+bus = &"SFX"
+max_distance = 600.0
+attenuation = 1.4
+
+[node name="WarningSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("7_warning_sound")
+volume_db = -3.0
+bus = &"SFX"
+max_distance = 600.0
+attenuation = 1.4
+
+[node name="EatSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("8_eat_sound")
+volume_db = -6.0
+bus = &"SFX"
+max_distance = 600.0
+attenuation = 1.4
+
+[node name="DetectionArea" type="Area2D" parent="." unique_id=1423854331]
 position = Vector2(0, -16)
 collision_layer = 0
 collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea" unique_id=419682699]
 shape = SubResource("CircleShape2D_detection")
 
-[node name="TongueHitArea" type="Area2D" parent="."]
+[node name="TongueHitArea" type="Area2D" parent="." unique_id=567878768]
 position = Vector2(-50, -7)
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="TongueHitArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TongueHitArea" unique_id=828594382]
+position = Vector2(-4.5, 0)
 shape = SubResource("RectangleShape2D_tongue_hit")
 disabled = true
 
-[node name="RayCastRight" type="RayCast2D" parent="."]
+[node name="RayCastRight" type="RayCast2D" parent="." unique_id=742697194]
 position = Vector2(2, 6)
 target_position = Vector2(15, 0)
 
-[node name="RayCastLeft" type="RayCast2D" parent="."]
+[node name="RayCastLeft" type="RayCast2D" parent="." unique_id=596284869]
 position = Vector2(-2, 6)
 target_position = Vector2(-15, 0)

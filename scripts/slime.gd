@@ -9,6 +9,7 @@ const DAMAGE_ATTACK_DELAY := 1.0
 const MAX_DAMAGE_ATTACK_DELAY := 2.0
 const DEFEAT_SOUND := preload("res://assets/sounds/freesound_community-poof-80161.mp3")
 const DEFEAT_SOUND_OFFSET := 0.5
+const TONGUE_WARNING_FRAME := 7
 
 ## Vùng tuần tra, tính bằng px từ vị trí đặt slime trong editor.
 ## Để -1 nghĩa là không giới hạn phía đó, chỉ quay đầu khi đụng tường.
@@ -28,6 +29,8 @@ const DEFEAT_SOUND_OFFSET := 0.5
 @export var face_player_while_stationary := false
 ## Bật đòn lưỡi cho devi-slime. Các slime thường vẫn dùng Killzone như trước.
 @export var attack_on_detection := false
+## Devi-slime nuốt tên của Serelyn thay vì nhận sát thương từ tên.
+@export var eats_arrows := false
 @export_range(0.1, 10.0, 0.1) var attack_cooldown := 1.25
 @export_range(0.0, 3.0, 0.05) var first_attack_delay := 0.4
 @export_range(1, 100, 1) var max_health := 1
@@ -38,6 +41,7 @@ const TONGUE_HIT_END_FRAME := 10
 var direction = 1
 var is_dead := false
 var is_attacking := false
+var is_eating := false
 var _player: Node2D = null
 var _attack_target: Node2D = null
 var _attack_cooldown_left := 0.0
@@ -61,6 +65,9 @@ var _start_x: float = 0.0
 ) as CollisionShape2D
 @onready var attack_sprite: AnimatedSprite2D = get_node_or_null("AttackSprite") as AnimatedSprite2D
 @onready var health_bar: ProgressBar = get_node_or_null("HealthBar") as ProgressBar
+@onready var attack_sound: AudioStreamPlayer2D = get_node_or_null("AttackSound") as AudioStreamPlayer2D
+@onready var warning_sound: AudioStreamPlayer2D = get_node_or_null("WarningSound") as AudioStreamPlayer2D
+@onready var eat_sound: AudioStreamPlayer2D = get_node_or_null("EatSound") as AudioStreamPlayer2D
 
 func _ready() -> void:
 	_start_x = position.x
@@ -81,6 +88,8 @@ func _ready() -> void:
 		detection_area.body_exited.connect(_on_detection_body_exited)
 		attack_sprite.frame_changed.connect(_on_attack_frame_changed)
 		attack_sprite.animation_finished.connect(_on_attack_animation_finished)
+	if eats_arrows and not Engine.is_editor_hint():
+		animated_sprite.animation_finished.connect(_on_eat_animation_finished)
 
 func _physics_process(delta: float) -> void:
 	if Engine.is_editor_hint() or is_dead:
@@ -143,11 +152,38 @@ func take_damage(amount: int = 1) -> void:
 		_delay_attack_after_damage()
 
 
+func eat_arrow() -> bool:
+	if not eats_arrows or is_dead:
+		return false
+	if is_eating:
+		return true
+
+	var interrupted_attack := is_attacking
+	if interrupted_attack:
+		_attack_cooldown_left = maxf(_attack_cooldown_left, attack_cooldown)
+	is_eating = true
+	is_attacking = false
+	if attack_sprite:
+		attack_sprite.stop()
+		attack_sprite.visible = false
+	if tongue_hit_shape:
+		tongue_hit_shape.set_deferred("disabled", true)
+	animated_sprite.visible = true
+	if animated_sprite.sprite_frames.has_animation(&"eat"):
+		if eat_sound:
+			eat_sound.play()
+		animated_sprite.play(&"eat")
+	else:
+		is_eating = false
+	return true
+
+
 func die() -> void:
 	if is_dead:
 		return
 
 	is_dead = true
+	is_eating = false
 	velocity = Vector2.ZERO
 	if health_bar:
 		health_bar.hide()
@@ -236,6 +272,8 @@ func _physics_process_detected_attack(delta: float) -> void:
 		velocity.y = 0.0
 	velocity.x = 0.0
 	move_and_slide()
+	if is_eating:
+		return
 
 	var target := _get_attack_target()
 	if not is_attacking and is_instance_valid(target):
@@ -320,6 +358,10 @@ func _on_attack_frame_changed() -> void:
 	var tongue_is_extended := attack_sprite.frame >= TONGUE_HIT_START_FRAME \
 		and attack_sprite.frame <= TONGUE_HIT_END_FRAME
 	tongue_hit_shape.set_deferred("disabled", not tongue_is_extended)
+	if attack_sprite.frame == TONGUE_WARNING_FRAME and warning_sound:
+		warning_sound.play()
+	if attack_sprite.frame == TONGUE_HIT_START_FRAME and attack_sound:
+		attack_sound.play()
 
 
 func _check_tongue_hit() -> void:
@@ -344,6 +386,14 @@ func _on_attack_animation_finished() -> void:
 	is_attacking = false
 	_attack_cooldown_left = attack_cooldown + _post_attack_damage_delay
 	_post_attack_damage_delay = 0.0
+
+
+func _on_eat_animation_finished() -> void:
+	if not is_eating or is_dead or animated_sprite.animation != &"eat":
+		return
+	is_eating = false
+	if animated_sprite.sprite_frames.has_animation(&"idle"):
+		animated_sprite.play(&"idle")
 
 
 func _find_player() -> Node2D:

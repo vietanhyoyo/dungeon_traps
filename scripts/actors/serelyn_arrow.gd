@@ -40,11 +40,15 @@ func _physics_process(delta: float) -> void:
 		var enemy := enemy_for_collider(target)
 		if enemy != null:
 			if _is_inside_camera(enemy):
-				_spawn_hit_effect()
-				if enemy.has_method("take_damage"):
-					enemy.take_damage(ATTACK_DAMAGE)
-				else:
-					enemy.die()
+				var arrow_was_eaten := false
+				if enemy.has_method("eat_arrow"):
+					arrow_was_eaten = enemy.eat_arrow()
+				if not arrow_was_eaten:
+					_spawn_hit_effect()
+					if enemy.has_method("take_damage"):
+						enemy.take_damage(ATTACK_DAMAGE)
+					else:
+						enemy.die()
 		elif target != null and target.is_in_group(&"breakable") \
 				and target.has_method("break_apart"):
 			_spawn_hit_effect()
