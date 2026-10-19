@@ -20,6 +20,7 @@ const SOUND_ATTENUATION := 1.4
 
 var is_dead := false
 var _age := 0.0
+var _slash_protection_time_left := 0.0
 var _trail_positions: Array[Vector2] = []
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
@@ -40,6 +41,7 @@ func _physics_process(delta: float) -> void:
 		return
 
 	_age += delta
+	_slash_protection_time_left = maxf(_slash_protection_time_left - delta, 0.0)
 	if _age >= LIFETIME:
 		_pop()
 		return
@@ -117,10 +119,16 @@ func on_player_touched(_player: Node2D) -> void:
 
 
 func die() -> void:
-	if is_dead:
+	if is_dead or _slash_protection_time_left > 0.0:
 		return
 	_play_defeat_sound()
 	_pop(true)
+
+
+## Cho viên đạn cuối bay qua cú chém vừa hạ spitter-slime; sau thời gian này,
+## Asura có thể chém phá nó như mọi viên đạn khác.
+func protect_from_slash_for(duration: float) -> void:
+	_slash_protection_time_left = maxf(_slash_protection_time_left, duration)
 
 
 func _pop(emit_toxic_smoke := false) -> void:

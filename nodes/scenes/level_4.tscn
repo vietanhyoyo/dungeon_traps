@@ -448,7 +448,7 @@ sources/1 = SubResource("TileSetAtlasSource_coome")
 script = ExtResource("18_level4")
 
 [node name="Asura" parent="." unique_id=1107660582 instance=ExtResource("1_dxylt")]
-position = Vector2(1257, -1006)
+position = Vector2(-105, -207)
 
 [node name="Camera2D" parent="Asura" unique_id=1738643562 instance=ExtResource("2_aixuq")]
 limit_bottom = 725
@@ -538,123 +538,93 @@ next_scene_path = "res://nodes/scenes/level_5.tscn"
 
 [node name="Fire31" parent="FireList" unique_id=2021685590 instance=ExtResource("9_p4xfq")]
 position = Vector2(1672, -936)
-always_active = true
 
 [node name="Fire2" parent="FireList" unique_id=287586641 instance=ExtResource("9_p4xfq")]
 position = Vector2(1690, -936)
-always_active = true
 
 [node name="Fire3" parent="FireList" unique_id=922428981 instance=ExtResource("9_p4xfq")]
 position = Vector2(1708, -936)
-always_active = true
 
 [node name="Fire4" parent="FireList" unique_id=810565837 instance=ExtResource("9_p4xfq")]
 position = Vector2(1726, -936)
-always_active = true
 
 [node name="Fire5" parent="FireList" unique_id=1263983392 instance=ExtResource("9_p4xfq")]
 position = Vector2(1744, -936)
-always_active = true
 
 [node name="Fire6" parent="FireList" unique_id=1787944342 instance=ExtResource("9_p4xfq")]
 position = Vector2(1762, -936)
-always_active = true
 
 [node name="Fire7" parent="FireList" unique_id=1583201408 instance=ExtResource("9_p4xfq")]
 position = Vector2(1780, -936)
-always_active = true
 
 [node name="Fire8" parent="FireList" unique_id=1280982656 instance=ExtResource("9_p4xfq")]
 position = Vector2(1798, -936)
-always_active = true
 
 [node name="Fire9" parent="FireList" unique_id=1994347533 instance=ExtResource("9_p4xfq")]
 position = Vector2(1816, -936)
-always_active = true
 
 [node name="Fire10" parent="FireList" unique_id=1858529404 instance=ExtResource("9_p4xfq")]
 position = Vector2(1834, -936)
-always_active = true
 
 [node name="Fire11" parent="FireList" unique_id=68039166 instance=ExtResource("9_p4xfq")]
 position = Vector2(1852, -936)
-always_active = true
 
 [node name="Fire12" parent="FireList" unique_id=25927968 instance=ExtResource("9_p4xfq")]
 position = Vector2(1870, -936)
-always_active = true
 
 [node name="Fire13" parent="FireList" unique_id=606821177 instance=ExtResource("9_p4xfq")]
 position = Vector2(1888, -936)
-always_active = true
 
 [node name="Fire14" parent="FireList" unique_id=1945621920 instance=ExtResource("9_p4xfq")]
 position = Vector2(1906, -936)
-always_active = true
 
 [node name="Fire15" parent="FireList" unique_id=1366951306 instance=ExtResource("9_p4xfq")]
 position = Vector2(1924, -936)
-always_active = true
 
 [node name="Fire16" parent="FireList" unique_id=1615680607 instance=ExtResource("9_p4xfq")]
 position = Vector2(1942, -936)
-always_active = true
 
 [node name="Fire17" parent="FireList" unique_id=189862523 instance=ExtResource("9_p4xfq")]
 position = Vector2(1960, -936)
-always_active = true
 
 [node name="Fire18" parent="FireList" unique_id=840995515 instance=ExtResource("9_p4xfq")]
 position = Vector2(1978, -936)
-always_active = true
 
 [node name="Fire19" parent="FireList" unique_id=1701795199 instance=ExtResource("9_p4xfq")]
 position = Vector2(1996, -936)
-always_active = true
 
 [node name="Fire20" parent="FireList" unique_id=1169006461 instance=ExtResource("9_p4xfq")]
 position = Vector2(2014, -936)
-always_active = true
 
 [node name="Fire21" parent="FireList" unique_id=555959862 instance=ExtResource("9_p4xfq")]
 position = Vector2(2032, -936)
-always_active = true
 
 [node name="Fire22" parent="FireList" unique_id=1520928568 instance=ExtResource("9_p4xfq")]
 position = Vector2(2050, -936)
-always_active = true
 
 [node name="Fire23" parent="FireList" unique_id=487577562 instance=ExtResource("9_p4xfq")]
 position = Vector2(2068, -936)
-always_active = true
 
 [node name="Fire24" parent="FireList" unique_id=348598414 instance=ExtResource("9_p4xfq")]
 position = Vector2(2086, -936)
-always_active = true
 
 [node name="Fire25" parent="FireList" unique_id=856969321 instance=ExtResource("9_p4xfq")]
 position = Vector2(2104, -936)
-always_active = true
 
 [node name="Fire26" parent="FireList" unique_id=1568371394 instance=ExtResource("9_p4xfq")]
 position = Vector2(2122, -936)
-always_active = true
 
 [node name="Fire27" parent="FireList" unique_id=1305087122 instance=ExtResource("9_p4xfq")]
 position = Vector2(2140, -936)
-always_active = true
 
 [node name="Fire28" parent="FireList" unique_id=1605846734 instance=ExtResource("9_p4xfq")]
 position = Vector2(2158, -936)
-always_active = true
 
 [node name="Fire29" parent="FireList" unique_id=1228621563 instance=ExtResource("9_p4xfq")]
 position = Vector2(2176, -936)
-always_active = true
 
 [node name="Fire30" parent="FireList" unique_id=1167384085 instance=ExtResource("9_p4xfq")]
 position = Vector2(2194, -936)
-always_active = true
 
 [node name="ThornList" type="Node" parent="." unique_id=1216989016]
 

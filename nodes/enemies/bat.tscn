@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://cveeocy2ajscd" path="res://assets/sprites/enemies/bat.png" id="2_bat"]
 [ext_resource type="PackedScene" uid="uid://dhq0pa6na6p7k" path="res://nodes/killzone.tscn" id="3_killzone"]
 [ext_resource type="AudioStream" uid="uid://uk6yffa0gp54" path="res://assets/sounds/bat_screech.wav" id="4_dive"]
+[ext_resource type="Texture2D" uid="uid://bx2pxupy0clu4" path="res://assets/sprites/enemies/bat-death.png" id="5_death"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bat"]
 size = Vector2(34, 20)
@@ -43,6 +44,22 @@ region = Rect2(128, 0, 64, 64)
 atlas = ExtResource("2_bat")
 region = Rect2(192, 0, 64, 64)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_death_0"]
+atlas = ExtResource("5_death")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death_1"]
+atlas = ExtResource("5_death")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death_2"]
+atlas = ExtResource("5_death")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death_3"]
+atlas = ExtResource("5_death")
+region = Rect2(192, 0, 64, 64)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_bat"]
 animations = [{
 "frames": [{
@@ -61,6 +78,23 @@ animations = [{
 "loop": 1,
 "name": &"fly",
 "speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death_3")
+}],
+"loop": 0,
+"name": &"death",
+"speed": 12.0
 }]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_detection"]

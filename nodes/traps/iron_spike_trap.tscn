@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://b0hcoo8pgtwca" path="res://assets/sprites/traps/iron-spike.png" id="1_texture"]
 [ext_resource type="Script" uid="uid://cycqhhq322068" path="res://scripts/iron_spike_trap.gd" id="2_script"]
-[ext_resource type="AudioStream" path="res://assets/sounds/iron_spike_appear.wav" id="3_appear_sound"]
+[ext_resource type="AudioStream" uid="uid://bfmkd7l1jutoi" path="res://assets/sounds/iron_spike_appear.wav" id="3_appear_sound"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0"]
 atlas = ExtResource("1_texture")
@@ -59,7 +59,6 @@ monitoring = false
 script = ExtResource("2_script")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1801464597]
-light_mask = 1
 sprite_frames = SubResource("SpriteFrames_appear")
 animation = &"appear"
 
@@ -75,7 +74,6 @@ collision_mask = 2
 monitorable = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerArea" unique_id=1844080565]
-visible = false
 position = Vector2(0, -17.75153)
 scale = Vector2(1.83, 1.481)
 shape = SubResource("RectangleShape2D_trigger")

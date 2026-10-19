@@ -3,9 +3,6 @@ extends CharacterBody2D
 
 const BULLET_SCENE := preload("res://nodes/enemies/spitter_slime_bullet.tscn")
 const DEATH_SMOKE_SCENE := preload("res://nodes/effects/spitter_slime_smoke.tscn")
-const HIT_FLASH_COUNT := 3
-const HIT_FLASH_ON_DURATION := 0.04
-const HIT_FLASH_OFF_DURATION := 0.035
 const DEFEAT_SOUND := preload("res://assets/sounds/freesound_community-poof-80161.mp3")
 const DEFEAT_SOUND_OFFSET := 0.5
 const SOUND_MAX_DISTANCE := 600.0
@@ -14,6 +11,7 @@ const ATTACK_RELEASE_FRAME := 4
 const PROJECTILE_GRAVITY := 620.0
 const DEATH_BURST_BULLET_COUNT := 5
 const DEATH_BURST_ANGLE_MIN_DEGREES := 50.0
+const DEATH_SHOT_SLASH_GRACE := 0.5
 
 enum State { WAIT, PATROL, ATTACK, DEAD }
 
@@ -168,11 +166,14 @@ func _start_attack() -> void:
 
 	var attack_speed := maxf(animated_sprite.sprite_frames.get_animation_speed(&"attack"), 0.01)
 	await get_tree().create_timer(ATTACK_RELEASE_FRAME / attack_speed, false).timeout
-	if is_dead or not is_inside_tree() or not _has_valid_target():
+	# Nếu bị chém trong lúc đang lên đạn, vẫn thả viên đạn của lượt bắn này.
+	if not is_inside_tree() or not _has_valid_target():
 		return
 
 	var launch_velocity := _get_targeted_launch_velocity(muzzle.global_position)
 	var bullet := BULLET_SCENE.instantiate()
+	if is_dead:
+		bullet.protect_from_slash_for(DEATH_SHOT_SLASH_GRACE)
 	get_tree().current_scene.add_child(bullet)
 	bullet.launch(muzzle.global_position, launch_velocity)
 	shoot_sound.play()
@@ -261,20 +262,14 @@ func die() -> void:
 	_state = State.DEAD
 	velocity = Vector2.ZERO
 	move_sound.stop()
-	animated_sprite.pause()
+	animated_sprite.play(&"death")
 	collision_shape.set_deferred("disabled", true)
 	detection_area.set_deferred("monitoring", false)
 	_spawn_death_bullets()
 	_spawn_death_smoke()
 	_play_defeat_sound()
-	await _play_hit_flash()
-	if not is_inside_tree():
-		return
+	await animated_sprite.animation_finished
 
-	var death_tween := create_tween().set_parallel(true)
-	death_tween.tween_property(self, "scale", Vector2.ZERO, 0.18)
-	death_tween.tween_property(animated_sprite, "modulate:a", 0.0, 0.18)
-	await death_tween.finished
 	if is_inside_tree():
 		queue_free()
 
@@ -298,6 +293,7 @@ func _spawn_death_bullets() -> void:
 		var horizontal_speed := lerpf(-horizontal_speed_limit, horizontal_speed_limit, spread)
 		var launch_velocity := Vector2(horizontal_speed, -vertical_speed)
 		var bullet := BULLET_SCENE.instantiate()
+		bullet.protect_from_slash_for(DEATH_SHOT_SLASH_GRACE)
 		current_scene.add_child(bullet)
 		bullet.launch(origin, launch_velocity)
 
@@ -327,20 +323,6 @@ func _play_defeat_sound() -> void:
 	get_tree().current_scene.add_child(sound_player)
 	sound_player.finished.connect(sound_player.queue_free)
 	sound_player.play(DEFEAT_SOUND_OFFSET)
-
-
-func _play_hit_flash() -> void:
-	if not animated_sprite.material is ShaderMaterial:
-		return
-
-	var flash_material := animated_sprite.material as ShaderMaterial
-	for flash_index in HIT_FLASH_COUNT:
-		flash_material.set_shader_parameter("flash_amount", 1.0)
-		await get_tree().create_timer(HIT_FLASH_ON_DURATION, false).timeout
-		flash_material.set_shader_parameter("flash_amount", 0.0)
-
-		if flash_index < HIT_FLASH_COUNT - 1:
-			await get_tree().create_timer(HIT_FLASH_OFF_DURATION, false).timeout
 
 
 func _draw() -> void:

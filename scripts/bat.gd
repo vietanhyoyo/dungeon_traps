@@ -219,15 +219,15 @@ func die() -> void:
 	collision_shape.set_deferred("disabled", true)
 	killzone.set_deferred("monitoring", false)
 	detection_area.set_deferred("monitoring", false)
+	animated_sprite.play(&"death")
 	_play_defeat_sound()
-
 	await _play_hit_flash()
+	if not is_inside_tree():
+		return
 
-	var death_tween := create_tween().set_parallel(true)
-	death_tween.tween_property(self, "scale", Vector2.ZERO, 0.18)
-	death_tween.tween_property(animated_sprite, "modulate:a", 0.0, 0.18)
-	await death_tween.finished
-	queue_free()
+	await animated_sprite.animation_finished
+	if is_inside_tree():
+		queue_free()
 
 
 func _play_screech() -> void:

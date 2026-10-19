@@ -6,6 +6,7 @@
 [ext_resource type="AudioStream" path="res://assets/sounds/spitter_slime_fire.wav" id="4_shoot"]
 [ext_resource type="Texture2D" path="res://assets/sprites/enemies/spitter-slime-move.png" id="5_move"]
 [ext_resource type="AudioStream" path="res://assets/sounds/spitter_slime_move.wav" id="6_move_sound"]
+[ext_resource type="Texture2D" uid="uid://cf8jqsp7yd4rm" path="res://assets/sprites/enemies/spitter-slime-death.png" id="7_death"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
 size = Vector2(26, 24)
@@ -97,6 +98,26 @@ region = Rect2(192, 0, 48, 64)
 atlas = ExtResource("3_attack")
 region = Rect2(240, 0, 48, 64)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_death_0"]
+atlas = ExtResource("7_death")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death_1"]
+atlas = ExtResource("7_death")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death_2"]
+atlas = ExtResource("7_death")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death_3"]
+atlas = ExtResource("7_death")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death_4"]
+atlas = ExtResource("7_death")
+region = Rect2(256, 0, 64, 64)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_move_0"]
 atlas = ExtResource("5_move")
 region = Rect2(0, 0, 48, 64)
@@ -140,6 +161,26 @@ animations = [{
 }],
 "loop": 0,
 "name": &"attack",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death_4")
+}],
+"loop": 0,
+"name": &"death",
 "speed": 12.0
 }, {
 "frames": [{
