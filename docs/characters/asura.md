@@ -10,7 +10,7 @@ layer 2 với mask 1. Hành vi được điều khiển bởi
 
 Controller xử lý trọng lực, nhảy, di chuyển trái/phải, lật sprite, lướt trên mặt
 đất và trên không, tấn công, bụi tiếp đất và trạng thái chết. Các animation gồm
-`idle`, `run`, `jump_up`, `jump_down`, `slide` và `death`. Lướt trên không chỉ
+`idle`, `run`, `jump_up`, `jump_down`, `wall_slide`, `slide` và `death`. Lướt trên không chỉ
 dùng được một lần mỗi khi rời mặt đất và hồi lại khi chạm đất. Bụi tiếp đất được
 tạo khi tốc độ rơi vượt `LANDING_DUST_MIN_SPEED`.
 
@@ -36,6 +36,16 @@ với `10.0` của `jump_attack`. Asura đứng yên theo phương ngang trong l
 công, nên animation ngắn hơn giúp nhân vật không bị treo lâu giữa không trung.
 
 ## Wall Double Jump
+
+Khi đang rơi, chạm mặt bên của tường và giữ hướng về phía tường, Asura phát
+animation `wall_slide` lặp từ ba khung trong `Shinn-Asura-wall-slide.png` và
+giới hạn tốc độ rơi ở 80 px/giây. Thả hướng, chạm đất hoặc nhảy khỏi tường sẽ
+kết thúc trạng thái trượt tường.
+
+`WallSlideDetector` là một `Area2D` ở giữa thân, có vùng dò 49x31 px. Chiều cao
+31 px bằng một nửa capsule va chạm chính (62 px). Vùng dò rộng hơn thân để
+chạm được tường khi capsule chính đang áp sát; `wall_slide` chỉ bật khi vùng dò
+này chạm vật cản thuộc collision layer 1.
 
 Asura nhảy tường khi `GameState.has_skill(Skills.WALL_DOUBLE_JUMP)` trả về true.
 Mỗi lần bám vào một mặt tường mới sẽ hồi một cú nhảy tường; chạm đất cũng hồi

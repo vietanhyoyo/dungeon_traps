@@ -4,6 +4,7 @@ const SPEED = 180.0
 const TELEPORT_EFFECT := preload("res://nodes/effects/character_transform_effect.tscn")
 const TRANSFORM_MOMENTUM_DECELERATION := 900.0
 const JUMP_VELOCITY = -320.0
+const WALL_SLIDE_SPEED = 80.0
 const SLIDE_SPEED = 240.0
 const SLIDE_DURATION = 0.4
 # Tốc độ giữ lại trong lúc slide_attack. Thấp hơn lúc lướt thường để đòn chém
@@ -62,6 +63,7 @@ const SPIN_ATTACK_ANIM = "jump_attack2"
 @onready var attack_shape_jump: CollisionShape2D = $AttackHitbox/JumpShape
 @onready var attack_shape_spin: CollisionShape2D = $AttackHitbox/SpinShape
 @onready var body_collision: CollisionShape2D = $CollisionShape2D
+@onready var wall_slide_detector: Area2D = $WallSlideDetector
 @onready var dust_scene = preload("res://nodes/effects/landing_dust.tscn")
 @onready var hit_effect_scene = preload("res://nodes/effects/hit_effect.tscn")
 
@@ -245,8 +247,14 @@ func _physics_process(delta: float) -> void:
 			start_wall_jump()
 
 	var direction := update_horizontal_movement(delta)
+	if is_wall_sliding(direction):
+		velocity.y = minf(velocity.y, WALL_SLIDE_SPEED)
 
 	move_and_slide()
+	# Cả cú chạm tường đầu tiên cũng cần giới hạn vận tốc rơi cho frame sau.
+	var wall_sliding := is_wall_sliding(direction)
+	if wall_sliding:
+		velocity.y = minf(velocity.y, WALL_SLIDE_SPEED)
 
 	# Đứng dưới đất mà tì vào mặt bên của hộp thì đẩy hộp đi theo. Nhảy lên đâm
 	# vào hộp giữa không trung không tính là đẩy.
@@ -273,11 +281,19 @@ func _physics_process(delta: float) -> void:
 			if not running_sound.playing:
 				running_sound.play()
 	else:
-		if velocity.y < 0:
+		if wall_sliding:
+			animated_sprite.play("wall_slide")
+		elif velocity.y < 0:
 			animated_sprite.play("jump_up")
 		else:
 			animated_sprite.play("jump_down")
 		running_sound.stop()
+
+
+func is_wall_sliding(direction: float) -> bool:
+	return not is_on_floor() and is_on_wall() and velocity.y >= 0.0 \
+		and direction * get_wall_normal().x < -0.5 \
+		and wall_slide_detector.has_overlapping_bodies()
 
 
 ## Điều khiển ngang dùng chung cho trạng thái di chuyển và jump attack.

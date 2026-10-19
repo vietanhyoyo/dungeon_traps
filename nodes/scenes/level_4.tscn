@@ -13,7 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://cewy0sh64816q" path="res://nodes/traps/bow_trap.tscn" id="11_7imj7"]
 [ext_resource type="PackedScene" uid="uid://dg4n7tp4d7q1y" path="res://nodes/enemies/slime.tscn" id="11_ghiv5"]
 [ext_resource type="PackedScene" path="res://nodes/traps/pendulum_trap.tscn" id="12_pendulum"]
-[ext_resource type="PackedScene" path="res://nodes/enemies/bat.tscn" id="12_yotrr"]
+[ext_resource type="PackedScene" uid="uid://cqwyfrn5xy0ei" path="res://nodes/enemies/bat.tscn" id="12_yotrr"]
 [ext_resource type="PackedScene" path="res://nodes/star_hud.tscn" id="13_wyfjl"]
 [ext_resource type="PackedScene" uid="uid://cg8mbcubeyje8" path="res://nodes/items/star.tscn" id="14_isuju"]
 [ext_resource type="Texture2D" uid="uid://dttn1pberb42" path="res://assets/sprites/mapp16.png" id="15_xgdpl"]
@@ -448,7 +448,7 @@ sources/1 = SubResource("TileSetAtlasSource_coome")
 script = ExtResource("18_level4")
 
 [node name="Asura" parent="." unique_id=1107660582 instance=ExtResource("1_dxylt")]
-position = Vector2(-105, -207)
+position = Vector2(-126, -233)
 
 [node name="Camera2D" parent="Asura" unique_id=1738643562 instance=ExtResource("2_aixuq")]
 limit_bottom = 725

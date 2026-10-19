@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://oaems1j5qg8c" path="res://assets/sprites/shinn_asura/Shinn-Asura-hust.png" id="4_sjxfn"]
 [ext_resource type="Texture2D" uid="uid://bkprs2akf857h" path="res://assets/sprites/shinn_asura/Shinn-Asura-run.png" id="5_cv6pu"]
 [ext_resource type="Texture2D" uid="uid://mt13ehvoet3d" path="res://assets/sprites/shinn_asura/Shinn-Asura-jump.png" id="5_i2l0f"]
+[ext_resource type="Texture2D" uid="uid://cs2bc2x1aajya" path="res://assets/sprites/shinn_asura/Shinn-Asura-wall-slide.png" id="5_wall_slide"]
 [ext_resource type="Texture2D" uid="uid://doeukudxrqnqn" path="res://assets/sprites/shinn_asura/Shinn-Asura-death.png" id="6_death"]
 [ext_resource type="Texture2D" uid="uid://bvsfcqyddstks" path="res://assets/sprites/shinn_asura/Shinn-Asura-jump-attack.png" id="7_341xe"]
 [ext_resource type="AudioStream" uid="uid://dxg8x1n6r6y2p" path="res://assets/sounds/running.mp3" id="7_running"]
@@ -186,6 +187,18 @@ region = Rect2(128, 0, 128, 128)
 [sub_resource type="AtlasTexture" id="AtlasTexture_uxljf"]
 atlas = ExtResource("9_dhu25")
 region = Rect2(256, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wall_slide_0"]
+atlas = ExtResource("5_wall_slide")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wall_slide_1"]
+atlas = ExtResource("5_wall_slide")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wall_slide_2"]
+atlas = ExtResource("5_wall_slide")
+region = Rect2(128, 0, 64, 64)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_hugui"]
 animations = [{
@@ -382,11 +395,28 @@ animations = [{
 "loop": 0,
 "name": &"slide_attack",
 "speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wall_slide_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wall_slide_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wall_slide_2")
+}],
+"loop": 1,
+"name": &"wall_slide",
+"speed": 8.0
 }]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_2j3w5"]
 radius = 17.0
 height = 62.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_slide_detector"]
+size = Vector2(49, 31)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_attack_high"]
 size = Vector2(67, 66)
@@ -428,6 +458,14 @@ autoplay = "idle"
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=103448317]
 position = Vector2(0, 1)
 shape = SubResource("CapsuleShape2D_2j3w5")
+
+[node name="WallSlideDetector" type="Area2D" parent="." unique_id=1862482469]
+collision_layer = 0
+monitorable = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WallSlideDetector" unique_id=1730497061]
+position = Vector2(0, 1)
+shape = SubResource("RectangleShape2D_wall_slide_detector")
 
 [node name="AttackHitbox" type="Area2D" parent="." unique_id=980519005]
 collision_layer = 0
