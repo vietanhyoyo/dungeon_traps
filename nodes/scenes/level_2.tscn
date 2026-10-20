@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" path="res://nodes/traps/spike_pit_trap.tscn" id="15_tg05m"]
 [ext_resource type="PackedScene" uid="uid://dhhgace1srtk8" path="res://nodes/traps/iron_spike_trap.tscn" id="16_ebfjb"]
 [ext_resource type="PackedScene" path="res://nodes/ui/pause_menu.tscn" id="20_pause"]
+[ext_resource type="Script" path="res://scripts/level_6_controller.gd" id="party_controller"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_8pcmo"]
 polygon = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
@@ -241,6 +242,9 @@ tile_size = Vector2i(32, 32)
 sources/1 = SubResource("TileSetAtlasSource_flnyc")
 
 [node name="Level2" type="Node2D" unique_id=46945069]
+
+[node name="PartyController" type="Node2D" parent="."]
+script = ExtResource("party_controller")
 
 [node name="Asura" parent="." unique_id=1107660582 instance=ExtResource("1_r7por")]
 position = Vector2(-150, -192)

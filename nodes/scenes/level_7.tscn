@@ -29,7 +29,7 @@
 [ext_resource type="PackedScene" uid="uid://cpmbitmavgkhg" path="res://nodes/enemies/spitter_slime.tscn" id="27_spitter_slime"]
 [ext_resource type="PackedScene" uid="uid://ddq2qqo23k2o0" path="res://nodes/traps/thorn.tscn" id="28_h833d"]
 [ext_resource type="PackedScene" path="res://nodes/enemies/slime_thorn.tscn" id="29_gnml5"]
-[ext_resource type="PackedScene" path="res://nodes/traps/spike_pit_trap.tscn" id="30_spike_pit"]
+[ext_resource type="PackedScene" uid="uid://ccnlpdr5ab8c5" path="res://nodes/traps/spike_pit_trap.tscn" id="30_spike_pit"]
 [ext_resource type="PackedScene" uid="uid://cexdosup8j5bc" path="res://nodes/enemies/slime_gunner.tscn" id="31_od8sf"]
 [ext_resource type="PackedScene" path="res://nodes/platforms/pushable_steel_crate.tscn" id="32_qthpr"]
 [ext_resource type="PackedScene" path="res://nodes/platforms/pushable_wooden_crate.tscn" id="33_js3qf"]
@@ -253,7 +253,7 @@ centered = false
 script = ExtResource("21_background_fit")
 
 [node name="Asura" parent="." unique_id=1809393430 instance=ExtResource("1_asura")]
-position = Vector2(180, 580)
+position = Vector2(125, 606)
 
 [node name="Camera2D" parent="Asura" unique_id=1065377516 instance=ExtResource("2_camera")]
 limit_left = 0

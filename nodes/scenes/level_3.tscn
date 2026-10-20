@@ -14,7 +14,7 @@
 [ext_resource type="PackedScene" path="res://nodes/star_hud.tscn" id="9_hud"]
 [ext_resource type="Texture2D" uid="uid://dttn1pberb42" path="res://assets/sprites/mapp16.png" id="13_8ytc0"]
 [ext_resource type="PackedScene" uid="uid://cd230y5iqj4bd" path="res://nodes/save_point.tscn" id="14_save_point"]
-[ext_resource type="PackedScene" path="res://nodes/enemies/bat.tscn" id="15_bat"]
+[ext_resource type="PackedScene" uid="uid://cqwyfrn5xy0ei" path="res://nodes/enemies/bat.tscn" id="15_bat"]
 [ext_resource type="PackedScene" path="res://nodes/items/treasure_chest.tscn" id="18_tl6wg"]
 [ext_resource type="PackedScene" path="res://nodes/ui/pause_menu.tscn" id="20_pause"]
 [ext_resource type="PackedScene" uid="uid://cewy0sh64816q" path="res://nodes/traps/bow_trap.tscn" id="21_bow_trap"]
@@ -23,6 +23,7 @@
 [ext_resource type="PackedScene" path="res://nodes/platforms/pushable_steel_crate.tscn" id="22_steel_crate"]
 [ext_resource type="PackedScene" uid="uid://dhhgace1srtk8" path="res://nodes/traps/iron_spike_trap.tscn" id="23_hqtwb"]
 [ext_resource type="PackedScene" path="res://nodes/platforms/pushable_wooden_crate.tscn" id="23_wooden_crate"]
+[ext_resource type="Script" uid="uid://b0wfmn0iuxfrh" path="res://scripts/level_6_controller.gd" id="party_controller"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_8pcmo"]
 polygon = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
@@ -445,8 +446,11 @@ sources/1 = SubResource("TileSetAtlasSource_coome")
 
 [node name="Level3" type="Node2D" unique_id=46945069]
 
+[node name="PartyController" type="Node2D" parent="." unique_id=784077439]
+script = ExtResource("party_controller")
+
 [node name="Asura" parent="." unique_id=1107660582 instance=ExtResource("1_player")]
-position = Vector2(-154, -201)
+position = Vector2(-160, -284)
 
 [node name="Camera2D" parent="Asura" unique_id=1738643562 instance=ExtResource("2_camera")]
 limit_bottom = 725

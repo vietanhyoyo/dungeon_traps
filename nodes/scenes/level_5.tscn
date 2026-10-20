@@ -22,6 +22,7 @@
 [ext_resource type="PackedScene" path="res://nodes/decor/decor-grass.tscn" id="21_7atvw"]
 [ext_resource type="PackedScene" uid="uid://dhhgace1srtk8" path="res://nodes/traps/iron_spike_trap.tscn" id="22_7atvw"]
 [ext_resource type="PackedScene" path="res://nodes/traps/spike_pit_trap.tscn" id="22_hs26l"]
+[ext_resource type="Script" path="res://scripts/level_6_controller.gd" id="party_controller"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_8pcmo"]
 polygon = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
@@ -248,6 +249,9 @@ tile_size = Vector2i(32, 32)
 sources/1 = SubResource("TileSetAtlasSource_flnyc")
 
 [node name="Level5" type="Node2D" unique_id=943828175]
+
+[node name="PartyController" type="Node2D" parent="."]
+script = ExtResource("party_controller")
 
 [node name="Asura" parent="." unique_id=1637589097 instance=ExtResource("1_dxylt")]
 position = Vector2(103, 209)

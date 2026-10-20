@@ -28,7 +28,15 @@ var is_open := false
 func _ready() -> void:
 	body_entered.connect(_on_body_entered)
 
-	if GameState.is_chest_opened(_chest_id()):
+	var chest_id := _chest_id()
+	if GameState.is_chest_opened(chest_id):
+		_show_already_opened()
+		return
+
+	# Nếu nhân vật đã có kỹ năng này từ trước, rương phần thưởng không cần mở
+	# lại hoặc trình diễn kỹ năng trùng lặp.
+	if not skill_id.is_empty() and GameState.has_skill(skill_id):
+		GameState.mark_chest_opened(chest_id)
 		_show_already_opened()
 		return
 

@@ -4,15 +4,17 @@ const AsuraController = preload("res://scripts/actors/asura_controller.gd")
 const SerelynController = preload("res://scripts/actors/serelyn_controller.gd")
 const SERELYN_SCENE: PackedScene = preload("res://nodes/characters/serelyn.tscn")
 const TransformEffect = preload("res://nodes/effects/character_transform_effect.tscn")
+const CHARACTER_HUD_SCENE: PackedScene = preload("res://nodes/ui/character_hud.tscn")
 const CAMERA_OFFSET := Vector2(-1.0, 5.0)
 const CAMERA_SWITCH_DURATION := 0.35
 const CHARACTER_SWITCH_COOLDOWN := 5.0
 
-@onready var asura: AsuraController = $Asura
-@onready var serelyn: SerelynController = get_node_or_null("Serelyn") as SerelynController
-@onready var camera: Camera2D = $Asura/Camera2D
-@onready var light: PointLight2D = $Asura/PointLight2D
-@onready var character_hud: CharacterHUD = $CharacterHUD
+var _level_root: Node2D
+var asura: AsuraController
+var serelyn: SerelynController
+var camera: Camera2D
+var light: PointLight2D
+var character_hud: CharacterHUD
 
 var controlling_serelyn := false
 var _is_transforming := false
@@ -20,22 +22,41 @@ var _switch_cooldown_remaining := 0.0
 
 
 func _ready() -> void:
-	# Level 7 omits the static NPC. Add Serelyn as a playable form only after
-	# recruitment has been saved; Level 6 still uses its scene NPC for dialogue.
+	# Controller có thể gắn trực tiếp ở root (Level 6-8) hoặc làm node con
+	# (Level 1-5, trong đó Level 4 còn có controller riêng cho rương).
+	_level_root = self if get_node_or_null("Asura") != null else get_parent() as Node2D
+	asura = _level_root.get_node("Asura") as AsuraController
+	serelyn = _level_root.get_node_or_null("Serelyn") as SerelynController
+	camera = _level_root.get_node("Asura/Camera2D") as Camera2D
+	light = _level_root.get_node("Asura/PointLight2D") as PointLight2D
+	character_hud = _level_root.get_node_or_null("CharacterHUD") as CharacterHUD
+	_setup_party_member.call_deferred()
+
+
+func _setup_party_member() -> void:
+	# Những màn chưa có HUD sẵn chỉ hiện HUD sau khi Serelyn đã được lưu.
+	if character_hud == null and GameState.has_party_member("serelyn"):
+		character_hud = CHARACTER_HUD_SCENE.instantiate() as CharacterHUD
+		character_hud.name = "CharacterHUD"
+		_level_root.add_child(character_hud)
+
+	# Level 7/8 và các màn chơi trước Level 6 không có NPC Serelyn đặt sẵn.
+	# Chỉ tạo cô ấy thành dạng có thể chơi sau khi đã gia nhập đội.
 	if serelyn == null and GameState.has_party_member("serelyn"):
 		serelyn = SERELYN_SCENE.instantiate() as SerelynController
 		serelyn.name = "Serelyn"
 		serelyn.position = asura.position
-		add_child(serelyn)
+		_level_root.add_child(serelyn)
 
 	if serelyn == null:
-		character_hud.set_state(false, false)
+		if character_hud != null:
+			character_hud.set_state(false, false)
 		return
 
 	serelyn.conversation_finished.connect(_on_serelyn_conversation_finished)
 	if serelyn.conversation_completed:
 		_on_serelyn_conversation_finished()
-	else:
+	elif character_hud != null:
 		character_hud.set_state(false, false)
 
 
@@ -58,13 +79,15 @@ func _process(delta: float) -> void:
 	if _switch_cooldown_remaining <= 0.0:
 		return
 	_switch_cooldown_remaining = maxf(_switch_cooldown_remaining - delta, 0.0)
-	character_hud.set_switch_cooldown(controlling_serelyn, _switch_cooldown_remaining)
+	if character_hud != null:
+		character_hud.set_switch_cooldown(controlling_serelyn, _switch_cooldown_remaining)
 
 
 func _on_serelyn_conversation_finished() -> void:
 	# Nhân vật đứng trò chuyện trở thành dạng nhân vật có thể chọn bằng Z.
 	_set_actor_active(serelyn, false)
-	character_hud.set_state(false, true)
+	if character_hud != null:
+		character_hud.set_state(false, true)
 
 
 func _switch_character() -> void:
@@ -116,8 +139,9 @@ func _switch_character() -> void:
 	else:
 		asura.animated_sprite.flip_h = facing_left
 		asura.set_controlled(true, true)
-	character_hud.set_state(controlling_serelyn, true)
-	character_hud.set_switch_cooldown(controlling_serelyn, _switch_cooldown_remaining)
+	if character_hud != null:
+		character_hud.set_state(controlling_serelyn, true)
+		character_hud.set_switch_cooldown(controlling_serelyn, _switch_cooldown_remaining)
 
 	var effect: CharacterTransformEffect = TransformEffect.instantiate()
 	target.add_child(effect)

@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" path="res://nodes/star_hud.tscn" id="11_star_hud"]
 [ext_resource type="PackedScene" uid="uid://dhhgace1srtk8" path="res://nodes/traps/iron_spike_trap.tscn" id="13_yggu3"]
 [ext_resource type="PackedScene" path="res://nodes/ui/pause_menu.tscn" id="20_pause"]
+[ext_resource type="Script" path="res://scripts/level_6_controller.gd" id="party_controller"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jsomn"]
 texture = ExtResource("2_8pcmo")
@@ -121,6 +122,9 @@ tile_size = Vector2i(32, 32)
 sources/1 = SubResource("TileSetAtlasSource_jsomn")
 
 [node name="Level1" type="Node2D" unique_id=46945069]
+
+[node name="PartyController" type="Node2D" parent="."]
+script = ExtResource("party_controller")
 
 [node name="Asura" parent="." unique_id=1107660582 instance=ExtResource("2_flbgy")]
 position = Vector2(-301, -457)

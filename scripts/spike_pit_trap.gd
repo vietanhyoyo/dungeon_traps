@@ -66,15 +66,18 @@ func _activate_for_player(player: CharacterBody2D) -> void:
 	call_deferred("_clear_floor_tiles")
 
 	await _drop_fake_ground()
-	if not is_instance_valid(self):
+	if not is_instance_valid(self) or not is_inside_tree():
 		return
 
 	var landed_on_bottom := await _wait_for_player_to_land()
-	if not is_instance_valid(self):
+	if not is_instance_valid(self) or not is_inside_tree():
 		return
 	if landed_on_bottom:
-		await get_tree().create_timer(PIT_SETTLE_DELAY).timeout
-		if not is_instance_valid(self):
+		var scene_tree := get_tree()
+		if scene_tree == null:
+			return
+		await scene_tree.create_timer(PIT_SETTLE_DELAY).timeout
+		if not is_instance_valid(self) or not is_inside_tree():
 			return
 	await _close_spike_walls()
 
@@ -101,14 +104,17 @@ func _drop_fake_ground() -> void:
 	tween.set_ease(Tween.EASE_IN)
 	tween.tween_property(ground_sprite, "position:y", 64.0 + PIT_DEPTH, 0.4)
 	await tween.finished
+	if not is_inside_tree():
+		return
+	ground_sprite.hide()
 
 
 func _wait_for_player_to_land() -> bool:
 	var player := _trapped_player
-	if not is_instance_valid(player):
+	if not is_instance_valid(player) or not is_inside_tree():
 		return false
 	for _frame in range(PIT_LANDING_TIMEOUT_FRAMES):
-		if not is_instance_valid(player):
+		if not is_instance_valid(player) or not is_inside_tree():
 			return false
 		if player.is_on_floor():
 			if _is_standing_on_pit_bottom(player):
@@ -116,10 +122,14 @@ func _wait_for_player_to_land() -> bool:
 				return true
 			return false
 		await get_tree().physics_frame
+		if not is_inside_tree():
+			return false
 	return false
 
 
 func _close_spike_walls() -> void:
+	if not is_inside_tree():
+		return
 	left_wall.set_deferred("monitoring", true)
 	right_wall.set_deferred("monitoring", true)
 	var tween := create_tween()
@@ -129,6 +139,8 @@ func _close_spike_walls() -> void:
 	tween.tween_property(left_wall, "position:x", -12.0, SPIKE_CLOSE_DURATION)
 	tween.tween_property(right_wall, "position:x", 12.0, SPIKE_CLOSE_DURATION)
 	await tween.finished
+	if not is_inside_tree():
+		return
 	if _player_has_reached_pit_bottom and _are_both_walls_touching_player(_trapped_player):
 		await _crush_player(_trapped_player)
 
@@ -143,9 +155,13 @@ func _on_spike_wall_body_entered(body: Node2D) -> void:
 		_player_has_reached_pit_bottom = true
 	if body.has_method("is_invulnerable"):
 		while is_instance_valid(body) and body.is_invulnerable():
+			if not is_inside_tree():
+				return
 			if not _player_has_reached_pit_bottom or not _are_both_walls_touching_player(body):
 				return
 			await get_tree().physics_frame
+			if not is_inside_tree():
+				return
 	if _player_has_reached_pit_bottom and _are_both_walls_touching_player(body):
 		await _crush_player(body)
 

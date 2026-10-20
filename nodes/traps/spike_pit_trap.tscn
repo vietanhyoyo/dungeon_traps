@@ -1,19 +1,11 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://ccnlpdr5ab8c5"]
 
 [ext_resource type="Texture2D" uid="uid://c5jngpa3w1ppg" path="res://assets/sprites/traps/trap-map-1.png" id="1_texture"]
-[ext_resource type="Script" path="res://scripts/spike_pit_trap.gd" id="2_script"]
+[ext_resource type="Script" uid="uid://b8rtwwmslbxvx" path="res://scripts/spike_pit_trap.gd" id="2_script"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ground"]
 atlas = ExtResource("1_texture")
 region = Rect2(0, 0, 64, 128)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_left_wall"]
-atlas = ExtResource("1_texture")
-region = Rect2(64, 0, 64, 128)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_right_wall"]
-atlas = ExtResource("1_texture")
-region = Rect2(128, 0, 64, 128)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ground"]
 size = Vector2(64, 8)
@@ -21,107 +13,113 @@ size = Vector2(64, 8)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_trigger"]
 size = Vector2(60, 20)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
-size = Vector2(64, 128)
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_pit_bottom"]
 size = Vector2(64, 8)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_pit_side"]
 size = Vector2(24, 128)
 
-[node name="SpikePitTrap" type="Node2D"]
-z_index = -2
+[sub_resource type="AtlasTexture" id="AtlasTexture_left_wall"]
+atlas = ExtResource("1_texture")
+region = Rect2(64, 0, 64, 128)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
+size = Vector2(64, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_right_wall"]
+atlas = ExtResource("1_texture")
+region = Rect2(128, 0, 64, 128)
+
+[node name="SpikePitTrap" type="Node2D" unique_id=971438148]
 modulate = Color(0.90359825, 0.90359825, 0.9035982, 1)
+z_index = -2
 script = ExtResource("2_script")
 
-[node name="FakeGround" type="StaticBody2D" parent="."]
+[node name="FakeGround" type="StaticBody2D" parent="." unique_id=869958853]
 collision_mask = 0
 
-[node name="GroundSprite" type="Sprite2D" parent="FakeGround"]
-position = Vector2(0, 64)
+[node name="GroundSprite" type="Sprite2D" parent="FakeGround" unique_id=866496256]
 light_mask = 0
+position = Vector2(0, 64)
 texture = SubResource("AtlasTexture_ground")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="FakeGround"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FakeGround" unique_id=1482362327]
 position = Vector2(0, 4)
 shape = SubResource("RectangleShape2D_ground")
 
-[node name="TriggerArea" type="Area2D" parent="FakeGround"]
+[node name="TriggerArea" type="Area2D" parent="FakeGround" unique_id=1955545521]
 position = Vector2(0, -14)
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="FakeGround/TriggerArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FakeGround/TriggerArea" unique_id=1826521636]
 shape = SubResource("RectangleShape2D_trigger")
 
-[node name="PitBottom" type="StaticBody2D" parent="."]
+[node name="PitBottom" type="StaticBody2D" parent="." unique_id=346934196]
 position = Vector2(0, 128)
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PitBottom"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PitBottom" unique_id=275701633]
 position = Vector2(0, 4)
 shape = SubResource("RectangleShape2D_pit_bottom")
 
-[node name="PitSideLeft" type="StaticBody2D" parent="."]
+[node name="PitSideLeft" type="StaticBody2D" parent="." unique_id=626150767]
 position = Vector2(-44, 64)
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PitSideLeft"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PitSideLeft" unique_id=2147037320]
 shape = SubResource("RectangleShape2D_pit_side")
 
-[node name="PitSideRight" type="StaticBody2D" parent="."]
+[node name="PitSideRight" type="StaticBody2D" parent="." unique_id=1242391356]
 position = Vector2(44, 64)
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PitSideRight"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PitSideRight" unique_id=1981920182]
 shape = SubResource("RectangleShape2D_pit_side")
 
-[node name="LeftWall" type="Area2D" parent="."]
-position = Vector2(-160, 80)
+[node name="LeftWall" type="Area2D" parent="." unique_id=1393843444]
 visible = false
+position = Vector2(-160, 80)
 collision_layer = 0
 collision_mask = 2
 monitoring = false
 monitorable = false
 
-[node name="Sprite2D" type="Sprite2D" parent="LeftWall"]
-z_index = 1
+[node name="Sprite2D" type="Sprite2D" parent="LeftWall" unique_id=5977634]
 light_mask = 0
+z_index = 1
 texture = SubResource("AtlasTexture_left_wall")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="LeftWall"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LeftWall" unique_id=1024424945]
 shape = SubResource("RectangleShape2D_wall")
 
-[node name="SolidWall" type="StaticBody2D" parent="LeftWall"]
-collision_layer = 1
+[node name="SolidWall" type="StaticBody2D" parent="LeftWall" unique_id=533631943]
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="LeftWall/SolidWall"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LeftWall/SolidWall" unique_id=1146275063]
 shape = SubResource("RectangleShape2D_wall")
 disabled = true
 
-[node name="RightWall" type="Area2D" parent="."]
-position = Vector2(160, 80)
+[node name="RightWall" type="Area2D" parent="." unique_id=511989674]
 visible = false
+position = Vector2(160, 80)
 collision_layer = 0
 collision_mask = 2
 monitoring = false
 monitorable = false
 
-[node name="Sprite2D" type="Sprite2D" parent="RightWall"]
-z_index = 1
+[node name="Sprite2D" type="Sprite2D" parent="RightWall" unique_id=553956797]
 light_mask = 0
+z_index = 1
 texture = SubResource("AtlasTexture_right_wall")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="RightWall"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RightWall" unique_id=740449310]
 shape = SubResource("RectangleShape2D_wall")
 
-[node name="SolidWall" type="StaticBody2D" parent="RightWall"]
-collision_layer = 1
+[node name="SolidWall" type="StaticBody2D" parent="RightWall" unique_id=1901477805]
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="RightWall/SolidWall"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RightWall/SolidWall" unique_id=894417282]
 shape = SubResource("RectangleShape2D_wall")
 disabled = true
