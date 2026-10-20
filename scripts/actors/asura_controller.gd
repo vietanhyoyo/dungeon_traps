@@ -56,6 +56,7 @@ const SPIN_ATTACK_ANIM = "jump_attack2"
 @onready var running_sound: AudioStreamPlayer2D = $RunningSound
 @onready var attack_sound: AudioStreamPlayer2D = $AttackSound
 @onready var slide_sound: AudioStreamPlayer2D = $SlideSound
+@onready var wall_slide_sound: AudioStreamPlayer2D = $WallSlideSound
 @onready var attack_hitbox: Area2D = $AttackHitbox
 @onready var attack_shape_high: CollisionShape2D = $AttackHitbox/HighShape
 @onready var attack_shape_low: CollisionShape2D = $AttackHitbox/LowShape
@@ -102,6 +103,13 @@ var hit_enemies: Array[Node] = []
 
 func _ready() -> void:
 	modulate = BODY_MODULATE
+	var wall_slide_stream := wall_slide_sound.stream as AudioStreamWAV
+	if wall_slide_stream:
+		wall_slide_stream.loop_begin = 0
+		wall_slide_stream.loop_end = roundi(
+			wall_slide_stream.mix_rate * wall_slide_stream.get_length()
+		)
+		wall_slide_stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
 	# Shape là Resource nên cần bản riêng trước khi thay đổi kích thước lúc chạy.
 	body_collision.shape = body_collision.shape.duplicate()
 	var capsule := body_collision.shape as CapsuleShape2D
@@ -126,15 +134,18 @@ func _physics_process(delta: float) -> void:
 		velocity += get_gravity() * delta
 		position += velocity * delta
 		running_sound.stop()
+		wall_slide_sound.stop()
 		return
 
 	if movement_locked:
 		velocity = Vector2.ZERO
 		running_sound.stop()
+		wall_slide_sound.stop()
 		return
 
 	if not is_controlled:
 		velocity.x = 0.0
+		wall_slide_sound.stop()
 		if not is_on_floor():
 			velocity += get_gravity() * delta
 		move_and_slide()
@@ -157,6 +168,7 @@ func _physics_process(delta: float) -> void:
 
 	# Khi đang lướt, giữ nguyên hướng nhìn và vận tốc cho đến hết animation.
 	if is_sliding:
+		wall_slide_sound.stop()
 		# Một lần nhấn trái/phải mới sẽ hủy slide ngay. Dùng just_pressed để
 		# người chơi vẫn có thể giữ hướng chạy khi bắt đầu slide.
 		var cancel_slide := Input.is_action_just_pressed("move_left") or \
@@ -230,6 +242,7 @@ func _physics_process(delta: float) -> void:
 		running_sound.stop()
 		update_attack_hitbox()
 		move_and_slide()
+		wall_slide_sound.stop()
 
 		# Kiểm tra vừa chạm đất trong lúc attack
 		if not was_on_floor and is_on_floor() and last_fall_speed > LANDING_DUST_MIN_SPEED:
@@ -255,6 +268,7 @@ func _physics_process(delta: float) -> void:
 	var wall_sliding := is_wall_sliding(direction)
 	if wall_sliding:
 		velocity.y = minf(velocity.y, WALL_SLIDE_SPEED)
+	_sync_wall_slide_sound(wall_sliding)
 
 	# Đứng dưới đất mà tì vào mặt bên của hộp thì đẩy hộp đi theo. Nhảy lên đâm
 	# vào hộp giữa không trung không tính là đẩy.
@@ -296,6 +310,14 @@ func is_wall_sliding(direction: float) -> bool:
 		and wall_slide_detector.has_overlapping_bodies()
 
 
+func _sync_wall_slide_sound(wall_sliding: bool) -> void:
+	if wall_sliding:
+		if not wall_slide_sound.playing:
+			wall_slide_sound.play()
+	else:
+		wall_slide_sound.stop()
+
+
 ## Điều khiển ngang dùng chung cho trạng thái di chuyển và jump attack.
 func update_horizontal_movement(delta: float) -> float:
 	var direction := Input.get_axis("move_left", "move_right")
@@ -329,6 +351,7 @@ func set_controlled(value: bool, preserve_momentum := false) -> void:
 	remove_from_group(&"player")
 	running_sound.stop()
 	slide_sound.stop()
+	wall_slide_sound.stop()
 	attack_sound.stop()
 	if is_sliding:
 		stop_slide()
@@ -445,6 +468,7 @@ func spawn_wall_dust(wall_normal: Vector2) -> void:
 
 
 func start_slide() -> void:
+	wall_slide_sound.stop()
 	_preserving_transform_momentum = false
 	var started_in_air := not is_on_floor()
 	if started_in_air:
@@ -612,6 +636,7 @@ func take_hit() -> void:
 	set_air_slide_sprite_offset(false)
 	clear_attack_hitbox()
 	running_sound.stop()
+	wall_slide_sound.stop()
 	movement_locked = true
 	velocity = Vector2.ZERO
 
@@ -633,6 +658,7 @@ func die() -> void:
 	set_air_slide_sprite_offset(false)
 	clear_attack_hitbox()
 	running_sound.stop()
+	wall_slide_sound.stop()
 	velocity = Vector2(0.0, DEATH_JUMP_VELOCITY)
 	collision_layer = 0
 	collision_mask = 0
@@ -671,6 +697,7 @@ func _detach_camera_for_game_over() -> void:
 
 func lock_movement() -> void:
 	movement_locked = true
+	wall_slide_sound.stop()
 	is_sliding = false
 	set_slide_collision(false)
 	set_air_slide_sprite_offset(false)

@@ -7,6 +7,8 @@ const TELEPORT_EFFECT := preload("res://nodes/effects/character_transform_effect
 const SPEED := 180.0
 const TRANSFORM_MOMENTUM_DECELERATION := 900.0
 const JUMP_VELOCITY := -320.0
+const WALL_SLIDE_SPEED := 80.0
+const WALL_SLIDE_SPRITE_OFFSET := Vector2(0.0, 16.0)
 const SLIDE_SPEED := 240.0
 const SLIDE_DURATION := 0.4
 const SLIDE_COLLISION_HEIGHT := 34.0
@@ -40,6 +42,7 @@ const TALK_LINES := [
 @onready var bow_shot_sound: AudioStreamPlayer2D = $BowShotSound
 @onready var ground_slide_sound: AudioStreamPlayer2D = $GroundSlideSound
 @onready var air_slide_sound: AudioStreamPlayer2D = $AirSlideSound
+@onready var wall_slide_sound: AudioStreamPlayer2D = $WallSlideSound
 @onready var talk_area: Area2D = $TalkArea
 @onready var prompt: Label = $Prompt
 @export_node_path("CanvasLayer") var dialogue_layer_path: NodePath
@@ -51,6 +54,7 @@ const TALK_LINES := [
 @onready var line_label: Label = dialog.get_node_or_null("Panel/Margin/Lines/Line") as Label \
 	if dialog != null else null
 @onready var body_collision: CollisionShape2D = $CollisionShape2D
+@onready var wall_slide_detector: Area2D = $WallSlideDetector
 @onready var dust_scene = preload("res://nodes/effects/landing_dust.tscn")
 
 var nearby_player: Node2D
@@ -73,11 +77,19 @@ var wall_jump_used := false
 var was_on_wall := false
 var normal_collision_height := 0.0
 var normal_collision_position := Vector2.ZERO
+var normal_sprite_position := Vector2.ZERO
 var was_on_floor := false
 var last_fall_speed := 0.0
 
 
 func _ready() -> void:
+	var wall_slide_stream := wall_slide_sound.stream as AudioStreamWAV
+	if wall_slide_stream:
+		wall_slide_stream.loop_begin = 0
+		wall_slide_stream.loop_end = roundi(
+			wall_slide_stream.mix_rate * wall_slide_stream.get_length()
+		)
+		wall_slide_stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
 	if _has_dialogue_ui():
 		add_to_group(&"dialogue_actors")
 	sprite.animation_finished.connect(_on_animation_finished)
@@ -90,6 +102,7 @@ func _ready() -> void:
 	if not _has_dialogue_ui():
 		talk_area.set_deferred("monitoring", false)
 	prompt.visible = false
+	normal_sprite_position = sprite.position
 	body_collision.shape = body_collision.shape.duplicate()
 	var capsule := body_collision.shape as CapsuleShape2D
 	if capsule:
@@ -112,6 +125,7 @@ func _play_spawn_effect() -> void:
 func _physics_process(delta: float) -> void:
 	if is_dead:
 		running_sound.stop()
+		wall_slide_sound.stop()
 		velocity += get_gravity() * delta
 		position += velocity * delta
 		return
@@ -119,9 +133,11 @@ func _physics_process(delta: float) -> void:
 		running_sound.stop()
 		ground_slide_sound.stop()
 		air_slide_sound.stop()
+		wall_slide_sound.stop()
 		return
 	if is_hurt:
 		running_sound.stop()
+		wall_slide_sound.stop()
 		return
 
 	# Giống Asura: mỗi lần chạm đất hoặc bám sang một mặt tường mới sẽ hồi lại
@@ -135,6 +151,7 @@ func _physics_process(delta: float) -> void:
 	was_on_wall = touching_wall
 
 	if is_sliding:
+		wall_slide_sound.stop()
 		_preserving_transform_momentum = false
 		var cancel_slide := Input.is_action_just_pressed("move_left") or \
 			Input.is_action_just_pressed("move_right")
@@ -175,6 +192,7 @@ func _physics_process(delta: float) -> void:
 				attack_animation = &"attack"
 		else:
 			attack_animation = &"jump_attack"
+		sprite.position = normal_sprite_position
 		sprite.play(attack_animation)
 
 	if is_attacking:
@@ -189,6 +207,7 @@ func _physics_process(delta: float) -> void:
 		else:
 			velocity.x = 0.0
 		move_and_slide()
+		wall_slide_sound.stop()
 		if not was_on_floor and is_on_floor() and last_fall_speed > LANDING_DUST_MIN_SPEED:
 			spawn_landing_dust()
 			last_fall_speed = 0.0
@@ -218,7 +237,14 @@ func _physics_process(delta: float) -> void:
 		velocity.x = 0.0
 	if direction != 0.0:
 		sprite.flip_h = direction < 0.0
+	var wall_sliding := _is_wall_sliding(direction)
+	if wall_sliding:
+		velocity.y = minf(velocity.y, WALL_SLIDE_SPEED)
 	move_and_slide()
+	wall_sliding = _is_wall_sliding(direction)
+	if wall_sliding:
+		velocity.y = minf(velocity.y, WALL_SLIDE_SPEED)
+	_sync_wall_slide_sound(wall_sliding)
 	# Giống Asura: chỉ đẩy thùng khi đang đứng trên sàn và tì vào mặt bên.
 	# Đang nhảy, lướt hoặc tấn công thì không đẩy.
 	if is_on_floor() and direction != 0.0:
@@ -230,7 +256,7 @@ func _physics_process(delta: float) -> void:
 	var animation_direction := direction
 	if animation_direction == 0.0 and _preserving_transform_momentum:
 		animation_direction = signf(velocity.x)
-	_update_animation(animation_direction)
+	_update_animation(animation_direction, wall_sliding)
 	_sync_running_sound(animation_direction)
 
 
@@ -243,6 +269,7 @@ func set_controlled(value: bool, preserve_momentum := false) -> void:
 		_preserving_transform_momentum = false
 		remove_from_group(&"player")
 		running_sound.stop()
+		wall_slide_sound.stop()
 		is_attacking = false
 		_attack_target = null
 		_attack_aim_local = Vector2.ZERO
@@ -252,6 +279,7 @@ func set_controlled(value: bool, preserve_momentum := false) -> void:
 		if is_sliding:
 			stop_slide()
 		velocity.x = 0.0
+		sprite.position = normal_sprite_position
 		_set_running(false)
 
 
@@ -305,6 +333,7 @@ func _start_wall_jump() -> void:
 	if not is_zero_approx(wall_normal.x):
 		sprite.flip_h = wall_normal.x < 0.0
 		_spawn_wall_dust(wall_normal)
+	sprite.position = normal_sprite_position
 	sprite.play(&"jump_up")
 
 
@@ -432,16 +461,36 @@ func _is_inside_camera(target: Node2D) -> bool:
 
 func _set_running(value: bool) -> void:
 	var animation := &"run" if value else &"idle"
+	sprite.position = normal_sprite_position
 	if sprite.animation != animation:
 		sprite.play(animation)
 
 
-func _update_animation(direction: float) -> void:
+func _is_wall_sliding(direction: float) -> bool:
+	return not is_on_floor() and is_on_wall() and velocity.y >= 0.0 \
+		and direction * get_wall_normal().x < -0.5 \
+		and wall_slide_detector.has_overlapping_bodies()
+
+
+func _sync_wall_slide_sound(wall_sliding: bool) -> void:
+	if wall_sliding:
+		if not wall_slide_sound.playing:
+			wall_slide_sound.play()
+	else:
+		wall_slide_sound.stop()
+
+
+func _update_animation(direction: float, wall_sliding := false) -> void:
 	var animation: StringName
-	if not is_on_floor():
+	if wall_sliding and not is_on_floor():
+		animation = &"wall_slide"
+		sprite.position = normal_sprite_position + WALL_SLIDE_SPRITE_OFFSET
+	elif not is_on_floor():
 		animation = &"jump_up" if velocity.y < 0.0 else &"jump_down"
+		sprite.position = normal_sprite_position
 	else:
 		animation = &"run" if direction != 0.0 else &"idle"
+		sprite.position = normal_sprite_position
 
 	if sprite.animation != animation:
 		sprite.play(animation)
@@ -459,6 +508,7 @@ func start_slide() -> void:
 	if not is_controlled:
 		return
 
+	wall_slide_sound.stop()
 	_preserving_transform_momentum = false
 	var started_in_air := not is_on_floor()
 	if started_in_air:
@@ -473,6 +523,7 @@ func start_slide() -> void:
 	slide_direction = -1.0 if sprite.flip_h else 1.0
 	velocity = Vector2(slide_direction * SLIDE_SPEED, 0.0)
 	set_slide_collision(true)
+	sprite.position = normal_sprite_position
 	sprite.play(&"slide-air" if started_in_air else &"slide")
 	if not started_in_air:
 		spawn_landing_dust()
@@ -480,11 +531,13 @@ func start_slide() -> void:
 
 func stop_slide() -> void:
 	is_sliding = false
+	wall_slide_sound.stop()
 	ground_slide_sound.stop()
 	air_slide_sound.stop()
 	slide_time_left = 0.0
 	velocity.x = 0.0
 	set_slide_collision(false)
+	sprite.position = normal_sprite_position
 	if not is_dead:
 		sprite.play("idle")
 
@@ -524,12 +577,14 @@ func take_hit() -> void:
 	is_attacking = false
 	is_sliding = false
 	running_sound.stop()
+	wall_slide_sound.stop()
 	ground_slide_sound.stop()
 	air_slide_sound.stop()
 	set_slide_collision(false)
 	is_hurt = true
 	set_controlled(false)
 	velocity = Vector2.ZERO
+	sprite.position = normal_sprite_position
 
 	if sprite.sprite_frames.has_animation(&"hust"):
 		sprite.play(&"hust")
@@ -542,7 +597,9 @@ func die() -> void:
 		return
 	is_dead = true
 	set_controlled(false)
+	wall_slide_sound.stop()
 	velocity = Vector2(0.0, DEATH_JUMP_VELOCITY)
+	sprite.position = normal_sprite_position
 	collision_layer = 0
 	collision_mask = 0
 	body_collision.set_deferred("disabled", true)

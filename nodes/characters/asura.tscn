@@ -9,12 +9,13 @@
 [ext_resource type="Texture2D" uid="uid://cs2bc2x1aajya" path="res://assets/sprites/shinn_asura/Shinn-Asura-wall-slide.png" id="5_wall_slide"]
 [ext_resource type="Texture2D" uid="uid://doeukudxrqnqn" path="res://assets/sprites/shinn_asura/Shinn-Asura-death.png" id="6_death"]
 [ext_resource type="Texture2D" uid="uid://bvsfcqyddstks" path="res://assets/sprites/shinn_asura/Shinn-Asura-jump-attack.png" id="7_341xe"]
-[ext_resource type="AudioStream" uid="uid://dxg8x1n6r6y2p" path="res://assets/sounds/running.mp3" id="7_running"]
+[ext_resource type="AudioStream" uid="uid://ccnfq8brrrccs" path="res://assets/sounds/eaglaxle-generic-footstep-4-530778.mp3" id="7_running"]
 [ext_resource type="Texture2D" uid="uid://dqt66prc0kuan" path="res://assets/sprites/shinn_asura/Shinn-Asura-slide.png" id="8_1bcgc"]
 [ext_resource type="Texture2D" uid="uid://b62b27guhyjs6" path="res://assets/sprites/shinn_asura/Shinn-Asura-jump-attack2.png" id="8_32pva"]
 [ext_resource type="AudioStream" uid="uid://7ibsbwq6hqo7" path="res://assets/sounds/sword_attack.mp3" id="8_attack"]
 [ext_resource type="Texture2D" uid="uid://dhkqrhyf67gra" path="res://assets/sprites/shinn_asura/Shinn-Asura-slide-attack.png" id="9_dhu25"]
 [ext_resource type="AudioStream" uid="uid://cmq1qt6vxrb5r" path="res://assets/sounds/slide.wav" id="10_slide"]
+[ext_resource type="AudioStream" uid="uid://bc5h6c8vmux1j" path="res://assets/sounds/wall_slide.wav" id="11_wall_slide_sound"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_w1tus"]
 atlas = ExtResource("2_u1ow0")
@@ -502,6 +503,7 @@ disabled = true
 [node name="RunningSound" type="AudioStreamPlayer2D" parent="." unique_id=1235242696]
 stream = ExtResource("7_running")
 volume_db = 20.0
+pitch_scale = 1.15
 bus = &"SFX"
 
 [node name="AttackSound" type="AudioStreamPlayer2D" parent="." unique_id=1131988582]
@@ -511,6 +513,12 @@ bus = &"SFX"
 [node name="SlideSound" type="AudioStreamPlayer2D" parent="." unique_id=390771162]
 stream = ExtResource("10_slide")
 volume_db = -3.0
+bus = &"SFX"
+
+[node name="WallSlideSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("11_wall_slide_sound")
+volume_db = -3.0
+attenuation = 0.0
 bus = &"SFX"
 
 [node name="PointLight2D" type="PointLight2D" parent="." unique_id=1077569544]

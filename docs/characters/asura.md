@@ -47,6 +47,9 @@ kết thúc trạng thái trượt tường.
 chạm được tường khi capsule chính đang áp sát; `wall_slide` chỉ bật khi vùng dò
 này chạm vật cản thuộc collision layer 1.
 
+Trong lúc trượt, `WallSlideSound` phát vòng lặp chung từ `sounds/wall_slide.wav`;
+âm thanh dừng khi rời tường, bắt đầu slide khác hoặc chuyển trạng thái.
+
 Asura nhảy tường khi `GameState.has_skill(Skills.WALL_DOUBLE_JUMP)` trả về true.
 Mỗi lần bám vào một mặt tường mới sẽ hồi một cú nhảy tường; chạm đất cũng hồi
 lại lượt. Nhờ vậy Asura có thể nối các cú nhảy giữa nhiều mặt tường nhưng không

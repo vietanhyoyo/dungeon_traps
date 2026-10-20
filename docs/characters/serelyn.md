@@ -28,8 +28,8 @@ khi vào màn; nếu chưa kết nạp thì không tạo Serelyn.
 ## Di Chuyển Và Tấn Công
 
 Serelyn là `CharacterBody2D` với `AnimatedSprite2D`. Các animation gồm idle (5
-khung), run (6 khung), `jump_up`, `jump_down`, `hust` và `death`. Khi được điều
-khiển, cô di chuyển trái/phải và nhảy bằng action `jump`.
+khung), run (6 khung), `jump_up`, `jump_down`, `wall_slide`, `hust` và `death`.
+Khi được điều khiển, cô di chuyển trái/phải và nhảy bằng action `jump`.
 
 Action `slide` làm Serelyn lướt theo hướng đang nhìn trong 0,4 giây, trên mặt
 đất hoặc trên không. Lượt lướt trên không chỉ dùng được một lần mỗi khi rời mặt
@@ -74,6 +74,12 @@ Serelyn dùng chung kỹ năng `wall_double_jump` với Asura. Cô chỉ nhảy 
 `GameState.has_skill(Skills.WALL_DOUBLE_JUMP)` trả về true. Bám sang mặt tường
 mới hoặc chạm đất sẽ hồi một cú nhảy tường. Cú nhảy gán `JUMP_VELOCITY` vào
 `velocity.y`, và tạo bụi gần mặt tường.
+
+Khi đang rơi, giữ hướng về phía tường để vùng `WallSlideDetector` giữa thân
+chạm tường; Serelyn phát animation `wall_slide` ba khung từ
+`Serelyn-run-wall-slide.png` và trượt xuống tối đa 80 px/giây. Vùng dò cao 31 px,
+bằng một nửa capsule chính 62 px. Cả Serelyn và Asura cùng phát vòng lặp âm
+thanh `sounds/wall_slide.wav` trong trạng thái này.
 
 Bảng pause cập nhật thông tin theo nhân vật đang được điều khiển. Khi chọn
 Serelyn, bảng hiển thị portrait, tên, class và mô tả đòn đánh của cô.

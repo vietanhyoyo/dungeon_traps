@@ -10,11 +10,13 @@
 [ext_resource type="Texture2D" uid="uid://cj00ht47kjqv" path="res://assets/sprites/serelyn/Serelyn-run.png" id="4_run"]
 [ext_resource type="Texture2D" uid="uid://bii1je8lj70ta" path="res://assets/sprites/serelyn/Serelyn-hust.png" id="4_xwkjk"]
 [ext_resource type="Texture2D" uid="uid://cf3x8ht5y5hqd" path="res://assets/sprites/serelyn/Serelyn-slide.png" id="5_o18wq"]
+[ext_resource type="Texture2D" uid="uid://v4712o4040sy" path="res://assets/sprites/serelyn/Serelyn-run-wall-slide.png" id="15_wall_slide"]
 [ext_resource type="Texture2D" uid="uid://bbt1n75g21hpf" path="res://assets/sprites/serelyn/Serelyn-slide-air.png" id="10_6j8w8"]
-[ext_resource type="AudioStream" uid="uid://dxg8x1n6r6y2p" path="res://assets/sounds/running.mp3" id="11_running"]
+[ext_resource type="AudioStream" uid="uid://ccnfq8brrrccs" path="res://assets/sounds/eaglaxle-generic-footstep-4-530778.mp3" id="11_running"]
 [ext_resource type="AudioStream" uid="uid://wvrpl8bfatm8" path="res://assets/sounds/serelyn_bow_shot.wav" id="12_bow_shot"]
 [ext_resource type="AudioStream" uid="uid://16upyix3vg3" path="res://assets/sounds/serelyn_slide_ground.wav" id="13_ground_slide"]
 [ext_resource type="AudioStream" uid="uid://bf56tjk6ib1d7" path="res://assets/sounds/mixkit-short-wind-swoosh-1461.wav" id="14_air_slide"]
+[ext_resource type="AudioStream" uid="uid://bc5h6c8vmux1j" path="res://assets/sounds/wall_slide.wav" id="16_wall_slide_sound"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_s2pmx"]
 atlas = ExtResource("2_gnoaf")
@@ -139,6 +141,18 @@ region = Rect2(384, 0, 96, 96)
 [sub_resource type="AtlasTexture" id="AtlasTexture_run_5"]
 atlas = ExtResource("4_run")
 region = Rect2(480, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wall_slide_0"]
+atlas = ExtResource("15_wall_slide")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wall_slide_1"]
+atlas = ExtResource("15_wall_slide")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wall_slide_2"]
+atlas = ExtResource("15_wall_slide")
+region = Rect2(128, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_m1rsf"]
 atlas = ExtResource("5_o18wq")
@@ -328,6 +342,20 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_wall_slide_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wall_slide_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wall_slide_2")
+}],
+"loop": 1,
+"name": &"wall_slide",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_m1rsf")
 }, {
 "duration": 1.0,
@@ -368,6 +396,9 @@ animations = [{
 radius = 17.0
 height = 62.0
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_slide_detector"]
+size = Vector2(49, 31)
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_talk"]
 radius = 72.0
 
@@ -388,6 +419,15 @@ frame_progress = 0.11427811
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=782152036]
 position = Vector2(0, 17)
 shape = SubResource("CapsuleShape2D_body")
+
+[node name="WallSlideDetector" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 1
+monitorable = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WallSlideDetector"]
+position = Vector2(0, 17)
+shape = SubResource("RectangleShape2D_wall_slide_detector")
 
 [node name="TalkArea" type="Area2D" parent="." unique_id=141953137]
 collision_layer = 0
@@ -410,6 +450,7 @@ horizontal_alignment = 1
 [node name="RunningSound" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("11_running")
 volume_db = 20.0
+pitch_scale = 1.15
 bus = &"SFX"
 
 [node name="BowShotSound" type="AudioStreamPlayer2D" parent="."]
@@ -425,4 +466,10 @@ bus = &"SFX"
 [node name="AirSlideSound" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("14_air_slide")
 volume_db = -6.0
+bus = &"SFX"
+
+[node name="WallSlideSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("16_wall_slide_sound")
+volume_db = -3.0
+attenuation = 0.0
 bus = &"SFX"
