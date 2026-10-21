@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" path="res://nodes/decor/decor-skull.tscn" id="10_s7q0h"]
 [ext_resource type="PackedScene" path="res://nodes/decor/decor-grass.tscn" id="11_qthpr"]
 [ext_resource type="PackedScene" path="res://nodes/ui/character_hud.tscn" id="16_character_hud"]
+[ext_resource type="PackedScene" path="res://nodes/decor/decor-crystal.tscn" id="16_w4rxv"]
 [ext_resource type="PackedScene" uid="uid://ugkld1yyytqd" path="res://nodes/traps/big_rock_ball.tscn" id="20_fpsml"]
 [ext_resource type="Texture2D" uid="uid://derdkdi54vr4a" path="res://assets/sprites/bg-1-layer-1.png" id="20_parallax_background"]
 [ext_resource type="Script" uid="uid://cjitb8wswyxq3" path="res://scripts/parallax_background_fit.gd" id="21_background_fit"]
@@ -295,6 +296,21 @@ position = Vector2(4213, 1200)
 
 [node name="decor-grass3" parent="DecorList" unique_id=1270224299 instance=ExtResource("11_qthpr")]
 position = Vector2(4502, 1200)
+
+[node name="decor-crystal" parent="DecorList" unique_id=1993578644 instance=ExtResource("16_w4rxv")]
+position = Vector2(1874, 632)
+
+[node name="decor-crystal2" parent="DecorList" unique_id=944016919 instance=ExtResource("16_w4rxv")]
+position = Vector2(1153, 856)
+
+[node name="decor-crystal3" parent="DecorList" unique_id=14934165 instance=ExtResource("16_w4rxv")]
+position = Vector2(3326, 760)
+
+[node name="decor-crystal4" parent="DecorList" unique_id=1344743984 instance=ExtResource("16_w4rxv")]
+position = Vector2(5908, 1368)
+
+[node name="decor-crystal5" parent="DecorList" unique_id=1561206146 instance=ExtResource("16_w4rxv")]
+position = Vector2(4633, 1592)
 
 [node name="Door" parent="." unique_id=701868363 instance=ExtResource("5_door")]
 position = Vector2(744, 1424)

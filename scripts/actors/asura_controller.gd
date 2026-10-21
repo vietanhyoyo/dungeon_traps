@@ -36,6 +36,8 @@ const HURT_DURATION = 0.4
 # phải chờ vài bước để đòn trên không bị cắt ngang kịp gây sát thương.
 const ATTACK_ACTIVE_STEPS = 3
 const ATTACK_DAMAGE := 5
+# Lớp vật có thể bị chém, dùng chung với thùng gỗ và decor crystal.
+const HITTABLE_COLLISION_LAYER := 3
 # Khung bất tử ngay đầu mỗi đòn đánh. Đòn chém là lúc nhân vật phải lao vào sát
 # bẫy/quái, nên cho người chơi một nhịp ngắn để "đánh đổi" mà không chết oan vì
 # chạm phải hitbox của mục tiêu ngay khi vung kiếm.
@@ -112,6 +114,8 @@ func _ready() -> void:
 		wall_slide_stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
 	# Shape là Resource nên cần bản riêng trước khi thay đổi kích thước lúc chạy.
 	body_collision.shape = body_collision.shape.duplicate()
+	# Giữ mask đồng bộ với layer của các vật có thể bị chém.
+	attack_hitbox.set_collision_mask_value(HITTABLE_COLLISION_LAYER, true)
 	var capsule := body_collision.shape as CapsuleShape2D
 	if capsule:
 		normal_collision_height = capsule.height
@@ -536,8 +540,18 @@ func update_attack_hitbox() -> void:
 	attack_shape.disabled = false
 	attack_active_steps += 1
 
-	for body in attack_hitbox.get_overlapping_bodies():
-		hit_enemy(body)
+	# Quét trực tiếp hình chém trong physics step để bắt cả StaticBody2D như
+	# decor crystal ngay từ lúc shape được bật, không phụ thuộc danh sách overlap
+	# Area2D vừa cập nhật hay chưa.
+	var query := PhysicsShapeQueryParameters2D.new()
+	query.shape = attack_shape.shape
+	query.transform = attack_shape.global_transform
+	query.collision_mask = attack_hitbox.collision_mask
+	query.collide_with_bodies = true
+	query.collide_with_areas = false
+	query.exclude = [get_rid()]
+	for result in get_world_2d().direct_space_state.intersect_shape(query, 32):
+		hit_enemy(result["collider"])
 
 	# Mũi tên của bẫy là Area2D thay vì PhysicsBody2D, nên dò riêng các vùng
 	# projectile có thể bị chém để Asura phá được tên đang bay tới.

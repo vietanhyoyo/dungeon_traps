@@ -28,6 +28,8 @@ const ARROW_SPAWN_OFFSET := Vector2(30.0, 13.0)
 const HIGH_ARROW_SPAWN_OFFSET := Vector2(30.0, -2.0)
 # attack_low kéo cung thấp hơn đòn thường, nên điểm sinh tên cũng hạ xuống theo.
 const LOW_ARROW_SPAWN_OFFSET := Vector2(30.0, 19.0)
+# Bỏ qua sai lệch nhỏ giữa điểm ngắm và điểm sinh tên để giữ tư thế bắn ngang.
+const HORIZONTAL_ATTACK_VERTICAL_TOLERANCE := 8.0
 const HIGH2_ARROW_ANGLE_THRESHOLD := deg_to_rad(15.0)
 const MAX_UPWARD_ARROW_ANGLE := deg_to_rad(60.0)
 const MAX_DOWNWARD_ARROW_ANGLE := deg_to_rad(15.0)
@@ -182,14 +184,17 @@ func _physics_process(delta: float) -> void:
 			var target := _attack_target
 			if target == null:
 				attack_animation = &"attack"
-			elif target.to_global(_attack_aim_local).y < attack_origin.y:
-				var target_angle := _get_arrow_target_angle(attack_origin, target.to_global(_attack_aim_local))
-				attack_animation = &"attack_high2" \
-					if absf(target_angle) > HIGH2_ARROW_ANGLE_THRESHOLD else &"attack_high"
-			elif target.to_global(_attack_aim_local).y > attack_origin.y:
-				attack_animation = &"attack_low"
 			else:
-				attack_animation = &"attack"
+				var aim_point := target.to_global(_attack_aim_local)
+				var vertical_offset := aim_point.y - attack_origin.y
+				if absf(vertical_offset) <= HORIZONTAL_ATTACK_VERTICAL_TOLERANCE:
+					attack_animation = &"attack"
+				elif vertical_offset < 0.0:
+					var target_angle := _get_arrow_target_angle(attack_origin, aim_point)
+					attack_animation = &"attack_high2" \
+						if absf(target_angle) > HIGH2_ARROW_ANGLE_THRESHOLD else &"attack_high"
+				else:
+					attack_animation = &"attack_low"
 		else:
 			attack_animation = &"jump_attack"
 		sprite.position = normal_sprite_position
@@ -378,17 +383,20 @@ func _find_arrow_target(origin: Vector2, facing: float, use_animation_origin := 
 	var nearest: Node2D
 	var nearest_point := Vector2.ZERO
 	var nearest_distance := INF
-	for candidate in get_tree().get_nodes_in_group(&"enemy"):
-		var enemy := candidate as Node2D
-		if enemy == null or not enemy.has_method("die") \
-				or not _is_inside_camera(enemy):
+	var candidates: Array[Node] = []
+	candidates.append_array(get_tree().get_nodes_in_group(&"enemy"))
+	candidates.append_array(get_tree().get_nodes_in_group(&"breakable"))
+	for candidate in candidates:
+		var target := candidate as Node2D
+		if target == null or not _is_arrow_target(target) \
+				or not _is_inside_camera(target):
 			continue
-		var visible_point := _find_shootable_point(enemy, origin, facing, use_animation_origin)
+		var visible_point := _find_shootable_point(target, origin, facing, use_animation_origin)
 		if visible_point.is_empty():
 			continue
-		var distance := origin.distance_squared_to(enemy.global_position)
+		var distance := origin.distance_squared_to(target.global_position)
 		if distance < nearest_distance:
-			nearest = enemy
+			nearest = target
 			nearest_point = visible_point["point"]
 			nearest_distance = distance
 	if nearest == null:
@@ -396,8 +404,13 @@ func _find_arrow_target(origin: Vector2, facing: float, use_animation_origin := 
 	return {"target": nearest, "local_point": nearest.to_local(nearest_point)}
 
 
-func _find_shootable_point(enemy: Node2D, origin: Vector2, facing: float, use_animation_origin: bool) -> Dictionary:
-	for aim_point in _get_target_points(enemy):
+func _is_arrow_target(target: Node) -> bool:
+	return (target.is_in_group(&"enemy") and target.has_method("die")) \
+		or (target.is_in_group(&"breakable") and target.has_method("break_apart"))
+
+
+func _find_shootable_point(target: Node2D, origin: Vector2, facing: float, use_animation_origin: bool) -> Dictionary:
+	for aim_point in _get_target_points(target):
 		var shot_origin := _get_targeting_origin(aim_point, facing) if use_animation_origin else origin
 		var offset := aim_point - shot_origin
 		if offset.x * facing <= 0.0:
@@ -410,19 +423,19 @@ func _find_shootable_point(enemy: Node2D, origin: Vector2, facing: float, use_an
 		var hit := SerelynArrow.raycast_path(
 			get_world_2d().direct_space_state, shot_origin, aim_point
 		)
-		if SerelynArrow.enemy_for_collider(hit.get("collider")) == enemy:
+		if SerelynArrow.shootable_target_for_collider(hit.get("collider")) == target:
 			return {"point": aim_point}
 	return {}
 
 
-func _get_target_points(enemy: Node2D) -> Array[Vector2]:
+func _get_target_points(target: Node2D) -> Array[Vector2]:
 	var points: Array[Vector2] = []
-	var aim_point := enemy.get_node_or_null("AimPoint") as Node2D
+	var aim_point := target.get_node_or_null("AimPoint") as Node2D
 	if aim_point != null:
 		points.append(aim_point.global_position)
-	points.append(enemy.global_position)
+	points.append(target.global_position)
 	for path in ["CollisionShape2D", "ArrowHitArea/CollisionShape2D"]:
-		var shape_node := enemy.get_node_or_null(path) as CollisionShape2D
+		var shape_node := target.get_node_or_null(path) as CollisionShape2D
 		if shape_node == null or shape_node.disabled or shape_node.shape == null:
 			continue
 		var rect := shape_node.shape.get_rect()
@@ -439,9 +452,10 @@ func _get_target_points(enemy: Node2D) -> Array[Vector2]:
 func _get_targeting_origin(aim_point: Vector2, facing: float) -> Vector2:
 	var offset := ARROW_SPAWN_OFFSET
 	var default_origin_y := global_position.y + ARROW_SPAWN_OFFSET.y
-	if aim_point.y < default_origin_y:
+	var vertical_offset := aim_point.y - default_origin_y
+	if vertical_offset < -HORIZONTAL_ATTACK_VERTICAL_TOLERANCE:
 		offset = HIGH_ARROW_SPAWN_OFFSET
-	elif aim_point.y > default_origin_y:
+	elif vertical_offset > HORIZONTAL_ATTACK_VERTICAL_TOLERANCE:
 		offset = LOW_ARROW_SPAWN_OFFSET
 	return global_position + Vector2(offset.x * facing, offset.y)
 

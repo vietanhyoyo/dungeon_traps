@@ -52,11 +52,12 @@ cho phép bắn khi phần đó lộ ra khỏi mép sàn. Serelyn kiểm tra t�
 sinh tên tương ứng với animation tấn công rồi giữ mục tiêu đó đến lúc bắn. Chỉ
 cần một điểm trên hitbox nằm trong camera thì enemy có thể được chọn.
 
-Góc bắn lên tối đa là 60 độ, còn góc bắn xuống tối đa 15 độ. Với mục tiêu cao
-hơn Serelyn tối đa 15 độ, cô dùng animation `attack_high`; mục tiêu cao hơn nữa
-dùng `attack_high2`. Vị trí sinh tên được nâng lên để khớp với tay và dây cung
-trong hai animation này. Nếu enemy ở thấp hơn, cô dùng `attack_low` và hạ thấp
-vị trí sinh tên.
+Góc bắn lên tối đa là 60 độ, còn góc bắn xuống tối đa 15 độ. Khi điểm ngắm lệch
+không quá 8 px theo chiều dọc so với vị trí sinh tên mặc định, cô dùng animation
+`attack` để giữ tư thế bắn ngang. Với mục tiêu cao hơn, cô dùng `attack_high`;
+mục tiêu cao hơn 15 độ dùng `attack_high2`. Vị trí sinh tên được nâng lên để
+khớp với tay và dây cung trong hai animation này. Nếu enemy thấp hơn quá 8 px,
+cô dùng `attack_low` và hạ thấp vị trí sinh tên.
 
 Tên làm vỡ thùng gỗ thuộc group `breakable`. Thùng sắt chặn tên nhưng không bị
 phá. Khi trúng enemy trong camera, tên tạo cùng `effects/hit_effect.tscn` với

@@ -12,7 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://cewy0sh64816q" path="res://nodes/traps/bow_trap.tscn" id="11_7imj7"]
 [ext_resource type="PackedScene" uid="uid://dg4n7tp4d7q1y" path="res://nodes/enemies/slime.tscn" id="11_ghiv5"]
 [ext_resource type="PackedScene" path="res://nodes/traps/pendulum_trap.tscn" id="12_pendulum"]
-[ext_resource type="PackedScene" path="res://nodes/enemies/bat.tscn" id="12_yotrr"]
+[ext_resource type="PackedScene" uid="uid://cqwyfrn5xy0ei" path="res://nodes/enemies/bat.tscn" id="12_yotrr"]
 [ext_resource type="PackedScene" path="res://nodes/star_hud.tscn" id="13_wyfjl"]
 [ext_resource type="PackedScene" uid="uid://cg8mbcubeyje8" path="res://nodes/items/star.tscn" id="14_isuju"]
 [ext_resource type="PackedScene" path="res://nodes/ui/pause_menu.tscn" id="16_h85ep"]
@@ -21,8 +21,9 @@
 [ext_resource type="PackedScene" path="res://nodes/decor/decor-skull.tscn" id="20_vmglt"]
 [ext_resource type="PackedScene" path="res://nodes/decor/decor-grass.tscn" id="21_7atvw"]
 [ext_resource type="PackedScene" uid="uid://dhhgace1srtk8" path="res://nodes/traps/iron_spike_trap.tscn" id="22_7atvw"]
-[ext_resource type="PackedScene" path="res://nodes/traps/spike_pit_trap.tscn" id="22_hs26l"]
-[ext_resource type="Script" path="res://scripts/level_6_controller.gd" id="party_controller"]
+[ext_resource type="PackedScene" uid="uid://ccnlpdr5ab8c5" path="res://nodes/traps/spike_pit_trap.tscn" id="22_hs26l"]
+[ext_resource type="PackedScene" path="res://nodes/decor/decor-crystal.tscn" id="22_tyfrk"]
+[ext_resource type="Script" uid="uid://b0wfmn0iuxfrh" path="res://scripts/level_6_controller.gd" id="party_controller"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_8pcmo"]
 polygon = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
@@ -250,7 +251,7 @@ sources/1 = SubResource("TileSetAtlasSource_flnyc")
 
 [node name="Level5" type="Node2D" unique_id=943828175]
 
-[node name="PartyController" type="Node2D" parent="."]
+[node name="PartyController" type="Node2D" parent="." unique_id=156014104]
 script = ExtResource("party_controller")
 
 [node name="Asura" parent="." unique_id=1637589097 instance=ExtResource("1_dxylt")]
@@ -757,6 +758,24 @@ position = Vector2(1013, 335)
 
 [node name="decor-grass" parent="DecorList" unique_id=617474082 instance=ExtResource("21_7atvw")]
 position = Vector2(371, 336)
+
+[node name="decor-crystal" parent="DecorList" unique_id=1474186472 instance=ExtResource("22_tyfrk")]
+position = Vector2(901, 344)
+
+[node name="decor-crystal2" parent="DecorList" unique_id=11608797 instance=ExtResource("22_tyfrk")]
+position = Vector2(2184, 472)
+
+[node name="decor-crystal3" parent="DecorList" unique_id=1881816915 instance=ExtResource("22_tyfrk")]
+position = Vector2(2351, 824)
+
+[node name="decor-crystal4" parent="DecorList" unique_id=1728768606 instance=ExtResource("22_tyfrk")]
+position = Vector2(1614, 984)
+
+[node name="decor-crystal5" parent="DecorList" unique_id=1863457610 instance=ExtResource("22_tyfrk")]
+position = Vector2(872, 1464)
+
+[node name="decor-crystal6" parent="DecorList" unique_id=1287965967 instance=ExtResource("22_tyfrk")]
+position = Vector2(80, 1048)
 
 [node name="IronSpikeList" type="Node" parent="." unique_id=602552797]
 

@@ -94,6 +94,18 @@ static func enemy_for_collider(collider: Object) -> Node2D:
 	return null
 
 
+static func shootable_target_for_collider(collider: Object) -> Node2D:
+	var enemy := enemy_for_collider(collider)
+	if enemy != null:
+		return enemy
+
+	var node := collider as Node
+	if node != null and node.is_in_group(&"breakable") \
+			and node.has_method("break_apart"):
+		return node as Node2D
+	return null
+
+
 func _is_inside_camera(target: Node2D) -> bool:
 	var camera := get_viewport().get_camera_2d()
 	if camera == null:

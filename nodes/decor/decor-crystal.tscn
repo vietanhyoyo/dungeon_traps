@@ -1,0 +1,132 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" uid="uid://dboepyltqhrap" path="res://assets/sprites/decor/decor-crystal.png" id="1_crystal"]
+[ext_resource type="Script" path="res://scripts/decor_crystal.gd" id="2_script"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_crystal_idle_0"]
+atlas = ExtResource("1_crystal")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_crystal_broken_0"]
+atlas = ExtResource("1_crystal")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_crystal_broken_1"]
+atlas = ExtResource("1_crystal")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_crystal_broken_2"]
+atlas = ExtResource("1_crystal")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_crystal_broken_3"]
+atlas = ExtResource("1_crystal")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_crystal_broken_4"]
+atlas = ExtResource("1_crystal")
+region = Rect2(320, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_crystal"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_crystal_idle_0")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_crystal_broken_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_crystal_broken_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_crystal_broken_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_crystal_broken_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_crystal_broken_4")
+}],
+"loop": false,
+"name": &"broken",
+"speed": 10.0
+}]
+
+[sub_resource type="Gradient" id="Gradient_crystal_glow"]
+offsets = PackedFloat32Array(0, 0.25, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.72, 0.82, 1, 0.72, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_crystal_glow"]
+gradient = SubResource("Gradient_crystal_glow")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="Animation" id="Animation_crystal_pulse"]
+resource_name = "pulse"
+length = 3.6
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Glow:texture_scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.9, 1.8, 2.7, 3.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.8, 1.05, 1.55, 1.05, 0.8]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Glow:energy")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.9, 1.8, 2.7, 3.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.2, 0.28, 0.42, 0.28, 0.2]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_crystal"]
+_data = {
+&"pulse": SubResource("Animation_crystal_pulse")
+}
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_crystal"]
+size = Vector2(32, 24)
+
+[node name="decor-crystal" type="StaticBody2D" groups=["breakable"]]
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("2_script")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -24)
+texture_filter = 1
+modulate = Color(0.90359825, 0.90359825, 0.9035982, 1)
+sprite_frames = SubResource("SpriteFrames_crystal")
+animation = &"idle"
+autoplay = "idle"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_crystal")
+
+[node name="Glow" type="PointLight2D" parent="."]
+color = Color(0.34, 0.62, 1, 1)
+energy = 0.2
+texture = SubResource("GradientTexture2D_crystal_glow")
+texture_scale = 0.8
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries/ = SubResource("AnimationLibrary_crystal")
+autoplay = &"pulse"

@@ -11,7 +11,8 @@
 [ext_resource type="PackedScene" path="res://nodes/star_hud.tscn" id="11_star_hud"]
 [ext_resource type="PackedScene" uid="uid://dhhgace1srtk8" path="res://nodes/traps/iron_spike_trap.tscn" id="13_yggu3"]
 [ext_resource type="PackedScene" path="res://nodes/ui/pause_menu.tscn" id="20_pause"]
-[ext_resource type="Script" path="res://scripts/level_6_controller.gd" id="party_controller"]
+[ext_resource type="PackedScene" path="res://nodes/decor/decor-crystal.tscn" id="decor_crystal"]
+[ext_resource type="Script" uid="uid://b0wfmn0iuxfrh" path="res://scripts/level_6_controller.gd" id="party_controller"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jsomn"]
 texture = ExtResource("2_8pcmo")
@@ -123,7 +124,7 @@ sources/1 = SubResource("TileSetAtlasSource_jsomn")
 
 [node name="Level1" type="Node2D" unique_id=46945069]
 
-[node name="PartyController" type="Node2D" parent="."]
+[node name="PartyController" type="Node2D" parent="." unique_id=1855047342]
 script = ExtResource("party_controller")
 
 [node name="Asura" parent="." unique_id=1107660582 instance=ExtResource("2_flbgy")]
@@ -199,6 +200,17 @@ position = Vector2(735, -144)
 
 [node name="Torch5" parent="TorchList" unique_id=2028788904 instance=ExtResource("5_jsomn")]
 position = Vector2(1041, -83)
+
+[node name="DecorList" type="Node2D" parent="." unique_id=387403332]
+
+[node name="decor-crystal" parent="DecorList" unique_id=287365236 instance=ExtResource("decor_crystal")]
+position = Vector2(-199, -296)
+
+[node name="decor-crystal2" parent="DecorList" unique_id=1207651498 instance=ExtResource("decor_crystal")]
+position = Vector2(304, -8)
+
+[node name="decor-crystal3" parent="DecorList" unique_id=1233647825 instance=ExtResource("decor_crystal")]
+position = Vector2(625, -72)
 
 [node name="Star" parent="." unique_id=669165112 instance=ExtResource("10_akfln")]
 position = Vector2(39, -348)

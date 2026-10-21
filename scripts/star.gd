@@ -19,12 +19,13 @@ func _on_body_entered(body: Node2D) -> void:
 		return
 
 	collected = true
+	# Phát tiếng trước khi cập nhật GameState/HUD để âm thanh bám sát thời điểm chạm star.
+	pickup_sound.play()
 	monitoring = false
 	collision_shape.set_deferred("disabled", true)
 	GameState.collect_star(_star_id())
 	get_tree().call_group(&"star_hud", &"add_star")
 	animated_sprite.hide()
-	pickup_sound.play()
 
 	await pickup_sound.finished
 	queue_free()

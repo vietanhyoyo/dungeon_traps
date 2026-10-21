@@ -23,6 +23,7 @@
 [ext_resource type="PackedScene" path="res://nodes/platforms/pushable_steel_crate.tscn" id="22_steel_crate"]
 [ext_resource type="PackedScene" uid="uid://dhhgace1srtk8" path="res://nodes/traps/iron_spike_trap.tscn" id="23_hqtwb"]
 [ext_resource type="PackedScene" path="res://nodes/platforms/pushable_wooden_crate.tscn" id="23_wooden_crate"]
+[ext_resource type="PackedScene" path="res://nodes/decor/decor-crystal.tscn" id="24_2me4h"]
 [ext_resource type="Script" uid="uid://b0wfmn0iuxfrh" path="res://scripts/level_6_controller.gd" id="party_controller"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_8pcmo"]
@@ -885,6 +886,24 @@ position = Vector2(1809, -144)
 
 [node name="decor-grass" parent="DecorList" unique_id=1286206178 instance=ExtResource("22_hqtwb")]
 position = Vector2(750, -49)
+
+[node name="decor-crystal" parent="DecorList" unique_id=75472877 instance=ExtResource("24_2me4h")]
+position = Vector2(296, -104)
+
+[node name="decor-crystal2" parent="DecorList" unique_id=482161578 instance=ExtResource("24_2me4h")]
+position = Vector2(889, -40)
+
+[node name="decor-crystal3" parent="DecorList" unique_id=1749874892 instance=ExtResource("24_2me4h")]
+position = Vector2(2292, 152)
+
+[node name="decor-crystal4" parent="DecorList" unique_id=990768319 instance=ExtResource("24_2me4h")]
+position = Vector2(3522, -40)
+
+[node name="decor-crystal5" parent="DecorList" unique_id=842819327 instance=ExtResource("24_2me4h")]
+position = Vector2(3754, -200)
+
+[node name="decor-crystal6" parent="DecorList" unique_id=1179110184 instance=ExtResource("24_2me4h")]
+position = Vector2(5470, -424)
 
 [node name="IronSpikeList" type="Node" parent="." unique_id=638067673]
 

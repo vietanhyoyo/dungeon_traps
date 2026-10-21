@@ -11,11 +11,12 @@
 [ext_resource type="PackedScene" uid="uid://cg8mbcubeyje8" path="res://nodes/items/star.tscn" id="10_star"]
 [ext_resource type="PackedScene" path="res://nodes/star_hud.tscn" id="11_star_hud"]
 [ext_resource type="PackedScene" uid="uid://dg4n7tp4d7q1y" path="res://nodes/enemies/slime.tscn" id="12_slime"]
-[ext_resource type="PackedScene" path="res://nodes/enemies/bat.tscn" id="14_gtnnj"]
-[ext_resource type="PackedScene" path="res://nodes/traps/spike_pit_trap.tscn" id="15_tg05m"]
+[ext_resource type="PackedScene" uid="uid://cqwyfrn5xy0ei" path="res://nodes/enemies/bat.tscn" id="14_gtnnj"]
+[ext_resource type="PackedScene" uid="uid://ccnlpdr5ab8c5" path="res://nodes/traps/spike_pit_trap.tscn" id="15_tg05m"]
 [ext_resource type="PackedScene" uid="uid://dhhgace1srtk8" path="res://nodes/traps/iron_spike_trap.tscn" id="16_ebfjb"]
+[ext_resource type="PackedScene" path="res://nodes/decor/decor-crystal.tscn" id="17_f12g6"]
 [ext_resource type="PackedScene" path="res://nodes/ui/pause_menu.tscn" id="20_pause"]
-[ext_resource type="Script" path="res://scripts/level_6_controller.gd" id="party_controller"]
+[ext_resource type="Script" uid="uid://b0wfmn0iuxfrh" path="res://scripts/level_6_controller.gd" id="party_controller"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_8pcmo"]
 polygon = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
@@ -243,7 +244,7 @@ sources/1 = SubResource("TileSetAtlasSource_flnyc")
 
 [node name="Level2" type="Node2D" unique_id=46945069]
 
-[node name="PartyController" type="Node2D" parent="."]
+[node name="PartyController" type="Node2D" parent="." unique_id=241066631]
 script = ExtResource("party_controller")
 
 [node name="Asura" parent="." unique_id=1107660582 instance=ExtResource("1_r7por")]
@@ -432,3 +433,14 @@ position = Vector2(970, 152)
 
 [node name="IronSpikeTrap15" parent="IronSpikeList" unique_id=10761061 instance=ExtResource("16_ebfjb")]
 position = Vector2(988, 152)
+
+[node name="DecorList" type="Node2D" parent="." unique_id=2021803854]
+
+[node name="decor-crystal" parent="DecorList" unique_id=262468250 instance=ExtResource("17_f12g6")]
+position = Vector2(312, -136)
+
+[node name="decor-crystal2" parent="DecorList" unique_id=1737666970 instance=ExtResource("17_f12g6")]
+position = Vector2(817, -232)
+
+[node name="decor-crystal3" parent="DecorList" unique_id=202032380 instance=ExtResource("17_f12g6")]
+position = Vector2(856, 152)

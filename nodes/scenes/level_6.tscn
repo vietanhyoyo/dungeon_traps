@@ -10,7 +10,8 @@
 [ext_resource type="PackedScene" uid="uid://c4jvx4glbgl2" path="res://nodes/door.tscn" id="8_door"]
 [ext_resource type="PackedScene" uid="uid://dscr153320p4r" path="res://nodes/traps/fire_trap.tscn" id="9_fire"]
 [ext_resource type="PackedScene" uid="uid://dg4n7tp4d7q1y" path="res://nodes/enemies/slime.tscn" id="11_slime"]
-[ext_resource type="PackedScene" path="res://nodes/enemies/bat.tscn" id="12_bat"]
+[ext_resource type="PackedScene" uid="uid://cqwyfrn5xy0ei" path="res://nodes/enemies/bat.tscn" id="12_bat"]
+[ext_resource type="PackedScene" path="res://nodes/decor/decor-crystal.tscn" id="12_xksej"]
 [ext_resource type="PackedScene" path="res://nodes/ui/character_hud.tscn" id="13_character_hud"]
 [ext_resource type="PackedScene" path="res://nodes/star_hud.tscn" id="13_star_hud"]
 [ext_resource type="PackedScene" uid="uid://cg8mbcubeyje8" path="res://nodes/items/star.tscn" id="14_star"]
@@ -395,6 +396,39 @@ position = Vector2(345, 816)
 
 [node name="decor-grass2" parent="DecorList" unique_id=764742540 instance=ExtResource("23_decor_grass")]
 position = Vector2(3219, 496)
+
+[node name="decor-crystal" parent="DecorList" unique_id=25204777 instance=ExtResource("12_xksej")]
+position = Vector2(926, 568)
+
+[node name="decor-crystal2" parent="DecorList" unique_id=567122965 instance=ExtResource("12_xksej")]
+position = Vector2(1153, 824)
+
+[node name="decor-crystal3" parent="DecorList" unique_id=205488649 instance=ExtResource("12_xksej")]
+position = Vector2(1593, 728)
+
+[node name="decor-crystal4" parent="DecorList" unique_id=468744088 instance=ExtResource("12_xksej")]
+position = Vector2(2052, 280)
+
+[node name="decor-crystal5" parent="DecorList" unique_id=1866869411 instance=ExtResource("12_xksej")]
+position = Vector2(2647, 216)
+
+[node name="decor-crystal6" parent="DecorList" unique_id=383633134 instance=ExtResource("12_xksej")]
+position = Vector2(2440, 376)
+
+[node name="decor-crystal7" parent="DecorList" unique_id=1160006933 instance=ExtResource("12_xksej")]
+position = Vector2(3200, 728)
+
+[node name="decor-crystal8" parent="DecorList" unique_id=1503731011 instance=ExtResource("12_xksej")]
+position = Vector2(2710, 760)
+
+[node name="decor-crystal9" parent="DecorList" unique_id=300352612 instance=ExtResource("12_xksej")]
+position = Vector2(3356, 792)
+
+[node name="decor-crystal10" parent="DecorList" unique_id=413939336 instance=ExtResource("12_xksej")]
+position = Vector2(3856, 952)
+
+[node name="decor-crystal11" parent="DecorList" unique_id=1845974649 instance=ExtResource("12_xksej")]
+position = Vector2(4945, 984)
 
 [node name="BigRockBallList" type="Node" parent="." unique_id=1382228137]
 
