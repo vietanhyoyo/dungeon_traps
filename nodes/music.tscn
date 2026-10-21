@@ -1,8 +1,10 @@
 [gd_scene format=3 uid="uid://leynegsf8w03"]
 
 [ext_resource type="AudioStream" uid="uid://c7i08s8vlifc0" path="res://assets/music/dungeon_theme.mp3" id="1_05ggv"]
+[ext_resource type="Script" path="res://scripts/music_manager.gd" id="2_music_manager"]
 
 [node name="Music" type="AudioStreamPlayer" unique_id=1244323829]
+script = ExtResource("2_music_manager")
 stream = ExtResource("1_05ggv")
 autoplay = true
-bus = &"Music"
+bus = &"BGM"
