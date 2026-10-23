@@ -4,10 +4,10 @@
 [ext_resource type="Texture2D" uid="uid://j0w7igtqb15m" path="res://assets/sprites/enemies/devi-slime.png" id="2_devi"]
 [ext_resource type="Texture2D" uid="uid://b3ahoekupdku8" path="res://assets/sprites/enemies/devi-slime-attack.png" id="3_attack"]
 [ext_resource type="Texture2D" uid="uid://3dwpkhc8m3b0" path="res://assets/sprites/enemies/devi-slime-eat.png" id="4_eat"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/devi-slime-death.png" id="5_death"]
-[ext_resource type="AudioStream" path="res://assets/sounds/devi_slime_attack.wav" id="6_attack_sound"]
-[ext_resource type="AudioStream" path="res://assets/sounds/u_xjrmmgxfru-sword-slash-01-266296.mp3" id="7_warning_sound"]
-[ext_resource type="AudioStream" path="res://assets/sounds/freesound_community-eating-sound-effect-36186.mp3" id="8_eat_sound"]
+[ext_resource type="Texture2D" uid="uid://b3s56vinr4wxu" path="res://assets/sprites/enemies/devi-slime-death.png" id="5_death"]
+[ext_resource type="AudioStream" uid="uid://sr0vigh0qjuf" path="res://assets/sounds/devi_slime_attack.wav" id="6_attack_sound"]
+[ext_resource type="AudioStream" uid="uid://cs26n6rkp0iuf" path="res://assets/sounds/u_xjrmmgxfru-sword-slash-01-266296.mp3" id="7_warning_sound"]
+[ext_resource type="AudioStream" uid="uid://drd27ukd8cfvt" path="res://assets/sounds/freesound_community-eating-sound-effect-36186.mp3" id="8_eat_sound"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
 size = Vector2(53, 57)
@@ -25,27 +25,11 @@ void fragment() {
 }
 "
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_c4etk"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6wp8r"]
 resource_local_to_scene = true
 shader = SubResource("Shader_hit_flash")
 shader_parameter/flash_amount = 0.0
 shader_parameter/flash_color = Color(1, 0.96, 0.78, 1)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_eat_0"]
-atlas = ExtResource("4_eat")
-region = Rect2(0, 0, 96, 96)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_eat_1"]
-atlas = ExtResource("4_eat")
-region = Rect2(96, 0, 96, 96)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_eat_2"]
-atlas = ExtResource("4_eat")
-region = Rect2(192, 0, 96, 96)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_eat_3"]
-atlas = ExtResource("4_eat")
-region = Rect2(288, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_death_0"]
 atlas = ExtResource("5_death")
@@ -66,6 +50,22 @@ region = Rect2(288, 0, 96, 96)
 [sub_resource type="AtlasTexture" id="AtlasTexture_death_4"]
 atlas = ExtResource("5_death")
 region = Rect2(384, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eat_0"]
+atlas = ExtResource("4_eat")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eat_1"]
+atlas = ExtResource("4_eat")
+region = Rect2(96, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eat_2"]
+atlas = ExtResource("4_eat")
+region = Rect2(192, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eat_3"]
+atlas = ExtResource("4_eat")
+region = Rect2(288, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_idle_0"]
 atlas = ExtResource("2_devi")
@@ -95,23 +95,6 @@ region = Rect2(480, 0, 96, 96)
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_eat_0")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_eat_1")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_eat_2")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_eat_3")
-}],
-"loop": 0,
-"name": &"eat",
-"speed": 12.0
-}, {
-"frames": [{
-"duration": 1.0,
 "texture": SubResource("AtlasTexture_death_0")
 }, {
 "duration": 1.0,
@@ -129,6 +112,23 @@ animations = [{
 "loop": 0,
 "name": &"death",
 "speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eat_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eat_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eat_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eat_3")
+}],
+"loop": 0,
+"name": &"eat",
+"speed": 12.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -165,7 +165,7 @@ border_color = Color(0.04, 0.03, 0.03, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_health_fill"]
 bg_color = Color(0.82, 0.12, 0.16, 1)
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_ku5i8"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8y3be"]
 resource_local_to_scene = true
 shader = SubResource("Shader_hit_flash")
 shader_parameter/flash_amount = 0.0
@@ -315,11 +315,12 @@ attack_cooldown = 1.8
 max_health = 80
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1177837588]
+visible = false
 position = Vector2(1.5, -12.5)
 shape = SubResource("RectangleShape2D_body")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1925515940]
-material = SubResource("ShaderMaterial_c4etk")
+material = SubResource("ShaderMaterial_6wp8r")
 position = Vector2(0, -32)
 sprite_frames = SubResource("SpriteFrames_devi")
 animation = &"idle"
@@ -344,31 +345,31 @@ show_percentage = false
 
 [node name="AttackSprite" type="AnimatedSprite2D" parent="." unique_id=624863184]
 visible = false
-material = SubResource("ShaderMaterial_ku5i8")
+material = SubResource("ShaderMaterial_8y3be")
 position = Vector2(0, -32)
 sprite_frames = SubResource("SpriteFrames_devi_attack")
 animation = &"attack"
 
-[node name="AttackSound" type="AudioStreamPlayer2D" parent="."]
+[node name="AttackSound" type="AudioStreamPlayer2D" parent="." unique_id=701864244]
 stream = ExtResource("6_attack_sound")
 volume_db = -4.0
-bus = &"SFX"
 max_distance = 600.0
 attenuation = 1.4
+bus = &"SFX"
 
-[node name="WarningSound" type="AudioStreamPlayer2D" parent="."]
+[node name="WarningSound" type="AudioStreamPlayer2D" parent="." unique_id=1633239256]
 stream = ExtResource("7_warning_sound")
 volume_db = -3.0
-bus = &"SFX"
 max_distance = 600.0
 attenuation = 1.4
+bus = &"SFX"
 
-[node name="EatSound" type="AudioStreamPlayer2D" parent="."]
+[node name="EatSound" type="AudioStreamPlayer2D" parent="." unique_id=824851811]
 stream = ExtResource("8_eat_sound")
 volume_db = -6.0
-bus = &"SFX"
 max_distance = 600.0
 attenuation = 1.4
+bus = &"SFX"
 
 [node name="DetectionArea" type="Area2D" parent="." unique_id=1423854331]
 position = Vector2(0, -16)
@@ -376,6 +377,7 @@ collision_layer = 0
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea" unique_id=419682699]
+visible = false
 shape = SubResource("CircleShape2D_detection")
 
 [node name="TongueHitArea" type="Area2D" parent="." unique_id=567878768]
@@ -385,6 +387,7 @@ collision_mask = 2
 monitorable = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TongueHitArea" unique_id=828594382]
+visible = false
 position = Vector2(-4.5, 0)
 shape = SubResource("RectangleShape2D_tongue_hit")
 disabled = true

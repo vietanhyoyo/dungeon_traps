@@ -17,6 +17,7 @@ const SPIKE_CLOSE_DURATION := 2.0
 @onready var right_wall: Area2D = $RightWall
 @onready var left_wall_solid_collision: CollisionShape2D = $LeftWall/SolidWall/CollisionShape2D
 @onready var right_wall_solid_collision: CollisionShape2D = $RightWall/SolidWall/CollisionShape2D
+@onready var activation_sound: AudioStreamPlayer2D = $ActivationSound
 
 var _triggered := false
 var _game_over_started := false
@@ -56,6 +57,7 @@ func _is_standing_on_fake_floor(player: CharacterBody2D) -> bool:
 
 func _activate_for_player(player: CharacterBody2D) -> void:
 	_triggered = true
+	activation_sound.play()
 	_trapped_player = player
 	left_wall.show()
 	right_wall.show()

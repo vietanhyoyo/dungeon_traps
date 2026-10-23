@@ -11,6 +11,8 @@ const DEFEAT_SOUND := preload("res://assets/sounds/freesound_community-poof-8016
 const DEFEAT_SOUND_OFFSET := 0.5
 const TONGUE_WARNING_FRAME := 7
 
+signal defeated
+
 ## Vùng tuần tra, tính bằng px từ vị trí đặt slime trong editor.
 ## Để -1 nghĩa là không giới hạn phía đó, chỉ quay đầu khi đụng tường.
 @export_range(-1.0, 1000.0, 1.0, "or_greater") var patrol_left: float = -1.0:
@@ -183,6 +185,7 @@ func die() -> void:
 		return
 
 	is_dead = true
+	defeated.emit()
 	is_eating = false
 	velocity = Vector2.ZERO
 	if health_bar:
@@ -276,8 +279,15 @@ func _physics_process_detected_attack(delta: float) -> void:
 		return
 
 	var target := _get_attack_target()
+	if not is_attacking:
+		if is_instance_valid(target):
+			_face_towards(target.global_position.x)
+		else:
+			var visible_player := _get_camera_visible_player()
+			if visible_player != null:
+				_face_towards(visible_player.global_position.x)
+
 	if not is_attacking and is_instance_valid(target):
-		_face_towards(target.global_position.x)
 		_attack_cooldown_left = maxf(_attack_cooldown_left - delta, 0.0)
 		if _attack_cooldown_left <= 0.0:
 			_begin_detected_attack(target)
@@ -400,6 +410,24 @@ func _find_player() -> Node2D:
 	if not is_instance_valid(_player) or not _player.is_in_group(&"player"):
 		_player = get_tree().get_first_node_in_group(&"player") as Node2D
 	return _player
+
+
+func _get_camera_visible_player() -> Node2D:
+	var player := _find_player()
+	if player != null and _is_inside_camera(player):
+		return player
+	return null
+
+
+func _is_inside_camera(target: Node2D) -> bool:
+	var camera := get_viewport().get_camera_2d()
+	if camera == null:
+		return false
+
+	var view_size := get_viewport_rect().size / camera.zoom.abs()
+	var view_center := camera.get_screen_center_position()
+	var view_rect := Rect2(view_center - view_size * 0.5, view_size)
+	return view_rect.has_point(target.global_position)
 
 
 func _face_towards(target_x: float) -> void:

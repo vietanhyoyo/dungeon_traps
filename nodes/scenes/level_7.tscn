@@ -13,13 +13,12 @@
 [ext_resource type="PackedScene" path="res://nodes/decor/decor-skull.tscn" id="10_s7q0h"]
 [ext_resource type="PackedScene" path="res://nodes/decor/decor-grass.tscn" id="11_qthpr"]
 [ext_resource type="PackedScene" path="res://nodes/ui/character_hud.tscn" id="16_character_hud"]
-[ext_resource type="PackedScene" path="res://nodes/decor/decor-crystal.tscn" id="16_w4rxv"]
+[ext_resource type="PackedScene" uid="uid://bmuubi5ljubla" path="res://nodes/decor/decor-crystal.tscn" id="16_w4rxv"]
 [ext_resource type="PackedScene" uid="uid://ugkld1yyytqd" path="res://nodes/traps/big_rock_ball.tscn" id="20_fpsml"]
 [ext_resource type="Texture2D" uid="uid://derdkdi54vr4a" path="res://assets/sprites/bg-1-layer-1.png" id="20_parallax_background"]
 [ext_resource type="Script" uid="uid://cjitb8wswyxq3" path="res://scripts/parallax_background_fit.gd" id="21_background_fit"]
 [ext_resource type="Texture2D" uid="uid://y1x06uvw12fh" path="res://assets/sprites/bg-1-layer-2.png" id="22_parallax_background_2"]
 [ext_resource type="PackedScene" uid="uid://cx1l83kjowuj3" path="res://nodes/traps/cracked-brick.tscn" id="22_xeiim"]
-[ext_resource type="PackedScene" path="res://nodes/traps/pendulum_trap.tscn" id="23_3rnlq"]
 [ext_resource type="Texture2D" uid="uid://d2ow06fg57cc6" path="res://assets/sprites/bg-1-layer-4.png" id="23_parallax_background_4"]
 [ext_resource type="PackedScene" uid="uid://cqwyfrn5xy0ei" path="res://nodes/enemies/bat.tscn" id="24_46k8c"]
 [ext_resource type="Texture2D" uid="uid://8osth2vx03rl" path="res://assets/sprites/bg-1-layer-3.png" id="24_parallax_background_3"]
@@ -36,6 +35,8 @@
 [ext_resource type="PackedScene" path="res://nodes/platforms/pushable_wooden_crate.tscn" id="33_js3qf"]
 [ext_resource type="PackedScene" path="res://nodes/torch.tscn" id="36_ivi6q"]
 [ext_resource type="PackedScene" uid="uid://dhhgace1srtk8" path="res://nodes/traps/iron_spike_trap.tscn" id="36_w4rxv"]
+[ext_resource type="PackedScene" uid="uid://114vfv2uvqgq" path="res://nodes/enemies/devi_slime.tscn" id="37_w4rxv"]
+[ext_resource type="PackedScene" uid="uid://toe3x6ld2pdi" path="res://nodes/traps/devi_slime_tentacle.tscn" id="38_tentacle"]
 [ext_resource type="Texture2D" uid="uid://bdf5mkngf61vt" path="res://assets/sprites/tilemapbackground3.png" id="tilemap_background_3"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_8pcmo"]
@@ -254,7 +255,7 @@ centered = false
 script = ExtResource("21_background_fit")
 
 [node name="Asura" parent="." unique_id=1809393430 instance=ExtResource("1_asura")]
-position = Vector2(125, 606)
+position = Vector2(1535, 1456)
 
 [node name="Camera2D" parent="Asura" unique_id=1065377516 instance=ExtResource("2_camera")]
 limit_left = 0
@@ -396,11 +397,6 @@ position = Vector2(5909, 1692)
 [node name="CrackedBrick6" parent="CrackedBrickList" unique_id=1140821211 instance=ExtResource("22_xeiim")]
 position = Vector2(2855, 549)
 
-[node name="PendulumList" type="Node" parent="." unique_id=2017888644]
-
-[node name="Pendulum2" parent="PendulumList" unique_id=1152668488 instance=ExtResource("23_3rnlq")]
-position = Vector2(1432, 1293)
-
 [node name="BatList" type="Node" parent="." unique_id=1902862031]
 
 [node name="Bat" parent="BatList" unique_id=2018107730 instance=ExtResource("24_46k8c")]
@@ -450,7 +446,7 @@ position = Vector2(2598, 512)
 position = Vector2(3116, 1669)
 
 [node name="SpitterSlime10" parent="SpitterSlimeList" unique_id=1648880338 instance=ExtResource("27_spitter_slime")]
-position = Vector2(1673, 1605)
+position = Vector2(1719, 1597)
 
 [node name="SpitterSlime9" parent="SpitterSlimeList" unique_id=1852143635 instance=ExtResource("27_spitter_slime")]
 position = Vector2(3350, 1729)
@@ -637,3 +633,23 @@ position = Vector2(4909, 1528)
 
 [node name="IronSpikeTrap7" parent="IronSpikeList" unique_id=1144206409 instance=ExtResource("36_w4rxv")]
 position = Vector2(2163, 1624)
+
+[node name="DeviSlimeList" type="Node" parent="." unique_id=933458606]
+
+[node name="DeviSlime" parent="DeviSlimeList" unique_id=648557765 instance=ExtResource("37_w4rxv")]
+z_index = 5
+position = Vector2(1384, 1538)
+
+[node name="DeviSlimeTentacleList" type="Node2D" parent="." unique_id=1436943757]
+
+[node name="DeviSlimeTentacle" parent="DeviSlimeTentacleList" unique_id=2011147063 instance=ExtResource("38_tentacle")]
+position = Vector2(921, 1472)
+devi_slime_path = NodePath("../../DeviSlimeList/DeviSlime")
+
+[node name="DeviSlimeTentacle2" parent="DeviSlimeTentacleList" unique_id=1558284770 instance=ExtResource("38_tentacle")]
+position = Vector2(1123, 1568)
+devi_slime_path = NodePath("../../DeviSlimeList/DeviSlime")
+
+[node name="DeviSlimeTentacle3" parent="DeviSlimeTentacleList" unique_id=857294606 instance=ExtResource("38_tentacle")]
+position = Vector2(978, 1664)
+devi_slime_path = NodePath("../../DeviSlimeList/DeviSlime")

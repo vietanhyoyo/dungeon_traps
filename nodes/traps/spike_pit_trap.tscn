@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://c5jngpa3w1ppg" path="res://assets/sprites/traps/trap-map-1.png" id="1_texture"]
 [ext_resource type="Script" uid="uid://b8rtwwmslbxvx" path="res://scripts/spike_pit_trap.gd" id="2_script"]
+[ext_resource type="AudioStream" path="res://assets/sounds/spike_pit_activate.wav" id="3_activation_sound"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ground"]
 atlas = ExtResource("1_texture")
@@ -34,6 +35,13 @@ region = Rect2(128, 0, 64, 128)
 modulate = Color(0.90359825, 0.90359825, 0.9035982, 1)
 z_index = -2
 script = ExtResource("2_script")
+
+[node name="ActivationSound" type="AudioStreamPlayer2D" parent="." unique_id=1469823017]
+stream = ExtResource("3_activation_sound")
+volume_db = -10.0
+max_distance = 700.0
+attenuation = 1.2
+bus = &"SFX"
 
 [node name="FakeGround" type="StaticBody2D" parent="." unique_id=869958853]
 collision_mask = 0

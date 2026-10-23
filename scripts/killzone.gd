@@ -12,6 +12,13 @@ func _on_body_entered(body: Node2D) -> void:
 	if get_parent().get("is_dead"):
 		return
 
+	# Một số vùng sát thương có cửa sổ né riêng khi người chơi đang tung chiêu.
+	# Cho phép hazard tự bỏ qua va chạm này mà không đổi cách hoạt động của các bẫy khác.
+	var hazard_owner := get_parent()
+	if hazard_owner.has_method("should_ignore_player_damage") \
+	and hazard_owner.should_ignore_player_damage(body):
+		return
+
 	# Nhân vật có khung bất tử ngắn ngay đầu đòn đánh. Không bỏ luôn cú va chạm
 	# này: chờ hết khung rồi kiểm tra lại, nếu người chơi vẫn còn nằm trong vùng
 	# nguy hiểm thì mới ăn đòn. Nhờ vậy khung bất tử chỉ cứu cú chém lướt qua,

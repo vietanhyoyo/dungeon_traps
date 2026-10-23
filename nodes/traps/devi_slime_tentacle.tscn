@@ -1,0 +1,172 @@
+[gd_scene format=3 uid="uid://toe3x6ld2pdi"]
+
+[ext_resource type="Script" uid="uid://bgpwo1sd0g5lx" path="res://scripts/devi_slime_tentacle.gd" id="1_tentacle"]
+[ext_resource type="Texture2D" uid="uid://ddrj8h6kwqoes" path="res://assets/sprites/enemies/devi-slime-tentacle.png" id="2_texture"]
+[ext_resource type="PackedScene" uid="uid://dhq0pa6na6p7k" path="res://nodes/killzone.tscn" id="3_killzone"]
+[ext_resource type="Texture2D" uid="uid://bgvwp5hl4hj8k" path="res://assets/sprites/enemies/devi-slime-tentacle-attack.png" id="4_attack_texture"]
+[ext_resource type="AudioStream" uid="uid://dnxspxdicbyqw" path="res://assets/sounds/devi_slime_tentacle_attack.wav" id="5_attack_sound"]
+
+[sub_resource type="Shader" id="Shader_devi_slime_flash"]
+code = "shader_type canvas_item;
+
+uniform float flash_amount : hint_range(0.0, 1.0) = 0.0;
+uniform vec4 flash_color : source_color = vec4(1.0, 0.96, 0.78, 1.0);
+
+void fragment() {
+	vec4 sprite_color = texture(TEXTURE, UV);
+	sprite_color.rgb = mix(sprite_color.rgb, flash_color.rgb, flash_amount);
+	COLOR = sprite_color * COLOR;
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_devi_slime_flash"]
+resource_local_to_scene = true
+shader = SubResource("Shader_devi_slime_flash")
+shader_parameter/flash_amount = 0.0
+shader_parameter/flash_color = Color(1, 0.96, 0.78, 1)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tentacle_attack_0"]
+atlas = ExtResource("4_attack_texture")
+region = Rect2(0, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tentacle_attack_1"]
+atlas = ExtResource("4_attack_texture")
+region = Rect2(112, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tentacle_attack_2"]
+atlas = ExtResource("4_attack_texture")
+region = Rect2(224, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tentacle_attack_3"]
+atlas = ExtResource("4_attack_texture")
+region = Rect2(336, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tentacle_attack_4"]
+atlas = ExtResource("4_attack_texture")
+region = Rect2(448, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tentacle_attack_5"]
+atlas = ExtResource("4_attack_texture")
+region = Rect2(560, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tentacle_0"]
+atlas = ExtResource("2_texture")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tentacle_1"]
+atlas = ExtResource("2_texture")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tentacle_2"]
+atlas = ExtResource("2_texture")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tentacle_3"]
+atlas = ExtResource("2_texture")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tentacle_4"]
+atlas = ExtResource("2_texture")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tentacle_5"]
+atlas = ExtResource("2_texture")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_tentacle"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tentacle_attack_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tentacle_attack_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tentacle_attack_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tentacle_attack_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tentacle_attack_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tentacle_attack_5")
+}],
+"loop": 0,
+"name": &"attack",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tentacle_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tentacle_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tentacle_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tentacle_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tentacle_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tentacle_5")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 8.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tentacle"]
+size = Vector2(20, 28)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_attack"]
+size = Vector2(112, 80)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_attack_range"]
+radius = 67.00746
+
+[node name="DeviSlimeTentacle" type="Node2D" unique_id=857294606]
+z_index = 2
+script = ExtResource("1_tentacle")
+
+[node name="TentacleSprite" type="AnimatedSprite2D" parent="." unique_id=559945715]
+material = SubResource("ShaderMaterial_devi_slime_flash")
+position = Vector2(0, -16)
+sprite_frames = SubResource("SpriteFrames_tentacle")
+animation = &"idle"
+autoplay = "idle"
+
+[node name="AttackSound" type="AudioStreamPlayer2D" parent="." unique_id=71042813]
+stream = ExtResource("5_attack_sound")
+volume_db = -8.0
+max_distance = 500.0
+attenuation = 1.2
+bus = &"SFX"
+
+[node name="Killzone" parent="." unique_id=1773516645 instance=ExtResource("3_killzone")]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Killzone" unique_id=1613930959]
+visible = false
+position = Vector2(0, -14)
+shape = SubResource("RectangleShape2D_tentacle")
+disabled = true
+
+[node name="AttackShape" type="CollisionShape2D" parent="Killzone" unique_id=1359959602]
+position = Vector2(0, -48)
+shape = SubResource("RectangleShape2D_attack")
+disabled = true
+
+[node name="AttackRange" type="Area2D" parent="." unique_id=1172849616]
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackRange" unique_id=817774143]
+position = Vector2(0, -24)
+shape = SubResource("CircleShape2D_attack_range")
