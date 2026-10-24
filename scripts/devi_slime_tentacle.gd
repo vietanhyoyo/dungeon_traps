@@ -11,6 +11,7 @@ const ATTACK_REPEAT_DELAY := 0.2
 @onready var attack_sound: AudioStreamPlayer2D = $AttackSound
 
 var _is_attacking := false
+var _is_dying := false
 var _target: Node2D
 var _attack_repeat_timer: Timer
 
@@ -40,7 +41,19 @@ func _ready() -> void:
 
 
 func _on_devi_slime_defeated() -> void:
-	queue_free()
+	if _is_dying:
+		return
+
+	_is_dying = true
+	_attack_repeat_timer.stop()
+	_target = null
+	attack_shape.set_deferred("disabled", true)
+	$Killzone/CollisionShape2D.set_deferred("disabled", true)
+	attack_range.set_deferred("monitoring", false)
+	attack_sound.stop()
+	tentacle_sprite.flip_h = false
+	tentacle_sprite.position.y = -16.0
+	tentacle_sprite.play(&"death")
 
 
 func _on_attack_range_body_entered(body: Node2D) -> void:
@@ -95,6 +108,9 @@ func _on_tentacle_frame_changed() -> void:
 
 
 func _on_tentacle_animation_finished() -> void:
+	if _is_dying and tentacle_sprite.animation == &"death":
+		queue_free()
+		return
 	if not _is_attacking or tentacle_sprite.animation != &"attack":
 		return
 
