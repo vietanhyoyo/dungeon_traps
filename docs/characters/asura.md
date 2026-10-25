@@ -14,8 +14,13 @@ Controller xử lý trọng lực, nhảy, di chuyển trái/phải, lật sprit
 dùng được một lần mỗi khi rời mặt đất và hồi lại khi chạm đất. Bụi tiếp đất được
 tạo khi tốc độ rơi vượt `LANDING_DUST_MIN_SPEED`.
 
-Đòn đánh trên mặt đất luân phiên giữa `attack` và `attack2`. Khi ở trên không,
-Asura dùng `jump_attack`, hoặc `jump_attack2` sau khi mở kỹ năng
+Đòn đánh trên mặt đất nối theo chuỗi `attack` → `attack2` → `attack3`, rồi lặp
+lại từ `attack`. Animation `attack3` dùng năm khung cuối trong
+`Shinn-Asura-attack.png`; ba khung đầu lấy đà và hai khung cuối mới gây sát
+thương. Mỗi đòn nối tiếp phải được tung trong vòng một giây sau khi animation
+trước kết thúc; di chuyển, nhảy, lướt hoặc bị trúng đòn sẽ ngắt chuỗi và combo
+bắt đầu lại từ `attack`. `attack3` gây 8 sát thương; các đòn khác gây 5. Khi ở
+trên không, Asura dùng `jump_attack`, hoặc `jump_attack2` sau khi mở kỹ năng
 `spin_jump_attack`. Trong lúc tấn công, `velocity.x` bị ép về 0.
 
 ## Spin Jump Attack

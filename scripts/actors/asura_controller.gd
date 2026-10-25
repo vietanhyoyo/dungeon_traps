@@ -28,6 +28,10 @@ const GAME_OVER_CAMERA_DROP = 40.0
 const GAME_OVER_CAMERA_DROP_DURATION = 0.4
 # Bỏ qua đoạn đầu file tiếng chém để tiếng khớp sớm hơn với lúc vung kiếm
 const ATTACK_SOUND_OFFSET = 0.2
+# Attack3 cần tiếng chém cao hơn, gần với tiếng báo trước của Devi Slime.
+const ATTACK3_SOUND_PITCH := 1.4
+# Khoảng thời gian nối đòn sau khi animation attack/attack2 kết thúc.
+const GROUND_ATTACK_COMBO_WINDOW := 1.0
 # Thời gian giữ animation "hust" trước khi chuyển sang animation chết
 const HURT_DURATION = 0.4
 # Trên không vẫn cho phép nối đòn sau khi vùng sát thương bật đủ số bước
@@ -36,6 +40,7 @@ const HURT_DURATION = 0.4
 # phải chờ vài bước để đòn trên không bị cắt ngang kịp gây sát thương.
 const ATTACK_ACTIVE_STEPS = 3
 const ATTACK_DAMAGE := 5
+const ATTACK3_DAMAGE := 8
 # Lớp vật có thể bị chém, dùng chung với thùng gỗ và decor crystal.
 const HITTABLE_COLLISION_LAYER := 3
 # Khung bất tử ngay đầu mỗi đòn đánh. Đòn chém là lúc nhân vật phải lao vào sát
@@ -50,9 +55,10 @@ const ATTACK_INVULNERABLE_COOLDOWN = 1.0
 # level scene, vì override modulate trên instance rất dễ bị ghi đè khi lưu scene.
 const BODY_MODULATE = Color(0.5449743, 0.54497427, 0.54497427, 1.0)
 # Các animation đánh, dùng để nhận ra lúc một đòn vừa kết thúc.
-const ATTACK_ANIMATIONS = ["attack", "attack2", "slide_attack", "jump_attack", "jump_attack2"]
+const ATTACK_ANIMATIONS = ["attack", "attack2", "attack3", "slide_attack", "jump_attack", "jump_attack2"]
 const JUMP_ATTACK_ANIM = "jump_attack"
 const SPIN_ATTACK_ANIM = "jump_attack2"
+const ATTACK3_ACTIVE_FRAME := 3
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var running_sound: AudioStreamPlayer2D = $RunningSound
@@ -83,7 +89,9 @@ var is_dead = false
 var movement_locked = false
 var is_controlled := true
 var _preserving_transform_momentum := false
-var use_attack_1 = true
+# Đòn đánh mặt đất chạy theo chuỗi attack -> attack2 -> attack3 rồi lặp lại.
+var ground_attack_combo_step := 0
+var ground_attack_combo_deadline_msec := 0
 var was_on_floor = false
 var last_fall_speed = 0.0
 var slide_direction = 1.0
@@ -135,6 +143,7 @@ func _play_spawn_effect() -> void:
 
 func _physics_process(delta: float) -> void:
 	if is_dead:
+		reset_ground_attack_combo()
 		velocity += get_gravity() * delta
 		position += velocity * delta
 		running_sound.stop()
@@ -142,18 +151,22 @@ func _physics_process(delta: float) -> void:
 		return
 
 	if movement_locked:
+		reset_ground_attack_combo()
 		velocity = Vector2.ZERO
 		running_sound.stop()
 		wall_slide_sound.stop()
 		return
 
 	if not is_controlled:
+		reset_ground_attack_combo()
 		velocity.x = 0.0
 		wall_slide_sound.stop()
 		if not is_on_floor():
 			velocity += get_gravity() * delta
 		move_and_slide()
 		return
+
+	update_ground_attack_combo()
 
 	# Chạm đất sẽ hồi lại một lần lướt trên không và một cú lộn vòng cho cú nhảy
 	# tiếp theo.
@@ -226,13 +239,13 @@ func _physics_process(delta: float) -> void:
 		if not is_on_floor():
 			try_start_jump_attack()
 		else:
-			# Ở dưới đất thì xen kẽ
-			if use_attack_1:
-				start_attack("attack")
-			else:
-				start_attack("attack2")
-
-			use_attack_1 = !use_attack_1
+			match ground_attack_combo_step:
+				0:
+					start_attack("attack")
+				1:
+					start_attack("attack2")
+				_:
+					start_attack("attack3")
 
 	# Trong lúc attack thì không override animation
 	if is_attacking:
@@ -376,9 +389,21 @@ func can_start_attack() -> bool:
 
 
 func start_attack(anim: String) -> void:
+	match anim:
+		"attack":
+			ground_attack_combo_step = 1
+			ground_attack_combo_deadline_msec = 0
+		"attack2":
+			ground_attack_combo_step = 2
+			ground_attack_combo_deadline_msec = 0
+		_:
+			# Attack3 hoàn tất combo; các đòn trên không và slide cũng ngắt chuỗi.
+			reset_ground_attack_combo()
+
 	is_attacking = true
 	attack_active_steps = 0
 	grant_attack_invulnerability()
+	attack_sound.pitch_scale = ATTACK3_SOUND_PITCH if anim == "attack3" else 1.0
 	attack_sound.play(ATTACK_SOUND_OFFSET)
 	animated_sprite.play(anim)
 	# play() không tua lại animation đang chạy, nên phải tự đưa về frame lấy đà
@@ -410,6 +435,27 @@ func get_attack_shape(anim: String) -> CollisionShape2D:
 			return attack_shape_spin
 		_:
 			return attack_shape_high
+
+
+func update_ground_attack_combo() -> void:
+	if ground_attack_combo_step == 0:
+		return
+
+	var combo_expired := ground_attack_combo_deadline_msec > 0 \
+		and Time.get_ticks_msec() >= ground_attack_combo_deadline_msec
+	var moved_before_next_attack := not is_attacking and (
+		Input.is_action_pressed("move_left")
+		or Input.is_action_pressed("move_right")
+		or Input.is_action_just_pressed("jump")
+		or Input.is_action_just_pressed("slide")
+	)
+	if combo_expired or moved_before_next_attack:
+		reset_ground_attack_combo()
+
+
+func reset_ground_attack_combo() -> void:
+	ground_attack_combo_step = 0
+	ground_attack_combo_deadline_msec = 0
 
 
 ## Đòn chém trên không. Mở rương kỹ năng ở level 3 thì đổi sang cú lộn vòng:
@@ -472,6 +518,7 @@ func spawn_wall_dust(wall_normal: Vector2) -> void:
 
 
 func start_slide() -> void:
+	reset_ground_attack_combo()
 	wall_slide_sound.stop()
 	_preserving_transform_momentum = false
 	var started_in_air := not is_on_floor()
@@ -533,8 +580,9 @@ func update_attack_hitbox() -> void:
 	if attack_shape == null:
 		return
 
-	# Frame 0 là lúc lấy đà, chỉ gây sát thương từ frame vung kiếm trở đi
-	if animated_sprite.frame < 1:
+	# Attack3 có ba khung lấy đà; chỉ hai khung vung kiếm cuối mới gây sát thương.
+	var first_active_frame := ATTACK3_ACTIVE_FRAME if animated_sprite.animation == "attack3" else 1
+	if animated_sprite.frame < first_active_frame:
 		return
 
 	attack_shape.disabled = false
@@ -578,7 +626,8 @@ func hit_enemy(body: Node) -> void:
 	hit_enemies.append(body)
 	spawn_hit_effect(body)
 	if body.has_method("take_damage"):
-		body.take_damage(ATTACK_DAMAGE)
+		var damage := ATTACK3_DAMAGE if animated_sprite.animation == "attack3" else ATTACK_DAMAGE
+		body.take_damage(damage)
 	elif body.has_method("die"):
 		body.die()
 
@@ -643,6 +692,7 @@ func take_hit() -> void:
 		return
 
 	attack_invulnerable_until_msec = 0
+	reset_ground_attack_combo()
 	is_hurt = true
 	is_attacking = false
 	is_sliding = false
@@ -710,6 +760,7 @@ func _detach_camera_for_game_over() -> void:
 
 
 func lock_movement() -> void:
+	reset_ground_attack_combo()
 	movement_locked = true
 	wall_slide_sound.stop()
 	is_sliding = false
@@ -720,6 +771,9 @@ func lock_movement() -> void:
 
 func _on_animated_sprite_2d_animation_finished():
 	if animated_sprite.animation in ATTACK_ANIMATIONS:
+		if animated_sprite.animation == "attack" or animated_sprite.animation == "attack2":
+			ground_attack_combo_deadline_msec = Time.get_ticks_msec() \
+				+ int(GROUND_ATTACK_COMBO_WINDOW * 1000.0)
 		var finished_slide_attack := animated_sprite.animation == "slide_attack"
 		is_attacking = false
 		clear_attack_hitbox()
