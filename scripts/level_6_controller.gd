@@ -51,6 +51,7 @@ func _setup_party_member() -> void:
 	if serelyn == null:
 		if character_hud != null:
 			character_hud.set_state(false, false)
+		GameState.consume_respawn_as_serelyn()
 		return
 
 	serelyn.conversation_finished.connect(_on_serelyn_conversation_finished)
@@ -58,6 +59,30 @@ func _setup_party_member() -> void:
 		_on_serelyn_conversation_finished()
 	elif character_hud != null:
 		character_hud.set_state(false, false)
+
+	_restore_respawn_character()
+
+
+func _restore_respawn_character() -> void:
+	if not GameState.consume_respawn_as_serelyn() or serelyn == null \
+			or not serelyn.conversation_completed:
+		return
+
+	serelyn.global_position = asura.global_position + Vector2(
+		0.0, _feet_offset(asura) - _feet_offset(serelyn)
+	)
+	asura.set_controlled(false)
+	_set_actor_active(asura, false)
+	_set_actor_active(serelyn, true)
+	serelyn.set_controlled(true)
+	camera.reparent(serelyn, true)
+	light.reparent(serelyn, true)
+	controlling_serelyn = true
+	if character_hud != null:
+		character_hud.set_state(true, true)
+	var effect: CharacterTransformEffect = TransformEffect.instantiate()
+	serelyn.add_child(effect)
+	effect.play(serelyn)
 
 
 func _unhandled_input(event: InputEvent) -> void:

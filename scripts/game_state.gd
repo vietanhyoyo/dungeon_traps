@@ -16,6 +16,8 @@ const GAME_OVER_SOUND := preload("res://assets/sounds/game_over.mp3")
 const RESTART_DELAY_SECONDS := 5
 
 var state: State = State.PLAYING
+var _respawn_as_serelyn := false
+var _respawn_character_pending := false
 
 var _is_counting_down := false
 var _restart_scene_path := DEFAULT_RESTART_SCENE_PATH
@@ -69,6 +71,8 @@ func trigger_game_over(player: Node2D) -> void:
 	if state == State.GAME_OVER:
 		return
 
+	_respawn_as_serelyn = player != null and player.name == &"Serelyn"
+	_respawn_character_pending = true
 	state = State.GAME_OVER
 	_restart_scene_path = _get_current_scene_path()
 	game_over_started.emit(player)
@@ -88,6 +92,16 @@ func trigger_game_over(player: Node2D) -> void:
 
 func is_game_over() -> bool:
 	return state == State.GAME_OVER
+
+
+func consume_respawn_as_serelyn() -> bool:
+	if not _respawn_character_pending:
+		return false
+
+	_respawn_character_pending = false
+	var respawn_as_serelyn := _respawn_as_serelyn
+	_respawn_as_serelyn = false
+	return respawn_as_serelyn
 
 
 func activate_checkpoint(spawn_position: Vector2) -> void:
