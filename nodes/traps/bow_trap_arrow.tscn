@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/bow_trap_arrow.gd" id="1_script"]
 [ext_resource type="Texture2D" path="res://assets/sprites/traps/bow-trap.png" id="2_bow"]
+[ext_resource type="AudioStream" path="res://assets/sounds/bow_trap_arrow_impact.wav" id="3_impact"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_arrow"]
 atlas = ExtResource("2_bow")
@@ -23,3 +24,8 @@ texture = SubResource("AtlasTexture_arrow")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 rotation = -0.785398
 shape = SubResource("RectangleShape2D_arrow")
+
+[node name="ImpactSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_impact")
+volume_db = -12.0
+bus = &"SFX"
