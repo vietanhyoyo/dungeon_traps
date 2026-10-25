@@ -218,7 +218,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"attack",
-"speed": 13.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -235,7 +235,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"attack2",
-"speed": 13.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -453,7 +453,7 @@ script = ExtResource("3_tby2x")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=260658179]
 sprite_frames = SubResource("SpriteFrames_hugui")
-animation = &"attack"
+animation = &"attack2"
 autoplay = "idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=103448317]
@@ -462,7 +462,6 @@ shape = SubResource("CapsuleShape2D_2j3w5")
 
 [node name="WallSlideDetector" type="Area2D" parent="." unique_id=1862482469]
 collision_layer = 0
-monitorable = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="WallSlideDetector" unique_id=1730497061]
 position = Vector2(0, 1)
@@ -515,7 +514,7 @@ stream = ExtResource("10_slide")
 volume_db = -3.0
 bus = &"SFX"
 
-[node name="WallSlideSound" type="AudioStreamPlayer2D" parent="."]
+[node name="WallSlideSound" type="AudioStreamPlayer2D" parent="." unique_id=572909902]
 stream = ExtResource("11_wall_slide_sound")
 volume_db = -3.0
 attenuation = 0.0
