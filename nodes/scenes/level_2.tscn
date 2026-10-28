@@ -248,7 +248,7 @@ sources/1 = SubResource("TileSetAtlasSource_flnyc")
 script = ExtResource("party_controller")
 
 [node name="Asura" parent="." unique_id=1107660582 instance=ExtResource("1_r7por")]
-position = Vector2(-150, -192)
+position = Vector2(1152, 106)
 
 [node name="Camera2D" parent="Asura" unique_id=1738643562 instance=ExtResource("9_camera")]
 limit_bottom = 725

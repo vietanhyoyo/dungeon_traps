@@ -21,7 +21,8 @@ const SPIKE_CLOSE_DURATION := 2.0
 
 var _triggered := false
 var _game_over_started := false
-var _player_has_reached_pit_bottom := false
+var _spike_walls_closed := false
+var _crush_check_in_progress := false
 var _trapped_player: CharacterBody2D
 
 
@@ -34,9 +35,7 @@ func _physics_process(_delta: float) -> void:
 	if _triggered:
 		if not is_instance_valid(_trapped_player):
 			return
-		if _is_standing_on_pit_bottom(_trapped_player):
-			_player_has_reached_pit_bottom = true
-		if _player_has_reached_pit_bottom and _are_both_walls_touching_player(_trapped_player):
+		if _spike_walls_closed and _are_both_walls_touching_player(_trapped_player):
 			call_deferred("_crush_player", _trapped_player)
 		return
 	for body in trigger_area.get_overlapping_bodies():
@@ -120,7 +119,6 @@ func _wait_for_player_to_land() -> bool:
 			return false
 		if player.is_on_floor():
 			if _is_standing_on_pit_bottom(player):
-				_player_has_reached_pit_bottom = true
 				return true
 			return false
 		await get_tree().physics_frame
@@ -143,7 +141,8 @@ func _close_spike_walls() -> void:
 	await tween.finished
 	if not is_inside_tree():
 		return
-	if _player_has_reached_pit_bottom and _are_both_walls_touching_player(_trapped_player):
+	_spike_walls_closed = true
+	if _are_both_walls_touching_player(_trapped_player):
 		await _crush_player(_trapped_player)
 
 
@@ -153,19 +152,8 @@ func _on_spike_wall_body_entered(body: Node2D) -> void:
 	var player := body as CharacterBody2D
 	if not body.is_in_group(&"player"):
 		return
-	if _is_standing_on_pit_bottom(player):
-		_player_has_reached_pit_bottom = true
-	if body.has_method("is_invulnerable"):
-		while is_instance_valid(body) and body.is_invulnerable():
-			if not is_inside_tree():
-				return
-			if not _player_has_reached_pit_bottom or not _are_both_walls_touching_player(body):
-				return
-			await get_tree().physics_frame
-			if not is_inside_tree():
-				return
-	if _player_has_reached_pit_bottom and _are_both_walls_touching_player(body):
-		await _crush_player(body)
+	if _can_crush_player(player):
+		await _crush_player(player)
 
 
 func _get_player_body_center(player: CharacterBody2D) -> Vector2:
@@ -194,14 +182,33 @@ func _are_both_walls_touching_player(body: Node2D) -> bool:
 		and right_wall.overlaps_body(body)
 
 
+func _can_crush_player(body: Node2D) -> bool:
+	return _spike_walls_closed \
+		and not _game_over_started \
+		and is_instance_valid(body) \
+		and body == _trapped_player \
+		and body is CharacterBody2D \
+		and body.is_in_group(&"player") \
+		and _are_both_walls_touching_player(body)
+
+
 func _crush_player(body: Node2D) -> void:
-	if _game_over_started or not (body is CharacterBody2D):
+	if _crush_check_in_progress or not _can_crush_player(body):
 		return
-	if not body.is_in_group(&"player") \
-		or not _player_has_reached_pit_bottom \
-		or not _are_both_walls_touching_player(body):
+	_crush_check_in_progress = true
+	while is_instance_valid(body) and body.has_method("is_invulnerable") and body.is_invulnerable():
+		if not is_inside_tree() or not _can_crush_player(body):
+			_crush_check_in_progress = false
+			return
+		await get_tree().physics_frame
+		if not is_inside_tree():
+			_crush_check_in_progress = false
+			return
+	if not _can_crush_player(body):
+		_crush_check_in_progress = false
 		return
 	_game_over_started = true
+	_crush_check_in_progress = false
 	var game_state := get_node_or_null("/root/GameState")
 	if game_state and game_state.has_method("trigger_game_over"):
 		await game_state.trigger_game_over(body)
