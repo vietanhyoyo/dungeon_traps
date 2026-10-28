@@ -454,7 +454,7 @@ script = ExtResource("18_level4")
 script = ExtResource("party_controller")
 
 [node name="Asura" parent="." unique_id=1107660582 instance=ExtResource("1_dxylt")]
-position = Vector2(-139, -219)
+position = Vector2(1810, 82)
 
 [node name="Camera2D" parent="Asura" unique_id=1738643562 instance=ExtResource("2_aixuq")]
 limit_bottom = 725
