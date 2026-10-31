@@ -109,7 +109,7 @@ func _process(delta: float) -> void:
 
 
 func _on_serelyn_conversation_finished() -> void:
-	# Nhân vật đứng trò chuyện trở thành dạng nhân vật có thể chọn bằng Z.
+	# Nhân vật đứng trò chuyện trở thành dạng nhân vật có thể chọn bằng A.
 	_set_actor_active(serelyn, false)
 	if character_hud != null:
 		character_hud.set_state(false, true)

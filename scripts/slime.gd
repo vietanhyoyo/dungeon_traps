@@ -6,7 +6,7 @@ const HIT_FLASH_COUNT := 3
 const HIT_FLASH_ON_DURATION := 0.04
 const HIT_FLASH_OFF_DURATION := 0.035
 const DAMAGE_ATTACK_DELAY := 1.0
-const MAX_DAMAGE_ATTACK_DELAY := 2.0
+const MAX_DAMAGE_ATTACK_DELAY := 1.5
 const DEFEAT_SOUND := preload("res://assets/sounds/freesound_community-poof-80161.mp3")
 const DEFEAT_SOUND_OFFSET := 0.5
 const TONGUE_WARNING_FRAME := 7
@@ -36,6 +36,8 @@ signal defeated
 @export_range(0.1, 10.0, 0.1) var attack_cooldown := 1.25
 @export_range(0.0, 3.0, 0.05) var first_attack_delay := 0.4
 @export_range(1, 100, 1) var max_health := 1
+## Các xúc tua sẽ chết theo slime này. Chọn node trong scene từ Inspector.
+@export var dependent_tentacles: Array[NodePath] = []
 
 const TONGUE_HIT_START_FRAME := 10
 const TONGUE_HIT_END_FRAME := 10
@@ -186,6 +188,10 @@ func die() -> void:
 
 	is_dead = true
 	defeated.emit()
+	for tentacle_path in dependent_tentacles:
+		var tentacle := get_node_or_null(tentacle_path)
+		if tentacle != null and tentacle.has_method("defeat"):
+			tentacle.defeat()
 	is_eating = false
 	velocity = Vector2.ZERO
 	if health_bar:
@@ -333,7 +339,7 @@ func _begin_detected_attack(target: Node2D) -> void:
 
 
 func _delay_attack_after_damage() -> void:
-	# Chỉ cộng tối đa 2 giây cho chu kỳ này. Khi chạm trần, các hit sau không
+	# Chỉ cộng tối đa 1.5 giây cho chu kỳ này. Khi chạm trần, các hit sau không
 	# đặt lại timer; cooldown hiện tại tiếp tục đếm tới đòn kế tiếp.
 	var remaining_delay := MAX_DAMAGE_ATTACK_DELAY - _damage_attack_delay_accumulated
 	if remaining_delay <= 0.0:

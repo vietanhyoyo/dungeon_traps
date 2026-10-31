@@ -89,8 +89,9 @@ var is_dead = false
 var movement_locked = false
 var is_controlled := true
 var _preserving_transform_momentum := false
-# Đòn đánh mặt đất chạy theo chuỗi attack -> attack2 -> attack3 rồi lặp lại.
+# Hai đòn đầu của combo đổi thứ tự ngẫu nhiên; đòn cuối luôn là attack3.
 var ground_attack_combo_step := 0
+var ground_attack_next_anim := ""
 var ground_attack_combo_deadline_msec := 0
 var was_on_floor = false
 var last_fall_speed = 0.0
@@ -241,9 +242,9 @@ func _physics_process(delta: float) -> void:
 		else:
 			match ground_attack_combo_step:
 				0:
-					start_attack("attack")
+					start_attack("attack" if randi_range(0, 1) == 0 else "attack2")
 				1:
-					start_attack("attack2")
+					start_attack(ground_attack_next_anim)
 				_:
 					start_attack("attack3")
 
@@ -391,10 +392,12 @@ func can_start_attack() -> bool:
 func start_attack(anim: String) -> void:
 	match anim:
 		"attack":
-			ground_attack_combo_step = 1
+			ground_attack_combo_step += 1
+			ground_attack_next_anim = "attack2"
 			ground_attack_combo_deadline_msec = 0
 		"attack2":
-			ground_attack_combo_step = 2
+			ground_attack_combo_step += 1
+			ground_attack_next_anim = "attack"
 			ground_attack_combo_deadline_msec = 0
 		_:
 			# Attack3 hoàn tất combo; các đòn trên không và slide cũng ngắt chuỗi.
@@ -455,6 +458,7 @@ func update_ground_attack_combo() -> void:
 
 func reset_ground_attack_combo() -> void:
 	ground_attack_combo_step = 0
+	ground_attack_next_anim = ""
 	ground_attack_combo_deadline_msec = 0
 
 

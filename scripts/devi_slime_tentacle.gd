@@ -3,8 +3,6 @@ extends Node2D
 const ATTACK_HIT_START_FRAME := 2
 const ATTACK_REPEAT_DELAY := 0.2
 
-@export var devi_slime_path: NodePath
-
 @onready var tentacle_sprite: AnimatedSprite2D = $TentacleSprite
 @onready var attack_shape: CollisionShape2D = $Killzone/AttackShape
 @onready var attack_range: Area2D = $AttackRange
@@ -27,20 +25,7 @@ func _ready() -> void:
 	_attack_repeat_timer.timeout.connect(_try_attack_target)
 	add_child(_attack_repeat_timer)
 
-	var devi_slime := get_node_or_null(devi_slime_path)
-	if devi_slime == null or not devi_slime.has_signal("defeated"):
-		return
-
-	devi_slime.connect(
-		"defeated",
-		Callable(self, "_on_devi_slime_defeated"),
-		CONNECT_ONE_SHOT
-	)
-	if devi_slime.get("is_dead"):
-		_on_devi_slime_defeated()
-
-
-func _on_devi_slime_defeated() -> void:
+func defeat() -> void:
 	if _is_dying:
 		return
 

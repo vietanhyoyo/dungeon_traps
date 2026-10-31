@@ -331,7 +331,7 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBox_key_badge")
-text = "X"
+text = "Z"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -429,7 +429,7 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBox_key_badge")
-text = "UP x2"
+text = "X x2"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -450,7 +450,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.72, 0.72, 0.78, 1)
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 11
-text = "Press UP twice on a wall for one more jump"
+text = "Press X twice on a wall for one more jump"
 
 [node name="Separator" type="HSeparator" parent="Overlay/Center/Panel/VBox"]
 layout_mode = 2

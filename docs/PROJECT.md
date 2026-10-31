@@ -50,11 +50,12 @@ File: `res://project.godot`
   - `Music`: `res://nodes/music.tscn`
   - `GameState`: `res://scripts/game_state.gd`
 - Input actions:
-  - `jump`: ↑
-  - `move_left`: Left Arrow, A
+  - `jump`: X
+  - `move_left`: Left Arrow
   - `move_right`: Right Arrow, D
   - `attack`: C
-  - `slide`: X
+  - `slide`: Z
+  - `switch_character`: A (level 6+)
 
 ## Gameplay Hiện Tại
 

@@ -53,11 +53,12 @@ python3 -m http.server 8000
 
 | Hành động | Phím |
 | --- | --- |
-| Sang trái | `A` hoặc `←` |
+| Sang trái | `←` |
 | Sang phải | `D` hoặc `→` |
-| Nhảy | `↑` |
+| Nhảy | `X` |
 | Tấn công | `C` |
-| Lướt | `X` |
+| Lướt | `Z` |
+| Biến hình (level 6+) | `A` |
 
 ## Gameplay
 
@@ -151,7 +152,7 @@ File `project.godot`:
 - `run/main_scene`: `nodes/scenes/level_1.tscn` (trỏ bằng UID).
 - Autoload: `Music` (`nodes/music.tscn`), `GameState` (`scripts/game_state.gd`).
 - Global group: `player`.
-- Input actions: `move_left`, `move_right`, `jump`, `attack`, `slide` (`X`).
+- Input actions: `move_left` (←), `move_right` (D/→), `jump` (X), `attack` (C), `slide` (Z), `switch_character` (A, level 6+).
 - `textures/canvas_textures/default_texture_filter=0` để giữ nét pixel art.
 - Stretch mode: `canvas_items`.
 

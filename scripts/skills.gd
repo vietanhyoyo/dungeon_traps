@@ -15,8 +15,8 @@ const ICON_SIZE := 32
 const CATALOG := {
 	WALL_DOUBLE_JUMP: {
 		"name": "Wall Double Jump",
-		"description": "Press the Up arrow twice while touching a wall to jump one more time.",
-		"key": "UP x2",
+		"description": "Press X twice while touching a wall to jump one more time.",
+		"key": "X x2",
 		"icon_index": 2,
 	},
 	SPIN_JUMP_ATTACK: {

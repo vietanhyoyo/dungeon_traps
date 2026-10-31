@@ -14,10 +14,10 @@ Sau câu cuối, `GameState.recruit_party_member("serelyn")` lưu Serelyn vào �
 trong `user://save_game.json`. Khi quay lại level 6, trạng thái đã lưu khiến
 Serelyn không còn xuất hiện dưới dạng NPC và không thể mở hội thoại lần nữa.
 
-Sau hội thoại, `scripts/level_6_controller.gd` nhận phím Z để chuyển giữa Asura
+Sau hội thoại, `scripts/level_6_controller.gd` nhận phím A để chuyển giữa Asura
 và Serelyn. Nhân vật được chọn xuất hiện tại vị trí nhân vật hiện tại, căn theo
 đáy capsule. Camera và `PointLight2D` đi theo nhân vật mới; nhân vật còn lại bị
-ẩn và tắt va chạm. Mỗi lần chuyển có vòng sáng màu riêng và khóa Z đến khi hiệu
+ẩn và tắt va chạm. Mỗi lần chuyển có vòng sáng màu riêng và khóa A đến khi hiệu
 ứng kết thúc. `ui/character_hud.tscn` hiển thị portrait cắt từ ảnh idle và làm
 sáng viền của nhân vật đang được điều khiển.
 
@@ -61,7 +61,7 @@ cô dùng `attack_low` và hạ thấp vị trí sinh tên.
 
 Tên làm vỡ thùng gỗ thuộc group `breakable`. Thùng sắt chặn tên nhưng không bị
 phá. Khi trúng enemy trong camera, tên tạo cùng `effects/hit_effect.tscn` với
-đòn chém của Asura rồi gọi `die()` của enemy. Phím Z bị khóa khi đang hội thoại,
+đòn chém của Asura rồi gọi `die()` của enemy. Phím A bị khóa khi đang hội thoại,
 tạm dừng hoặc game over.
 
 ## Chịu Đòn, Chết Và Kỹ Năng Chung

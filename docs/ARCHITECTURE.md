@@ -58,7 +58,7 @@ flowchart TD
 - Autoload `Music`: scene `nodes/music.tscn`, an `AudioStreamPlayer` autoplaying `background_music.mp3` globally on the `Music` bus.
 - Autoload `GameState`: `scripts/game_state.gd`.
 - Global group: `player`.
-- Input actions: `move_left` (A/←), `move_right` (D/→), `jump` (↑), `attack` (C), `slide` (X), `interact` (E), `switch_character` (Z, level 6).
+- Input actions: `move_left` (←), `move_right` (D/→), `jump` (X), `attack` (C), `slide` (Z), `interact` (E), `switch_character` (A, level 6+).
 
 `default_bus_layout.tres` defines the `Music` bus (-6 dB) and the `SFX` bus (0 dB), both routed to `Master`.
 
@@ -301,7 +301,7 @@ Bảng nhân vật trong `pause_menu.tscn` có sẵn hàng `SkillList/SpinJumpAt
 
 `level_6.tscn` đặt Serelyn làm NPC gần điểm xuất phát và chứa `DialogueLayer`.
 `scripts/level_6_controller.gd` quản lý việc tuyển thành viên và chuyển nhân
-vật bằng Z; camera, `PointLight2D` và `ui/character_hud.tscn` theo nhân vật đang
+vật bằng A; camera, `PointLight2D` và `ui/character_hud.tscn` theo nhân vật đang
 được điều khiển. Level 7 không đặt Serelyn sẵn trong scene; controller chỉ tạo
 cô ấy tại vị trí Asura nếu trạng thái lưu cho biết đã kết nạp cô ở level 6.
 Chi tiết hội thoại và hành vi của từng nhân vật nằm trong

@@ -639,17 +639,15 @@ position = Vector2(2163, 1624)
 [node name="DeviSlime" parent="DeviSlimeList" unique_id=648557765 instance=ExtResource("37_w4rxv")]
 z_index = 5
 position = Vector2(1384, 1538)
+dependent_tentacles = Array[NodePath]([NodePath("../../DeviSlimeTentacleList/DeviSlimeTentacle"), NodePath("../../DeviSlimeTentacleList/DeviSlimeTentacle2"), NodePath("../../DeviSlimeTentacleList/DeviSlimeTentacle3")])
 
 [node name="DeviSlimeTentacleList" type="Node2D" parent="." unique_id=1436943757]
 
 [node name="DeviSlimeTentacle" parent="DeviSlimeTentacleList" unique_id=2011147063 instance=ExtResource("38_tentacle")]
 position = Vector2(921, 1472)
-devi_slime_path = NodePath("../../DeviSlimeList/DeviSlime")
 
 [node name="DeviSlimeTentacle2" parent="DeviSlimeTentacleList" unique_id=1558284770 instance=ExtResource("38_tentacle")]
 position = Vector2(1123, 1568)
-devi_slime_path = NodePath("../../DeviSlimeList/DeviSlime")
 
 [node name="DeviSlimeTentacle3" parent="DeviSlimeTentacleList" unique_id=857294606 instance=ExtResource("38_tentacle")]
 position = Vector2(978, 1664)
-devi_slime_path = NodePath("../../DeviSlimeList/DeviSlime")
