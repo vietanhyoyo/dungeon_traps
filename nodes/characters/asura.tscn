@@ -107,19 +107,15 @@ region = Rect2(0, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_q60cs"]
 atlas = ExtResource("7_341xe")
-region = Rect2(0, 0, 94, 94)
+region = Rect2(0, 0, 110, 94)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ilkss"]
 atlas = ExtResource("7_341xe")
-region = Rect2(94, 0, 94, 94)
+region = Rect2(110, 0, 110, 94)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_e4ivm"]
 atlas = ExtResource("7_341xe")
-region = Rect2(188, 0, 94, 94)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_mh270"]
-atlas = ExtResource("7_341xe")
-region = Rect2(188, 0, 94, 94)
+region = Rect2(220, 0, 110, 94)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_edhg0"]
 atlas = ExtResource("8_32pva")
@@ -333,9 +329,6 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_e4ivm")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_mh270")
 }],
 "loop": 0,
 "name": &"jump_attack",
@@ -466,10 +459,10 @@ size = Vector2(67, 66)
 size = Vector2(66, 71)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_attack_slide"]
-size = Vector2(69, 56)
+size = Vector2(70, 64)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_attack_jump"]
-size = Vector2(52, 78)
+size = Vector2(48, 89)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_attack_spin"]
 size = Vector2(84, 96)
@@ -493,8 +486,10 @@ script = ExtResource("3_tby2x")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=260658179]
 sprite_frames = SubResource("SpriteFrames_hugui")
-animation = &"attack2"
+animation = &"jump_attack"
 autoplay = "idle"
+frame = 2
+frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=103448317]
 position = Vector2(0, 1)
@@ -513,23 +508,26 @@ collision_mask = 4
 monitorable = false
 
 [node name="HighShape" type="CollisionShape2D" parent="AttackHitbox" unique_id=1175297809]
+visible = false
 position = Vector2(30.5, -1)
 shape = SubResource("RectangleShape2D_attack_high")
 disabled = true
 
 [node name="LowShape" type="CollisionShape2D" parent="AttackHitbox" unique_id=517016674]
+visible = false
 position = Vector2(30, 2.5)
 shape = SubResource("RectangleShape2D_attack_low")
 disabled = true
 
 [node name="SlideShape" type="CollisionShape2D" parent="AttackHitbox" unique_id=428317905]
-position = Vector2(17.5, 8)
+visible = false
+position = Vector2(18, 4)
 shape = SubResource("RectangleShape2D_attack_slide")
 disabled = true
 
 [node name="JumpShape" type="CollisionShape2D" parent="AttackHitbox" unique_id=884502613]
 visible = false
-position = Vector2(21, -3)
+position = Vector2(31, -1.5)
 shape = SubResource("RectangleShape2D_attack_jump")
 disabled = true
 

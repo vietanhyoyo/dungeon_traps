@@ -36,6 +36,7 @@
 [ext_resource type="PackedScene" path="res://nodes/platforms/pushable_steel_crate.tscn" id="36_gq45r"]
 [ext_resource type="PackedScene" path="res://nodes/torch.tscn" id="36_ivi6q"]
 [ext_resource type="PackedScene" path="res://nodes/platforms/pushable_wooden_crate.tscn" id="37_3dxep"]
+[ext_resource type="PackedScene" path="res://nodes/decor/decor-big-crystal.tscn" id="38_big_crystal"]
 [ext_resource type="Texture2D" uid="uid://bdf5mkngf61vt" path="res://assets/sprites/tilemapbackground3.png" id="tilemap_background_3"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_8pcmo"]
@@ -233,7 +234,7 @@ centered = false
 script = ExtResource("21_background_fit")
 
 [node name="Asura" parent="." unique_id=1809393430 instance=ExtResource("1_asura")]
-position = Vector2(1862, 731)
+position = Vector2(284, 1285)
 
 [node name="Camera2D" parent="Asura" unique_id=1065377516 instance=ExtResource("2_camera")]
 limit_left = 0
@@ -278,6 +279,12 @@ position = Vector2(1154, 848)
 
 [node name="decor-crystal" parent="DecorList" unique_id=901177065 instance=ExtResource("15_asa7y")]
 position = Vector2(1228, 568)
+
+[node name="decor-big-crystal" parent="DecorList" unique_id=1837742501 instance=ExtResource("38_big_crystal")]
+position = Vector2(419, 1368)
+
+[node name="decor-big-crystal2" parent="DecorList" unique_id=2022644179 instance=ExtResource("38_big_crystal")]
+position = Vector2(607, 1400)
 
 [node name="Door" parent="." unique_id=701868363 instance=ExtResource("5_door")]
 position = Vector2(6208, 1664)
