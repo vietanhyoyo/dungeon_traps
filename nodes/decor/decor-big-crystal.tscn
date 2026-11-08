@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://btjc6s01lkvea"]
 
 [ext_resource type="Texture2D" uid="uid://ch3xe166rc7rr" path="res://assets/sprites/decor/decor-big-crystal.png" id="1_big_crystal"]
-[ext_resource type="Script" uid="uid://bxnga6bbmlgk4" path="res://scripts/decor_crystal.gd" id="2_script"]
+[ext_resource type="Script" path="res://scripts/decor_big_crystal.gd" id="2_script"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_big_crystal_broken_0"]
 atlas = ExtResource("1_big_crystal")
@@ -58,8 +58,11 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_big_crystal"]
-size = Vector2(17, 39)
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_big_crystal"]
+points = PackedVector2Array(0, -19.5, 8.5, 19.5, -8.5, 19.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_big_crystal_slip_sensor"]
+size = Vector2(40, 16)
 
 [sub_resource type="Gradient" id="Gradient_big_crystal_glow"]
 offsets = PackedFloat32Array(0, 0.25, 1)
@@ -106,6 +109,7 @@ _data = {
 }
 
 [node name="decor-big-crystal" type="StaticBody2D" unique_id=1718436550 groups=["breakable"]]
+process_priority = 100
 collision_layer = 5
 collision_mask = 0
 script = ExtResource("2_script")
@@ -120,7 +124,15 @@ autoplay = "idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1149146574]
 position = Vector2(0.5, -11.5)
-shape = SubResource("RectangleShape2D_big_crystal")
+shape = SubResource("ConvexPolygonShape2D_big_crystal")
+
+[node name="SlipSensor" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SlipSensor"]
+position = Vector2(0, -27)
+shape = SubResource("RectangleShape2D_big_crystal_slip_sensor")
 
 [node name="Glow" type="PointLight2D" parent="." unique_id=201039373]
 color = Color(0.34, 0.62, 1, 1)
