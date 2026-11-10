@@ -3,7 +3,7 @@ extends Node2D
 const PIT_DEPTH := 128.0
 const PIT_WIDTH := 64.0
 const PIT_LANDING_TIMEOUT_FRAMES := 180
-const PIT_SETTLE_DELAY := 0.6
+const PIT_SETTLE_DELAY := 0.2
 const SPIKE_CLOSE_DURATION := 2.0
 
 @export var tile_map_path: NodePath = ^"../TileMap32"
