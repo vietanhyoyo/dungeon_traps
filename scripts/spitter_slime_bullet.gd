@@ -15,6 +15,7 @@ const TRAIL_COLORS := [
 const MAX_TRAIL_HISTORY := 24
 const DEFEAT_SOUND := preload("res://assets/sounds/freesound_community-poof-80161.mp3")
 const DEFEAT_SOUND_OFFSET := 0.5
+const HIT_EFFECT_SCENE := preload("res://nodes/effects/hit_effect.tscn")
 const SOUND_MAX_DISTANCE := 600.0
 const SOUND_ATTENUATION := 1.4
 
@@ -114,8 +115,20 @@ func _spawn_toxic_smoke() -> void:
 	smoke.global_position = global_position
 
 
-func on_player_touched(_player: Node2D) -> void:
+func on_player_touched(player: Node2D) -> void:
+	_spawn_hit_effect(player)
 	_pop()
+
+
+## Cùng hiệu ứng hit.png như lúc player chém trúng quái, đặt ở vị trí player.
+## Gắn vào scene màn chơi chứ không vào đạn: đạn tự xoá sau hiệu ứng vỡ.
+func _spawn_hit_effect(player: Node2D) -> void:
+	var current_scene := get_tree().current_scene
+	if current_scene == null or not is_instance_valid(player):
+		return
+	var effect: AnimatedSprite2D = HIT_EFFECT_SCENE.instantiate()
+	current_scene.add_child(effect)
+	effect.global_position = player.global_position
 
 
 func die() -> void:

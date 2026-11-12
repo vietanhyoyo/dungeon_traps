@@ -5,6 +5,8 @@ const PIT_WIDTH := 64.0
 const PIT_LANDING_TIMEOUT_FRAMES := 180
 const PIT_SETTLE_DELAY := 0.2
 const SPIKE_CLOSE_DURATION := 2.0
+# Cho phép player chạm mép tường một chút vẫn tính là bị kẹp.
+const CRUSH_TOLERANCE := 2.0
 
 @export var tile_map_path: NodePath = ^"../TileMap32"
 
@@ -21,7 +23,7 @@ const SPIKE_CLOSE_DURATION := 2.0
 
 var _triggered := false
 var _game_over_started := false
-var _spike_walls_closed := false
+var _spike_walls_closing := false
 var _crush_check_in_progress := false
 var _trapped_player: CharacterBody2D
 
@@ -35,7 +37,7 @@ func _physics_process(_delta: float) -> void:
 	if _triggered:
 		if not is_instance_valid(_trapped_player):
 			return
-		if _spike_walls_closed and _are_both_walls_touching_player(_trapped_player):
+		if _spike_walls_closing and _is_player_crushed(_trapped_player):
 			call_deferred("_crush_player", _trapped_player)
 		return
 	for body in trigger_area.get_overlapping_bodies():
@@ -132,6 +134,11 @@ func _close_spike_walls() -> void:
 		return
 	left_wall.set_deferred("monitoring", true)
 	right_wall.set_deferred("monitoring", true)
+	# Tắt va chạm cứng của tường gai khi khép lại: nếu không, StaticBody sẽ đẩy
+	# player ra ngoài (thường là đẩy lên đứng trên nóc tường) và player không chết.
+	left_wall_solid_collision.set_deferred("disabled", true)
+	right_wall_solid_collision.set_deferred("disabled", true)
+	_spike_walls_closing = true
 	var tween := create_tween()
 	tween.set_parallel(true)
 	tween.set_trans(Tween.TRANS_SINE)
@@ -141,9 +148,20 @@ func _close_spike_walls() -> void:
 	await tween.finished
 	if not is_inside_tree():
 		return
-	_spike_walls_closed = true
-	if _are_both_walls_touching_player(_trapped_player):
+	if _is_player_crushed(_trapped_player):
 		await _crush_player(_trapped_player)
+	# Chờ lượt kiểm tra kẹp đang chạy (vd. player đang bất tử tạm thời) kết thúc.
+	while _crush_check_in_progress and is_inside_tree():
+		await get_tree().physics_frame
+	if not is_inside_tree() or _game_over_started:
+		return
+	# Tường đã khép xong mà player không bị kẹp: ngừng gây sát thương và bật lại
+	# va chạm cứng để player có thể đứng lên trên tường gai.
+	_spike_walls_closing = false
+	left_wall.set_deferred("monitoring", false)
+	right_wall.set_deferred("monitoring", false)
+	left_wall_solid_collision.set_deferred("disabled", false)
+	right_wall_solid_collision.set_deferred("disabled", false)
 
 
 func _on_spike_wall_body_entered(body: Node2D) -> void:
@@ -182,14 +200,42 @@ func _are_both_walls_touching_player(body: Node2D) -> bool:
 		and right_wall.overlaps_body(body)
 
 
+func _get_shape_half_width(collision_shape: CollisionShape2D) -> float:
+	if collision_shape == null or collision_shape.shape == null:
+		return 0.0
+	return collision_shape.shape.get_rect().size.x * 0.5 * absf(collision_shape.global_scale.x)
+
+
+# Kiểm tra bằng hình học thay vì chỉ dựa vào Area overlap (dễ trượt khi player
+# bị physics đẩy ra khỏi tường): player còn nằm trong lòng hố và khe hở giữa hai
+# tường gai đã hẹp hơn thân player.
+func _is_player_crushed(body: Node2D) -> bool:
+	if not is_instance_valid(body) or not (body is CharacterBody2D):
+		return false
+	if _are_both_walls_touching_player(body):
+		return true
+	var player := body as CharacterBody2D
+	var player_shape := player.get_node_or_null("CollisionShape2D") as CollisionShape2D
+	var player_half_width := _get_shape_half_width(player_shape)
+	var center := _get_player_body_center(player)
+	if absf(center.x) > PIT_WIDTH * 0.5:
+		return false
+	if center.y < 0.0 or center.y > PIT_DEPTH + 16.0:
+		return false
+	var wall_half_width := _get_shape_half_width($LeftWall/CollisionShape2D as CollisionShape2D)
+	var left_inner := left_wall.position.x + wall_half_width
+	var right_inner := right_wall.position.x - wall_half_width
+	return right_inner - left_inner <= player_half_width * 2.0 + CRUSH_TOLERANCE
+
+
 func _can_crush_player(body: Node2D) -> bool:
-	return _spike_walls_closed \
+	return _spike_walls_closing \
 		and not _game_over_started \
 		and is_instance_valid(body) \
 		and body == _trapped_player \
 		and body is CharacterBody2D \
 		and body.is_in_group(&"player") \
-		and _are_both_walls_touching_player(body)
+		and _is_player_crushed(body)
 
 
 func _crush_player(body: Node2D) -> void:

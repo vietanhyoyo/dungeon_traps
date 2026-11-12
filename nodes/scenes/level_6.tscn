@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://d28tluf6jm21n" path="res://assets/sprites/background5.png" id="4_k83a1"]
 [ext_resource type="PackedScene" path="res://nodes/tile_map_32.tscn" id="4_tilemap"]
 [ext_resource type="Texture2D" uid="uid://bcxnn1f6qiuev" path="res://assets/sprites/mapp32.png" id="5_mapp32"]
-[ext_resource type="PackedScene" uid="uid://c4jvx4glbgl2" path="res://nodes/door.tscn" id="8_door"]
+[ext_resource type="PackedScene" path="res://nodes/rock_door.tscn" id="8_door"]
 [ext_resource type="PackedScene" uid="uid://dscr153320p4r" path="res://nodes/traps/fire_trap.tscn" id="9_fire"]
 [ext_resource type="PackedScene" uid="uid://dg4n7tp4d7q1y" path="res://nodes/enemies/slime.tscn" id="11_slime"]
 [ext_resource type="PackedScene" uid="uid://cqwyfrn5xy0ei" path="res://nodes/enemies/bat.tscn" id="12_bat"]
