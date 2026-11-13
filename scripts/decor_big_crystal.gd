@@ -2,8 +2,20 @@ extends "res://scripts/decor_crystal.gd"
 
 const SLIDE_OFF_SPEED := 300.0
 const SLIDE_OFF_FEET_TOLERANCE := 24.0
+const CRYSTAL_KEY_SCENE: PackedScene = preload("res://nodes/items/crystal_key.tscn")
+## Tâm sprite pha lê so với gốc node (gốc nằm ở chân).
+const KEY_SPAWN_OFFSET := Vector2(0.0, -24.0)
+
+## Để trống thì là pha lê trang trí. Đặt id thì phá vỡ sẽ rơi ra chìa khoá đó.
+@export var key_id := ""
 
 @onready var slip_sensor: Area2D = $SlipSensor
+
+
+func _ready() -> void:
+	# Hồi sinh ở save point sau khi đã lấy chìa: pha lê này đã vỡ từ trước.
+	if not key_id.is_empty() and GameState.is_key_collected(key_id):
+		queue_free()
 
 
 func _physics_process(delta: float) -> void:
@@ -33,5 +45,20 @@ func _physics_process(delta: float) -> void:
 
 
 func break_apart() -> void:
+	if _is_broken:
+		return
 	slip_sensor.set_deferred("monitoring", false)
+	if not key_id.is_empty() and not GameState.is_key_collected(key_id):
+		_drop_key()
 	super.break_apart()
+
+
+func _drop_key() -> void:
+	# Ghi nhận ngay lúc vỡ, để chết giữa lúc chìa đang bay vẫn giữ được chìa.
+	GameState.collect_key(key_id)
+
+	var key := CRYSTAL_KEY_SCENE.instantiate() as CrystalKey
+	# Chìa sống ở scene hiện tại: pha lê sẽ queue_free() khi animation vỡ xong.
+	get_tree().current_scene.add_child(key)
+	key.global_position = global_position + KEY_SPAWN_OFFSET
+	key.collect_into_hud()

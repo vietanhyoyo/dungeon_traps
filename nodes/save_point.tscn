@@ -1,10 +1,27 @@
 [gd_scene format=3 uid="uid://cd230y5iqj4bd"]
 
 [ext_resource type="Script" uid="uid://bnobl5ft71h4y" path="res://scripts/save_point.gd" id="1_save_point"]
-[ext_resource type="Texture2D" uid="uid://da8soip3d7dh2" path="res://assets/sprites/save-flag.png" id="2_flag"]
+[ext_resource type="Texture2D" path="res://assets/sprites/save_point.png" id="2_flag"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_save_point"]
 size = Vector2(44, 64)
+
+[sub_resource type="Gradient" id="Gradient_glow"]
+offsets = PackedFloat32Array(0, 0.3, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.8, 0.75, 0.6, 0.55, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_glow"]
+gradient = SubResource("Gradient_glow")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_add"]
+blend_mode = 1
+
+[sub_resource type="Gradient" id="Gradient_spark"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(1, 0.96, 0.75, 1, 1, 0.78, 0.3, 1, 1, 0.45, 0.1, 0)
 
 [node name="SavePoint" type="Area2D" unique_id=668168341]
 z_index = 4
@@ -12,10 +29,35 @@ collision_layer = 0
 collision_mask = 2
 script = ExtResource("1_save_point")
 
+[node name="Glow" type="PointLight2D" parent="." unique_id=1416793612]
+position = Vector2(0, -50)
+enabled = false
+color = Color(1, 0.74, 0.42, 1)
+energy = 0.0
+texture = SubResource("GradientTexture2D_glow")
+texture_scale = 1.4
+
 [node name="FlagSprite" type="Sprite2D" parent="." unique_id=1416793611]
-modulate = Color(0.431, 0.431, 0.431, 1)
 position = Vector2(0, -32)
 texture = ExtResource("2_flag")
+hframes = 5
+
+[node name="Sparks" type="CPUParticles2D" parent="." unique_id=1416793613]
+material = SubResource("CanvasItemMaterial_add")
+position = Vector2(0, -59)
+emitting = false
+amount = 18
+lifetime = 0.7
+one_shot = true
+explosiveness = 0.9
+direction = Vector2(0, -1)
+spread = 70.0
+gravity = Vector2(0, 90)
+initial_velocity_min = 25.0
+initial_velocity_max = 55.0
+scale_amount_min = 1.0
+scale_amount_max = 2.0
+color_ramp = SubResource("Gradient_spark")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=947909518]
 position = Vector2(0, -32)

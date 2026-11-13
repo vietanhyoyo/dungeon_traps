@@ -4,6 +4,13 @@ class_name GameStateManager
 signal game_over_started(player: Node2D)
 signal restart_countdown_changed(seconds_left: int)
 signal checkpoint_activated(scene_path: String, spawn_position: Vector2)
+## Phát khi người chơi nhặt hoặc dùng một chìa khoá trong màn hiện tại.
+signal keys_changed
+
+enum KeyState {
+	HELD,
+	USED,
+}
 
 enum State {
 	PLAYING,
@@ -39,6 +46,9 @@ var _unlocked_skills := {}
 ## skill_id -> true cho kỹ năng đã hoàn thành màn và được ghi vào file save. Nạp
 ## lại ở mỗi lần mở game nên màn nào cũng dùng được, kể cả chơi lại từ level 1.
 var _saved_skills := {}
+## scene_path -> { key_id: KeyState }. Giữ chìa đã nhặt / đã tra vào cửa khi
+## chết và hồi sinh ở save point, giống sao và rương.
+var _level_keys := {}
 ## Thành viên đã gia nhập đội, lưu trong file save ngay sau hội thoại.
 var _party_members := {}
 
@@ -142,6 +152,41 @@ func is_chest_opened(chest_id: String) -> bool:
 	return opened.has(chest_id)
 
 
+func collect_key(key_id: String) -> void:
+	var scene_path := _get_current_scene_path()
+	if not _level_keys.has(scene_path):
+		_level_keys[scene_path] = {}
+	if _level_keys[scene_path].has(key_id):
+		return
+	_level_keys[scene_path][key_id] = KeyState.HELD
+	keys_changed.emit()
+
+
+func use_key(key_id: String) -> void:
+	if not has_key(key_id):
+		return
+	_level_keys[_get_current_scene_path()][key_id] = KeyState.USED
+	keys_changed.emit()
+
+
+## Đã nhặt chìa này trong màn hiện tại (kể cả khi đã dùng).
+func is_key_collected(key_id: String) -> bool:
+	return _keys_of_current_scene().has(key_id)
+
+
+## Đang cầm chìa trong người, chưa tra vào cửa.
+func has_key(key_id: String) -> bool:
+	return int(_keys_of_current_scene().get(key_id, -1)) == KeyState.HELD
+
+
+func is_key_used(key_id: String) -> bool:
+	return int(_keys_of_current_scene().get(key_id, -1)) == KeyState.USED
+
+
+func _keys_of_current_scene() -> Dictionary:
+	return _level_keys.get(_get_current_scene_path(), {})
+
+
 ## Mở khoá một kỹ năng trong Skills.CATALOG cho nhân vật. Dùng được ngay, nhưng
 ## chỉ thành của mình vĩnh viễn sau khi đi hết màn — xem complete_level().
 func unlock_skill(skill_id: String) -> void:
@@ -198,6 +243,7 @@ func clear_level_progress(scene_path := "") -> void:
 	if scene_path.is_empty():
 		_collected_stars.clear()
 		_opened_chests.clear()
+		_level_keys.clear()
 		_unlocked_skills.clear()
 		_saved_skills.clear()
 		SaveGame.save_skills([])
@@ -209,6 +255,7 @@ func clear_level_progress(scene_path := "") -> void:
 
 	_collected_stars.erase(scene_path)
 	_opened_chests.erase(scene_path)
+	_level_keys.erase(scene_path)
 	for skill_id in _unlocked_skills.keys():
 		if _unlocked_skills[skill_id] == scene_path:
 			_unlocked_skills.erase(skill_id)

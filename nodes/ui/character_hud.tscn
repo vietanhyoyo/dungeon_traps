@@ -3,6 +3,8 @@
 [ext_resource type="Script" path="res://scripts/ui/character_hud.gd" id="1_script"]
 [ext_resource type="Texture2D" path="res://assets/sprites/shinn_asura/Shinn-Asura-idle.png" id="3_asura"]
 [ext_resource type="Texture2D" path="res://assets/sprites/serelyn/Serelyn-idle.png" id="4_serelyn"]
+[ext_resource type="StyleBox" path="res://nodes/ui/styles/frame_gold.tres" id="5_frame"]
+[ext_resource type="StyleBox" path="res://nodes/ui/styles/frame_mini_gold.tres" id="6_badge"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_asura"]
 atlas = ExtResource("3_asura")
@@ -12,34 +14,6 @@ region = Rect2(16, 0, 32, 32)
 atlas = ExtResource("4_serelyn")
 region = Rect2(32, 32, 32, 32)
 
-[sub_resource type="StyleBoxFlat" id="StyleBox_card"]
-content_margin_left = 3.0
-content_margin_top = 3.0
-content_margin_right = 3.0
-content_margin_bottom = 3.0
-bg_color = Color(0.035, 0.025, 0.08, 0.9)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.93, 0.82, 0.1, 1)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-
-[sub_resource type="StyleBoxFlat" id="StyleBox_cooldown_badge"]
-bg_color = Color(0.035, 0.025, 0.08, 0.95)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.93, 0.82, 0.1, 1)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-
 [node name="CharacterHUD" type="CanvasLayer"]
 layer = 12
 script = ExtResource("1_script")
@@ -47,19 +21,19 @@ script = ExtResource("1_script")
 [node name="Portraits" type="HBoxContainer" parent="."]
 offset_left = 56.0
 offset_top = 12.0
-offset_right = 174.0
-offset_bottom = 68.0
+offset_right = 182.0
+offset_bottom = 72.0
 mouse_filter = 2
 theme_override_constants/separation = 6
 
 [node name="AsuraCard" type="PanelContainer" parent="Portraits"]
-custom_minimum_size = Vector2(56, 56)
+custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
 mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBox_card")
+theme_override_styles/panel = ExtResource("5_frame")
 
 [node name="Portrait" type="TextureRect" parent="Portraits/AsuraCard"]
-custom_minimum_size = Vector2(50, 50)
+custom_minimum_size = Vector2(48, 48)
 layout_mode = 2
 mouse_filter = 2
 texture_filter = 1
@@ -76,7 +50,7 @@ offset_top = 2.0
 offset_right = -2.0
 offset_bottom = 26.0
 mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBox_cooldown_badge")
+theme_override_styles/panel = ExtResource("6_badge")
 
 [node name="Countdown" type="Label" parent="Portraits/AsuraCard/Portrait/CooldownBadge"]
 layout_mode = 2
@@ -89,13 +63,13 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="SerelynCard" type="PanelContainer" parent="Portraits"]
-custom_minimum_size = Vector2(56, 56)
+custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
 mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBox_card")
+theme_override_styles/panel = ExtResource("5_frame")
 
 [node name="Portrait" type="TextureRect" parent="Portraits/SerelynCard"]
-custom_minimum_size = Vector2(50, 50)
+custom_minimum_size = Vector2(48, 48)
 layout_mode = 2
 mouse_filter = 2
 texture_filter = 1
@@ -112,7 +86,7 @@ offset_top = 2.0
 offset_right = -2.0
 offset_bottom = 26.0
 mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBox_cooldown_badge")
+theme_override_styles/panel = ExtResource("6_badge")
 
 [node name="Countdown" type="Label" parent="Portraits/SerelynCard/Portrait/CooldownBadge"]
 layout_mode = 2

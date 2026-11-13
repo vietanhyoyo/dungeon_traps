@@ -93,7 +93,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			or not serelyn.conversation_completed \
 			or serelyn.dialogue_open or asura.is_dead or serelyn.is_dead \
 			or asura.movement_locked or serelyn.is_hurt or _is_transforming \
-			or _switch_cooldown_remaining > 0.0:
+			or _switch_cooldown_remaining > 0.0 \
+			or get_tree().has_group(&"cutscene_lock"):
 		return
 
 	_switch_character()
