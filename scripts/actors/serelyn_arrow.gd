@@ -8,12 +8,19 @@ const ARROW_AREA_MASK := 16 # Vùng trúng tên mở rộng của enemy, không 
 const ARROW_TIP_OFFSET := 17.0
 const ATTACK_DAMAGE := 1
 const HIT_EFFECT_SCENE := preload("res://nodes/effects/hit_effect.tscn")
+const MUZZLE_EFFECT_SCENE := preload("res://nodes/effects/serelyn_arrow_muzzle.tscn")
+const IMPACT_EFFECT_SCENE := preload("res://nodes/effects/serelyn_arrow_impact.tscn")
+## Lớp hiệu ứng 3 khung đè lên mũi tên gốc: vệt sáng phía sau và đốm lấp lánh ở mũi.
+const SHIMMER_FPS := 18.0
+const GLOW_ENERGY := 2.2
+const GLOW_PULSE := 0.4
 
 var direction := Vector2.RIGHT
 var age := 0.0
 
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var glow: PointLight2D = $GreenGlow
+@onready var fx: Sprite2D = $Sprite2D/Fx
 
 
 func launch(origin: Vector2, launch_direction: Vector2) -> void:
@@ -23,10 +30,13 @@ func launch(origin: Vector2, launch_direction: Vector2) -> void:
 	sprite.flip_h = false
 	# Tâm quầng sáng nằm ở đầu mũi tên, không nằm giữa texture 64x64.
 	glow.position = Vector2(ARROW_TIP_OFFSET, 0.0)
+	_spawn_effect(MUZZLE_EFFECT_SCENE, origin, rotation)
 
 
 func _physics_process(delta: float) -> void:
 	age += delta
+	fx.frame = int(age * SHIMMER_FPS) % fx.hframes
+	glow.energy = GLOW_ENERGY + GLOW_PULSE * sin(age * 40.0)
 	if age >= LIFETIME:
 		queue_free()
 		return
@@ -36,6 +46,8 @@ func _physics_process(delta: float) -> void:
 	var hit := raycast_path(get_world_2d().direct_space_state, global_position, global_position + motion)
 	if not hit.is_empty():
 		global_position = hit["position"]
+		# Toé sáng xanh ở mũi tên mỗi khi trúng, kể cả tường và vật thể.
+		_spawn_effect(IMPACT_EFFECT_SCENE, global_position, rotation)
 		var target := hit["collider"] as Node
 		var enemy := enemy_for_collider(target)
 		if enemy != null:
@@ -122,3 +134,14 @@ func _spawn_hit_effect() -> void:
 	var effect: AnimatedSprite2D = HIT_EFFECT_SCENE.instantiate()
 	get_tree().current_scene.add_child(effect)
 	effect.global_position = global_position
+
+
+func _spawn_effect(scene: PackedScene, at: Vector2, angle: float) -> void:
+	# Gắn vào scene màn chơi để hiệu ứng không bị xoá cùng mũi tên.
+	var current_scene := get_tree().current_scene
+	if current_scene == null:
+		return
+	var effect := scene.instantiate() as Node2D
+	current_scene.add_child(effect)
+	effect.global_position = at
+	effect.rotation = angle

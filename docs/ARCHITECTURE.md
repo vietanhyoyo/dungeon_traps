@@ -1,6 +1,6 @@
 # Dungeon Traps - Project Architecture
 
-Updated: 2026-09-17
+Updated: 2026-11-13
 
 This document describes the actual architecture and runtime behavior of the project.
 
@@ -20,32 +20,24 @@ flowchart TD
   Project --> Music["Autoload: Music (nodes/music.tscn)"]
   Project --> GameState["Autoload: GameState (scripts/game_state.gd)"]
 
-  Main --> Asura["characters/asura.tscn"]
-  Main --> Door["door.tscn"]
-  Main --> Fire["traps/fire_trap.tscn"]
-  Main --> Thorn["traps/thorn.tscn"]
-  Main --> Pendulum["traps/pendulum_trap.tscn"]
-  Main --> Torch["torch.tscn"]
-  Main --> TileMap["TileMap / TileMap32"]
+  Main --> Level["nodes/scenes/level_N.tscn (1..8)"]
+  Level --> Party["level_6_controller.gd (PartyController / root)"]
+  Level --> Asura["characters/asura.tscn"]
+  Level --> Serelyn["characters/serelyn.tscn (level 6+)"]
+  Level --> Traps["traps/*.tscn, enemies/*.tscn"]
+  Level --> SavePoint["save_point.tscn"]
+  Level --> Door["door.tscn / rock_door.tscn"]
+  Level --> HUD["ui/*: StarHUD, CharacterHUD, KeyHUD, PauseMenu"]
 
-  Asura --> AsuraController["scripts/actors/asura_controller.gd"]
-  Asura --> Dust["effects/landing_dust.tscn"]
-  Fire --> FireScript["scripts/fire_trap.gd"]
-  Thorn --> ThornScript["scripts/thorn_trap.gd"]
-  Pendulum --> PendulumScript["scripts/pendulum_trap.gd"]
-  Door --> DoorScript["scripts/door.gd"]
-
-  FireScript --> GameOver["GameState.trigger_game_over(player)"]
-  ThornScript --> GameOver
-  PendulumScript --> GameOver
+  Traps --> GameOver["GameState.trigger_game_over(player)"]
   KillzoneScript["scripts/killzone.gd"] --> GameOver
-
   GameOver --> Die["player.die()"]
-  GameOver --> Sound["game_over.mp3 (SFX bus)"]
   GameOver --> Overlay["GAME OVER overlay + 5s countdown"]
-  Overlay --> Reload["change_scene_to_file(current scene)"]
+  Overlay --> Reload["reload scene, respawn at active checkpoint"]
 
-  DoorScript --> Level2["nodes/scenes/level_2.tscn"]
+  SavePoint --> Checkpoint["GameState.activate_checkpoint()"]
+  Door --> Complete["GameState.complete_level()"]
+  Complete --> Next["change_scene_to_file(next_scene_path)"]
 ```
 
 ## Layers Of Responsibility
@@ -64,16 +56,28 @@ flowchart TD
 
 ### Level Scenes
 
-`nodes/scenes/level_1.tscn` (root `Level1`), `nodes/scenes/level_2.tscn` (root `Level2`) and `nodes/scenes/level_3.tscn` (root `Level3`).
+`nodes/scenes/level_1.tscn` … `nodes/scenes/level_8.tscn` (root `Level1` … `Level8`).
 
 A level contains:
 
 - The player instance, with its camera and `PointLight2D` parented under it.
 - TileMap/background.
-- Trap, door and torch instances, grouped under plain `Node` list holders: `FireList`, `ThornList`, `BowTrapList`, `PendulumList`, `TorchList`, `SlimeList`, `BatList`, `StarList`, `ChestList`. Các holder này không phải `Node2D` nên không có transform, đưa instance vào list không làm đổi vị trí.
+- Trap, door and torch instances, grouped under plain `Node` list holders: `FireList`, `ThornList`, `BowTrapList`, `PendulumList`, `TorchList`, `SlimeList`, `BatList`, `StarList`, `ChestList`. Các holder này không phải `Node2D` nên không có transform, đưa instance vào list không làm đổi vị trí. (`DecorList` của `level_6` là `Node2D`.)
+- Save point (`save_point.tscn`) ở level 3–8.
+- HUD instances: `StarHUD`, `PauseMenu`, `CharacterHUD` (level 6+ đặt sẵn; màn khác do controller tạo khi đã có Serelyn), `KeyHUD` (chỉ `level_6`).
 - Instance-specific configuration such as `Door.next_scene_path`.
 
-Levels hold no death/restart logic, no character movement logic, and no global state. `level_4` có script kịch bản ở node gốc (`scripts/level_4_controller.gd`); `level_6` dùng `scripts/level_6_controller.gd` để chuyển nhân vật và camera.
+Levels hold no death/restart logic, no character movement logic, and no global state.
+
+Controller của màn:
+
+| Màn | Script | Gắn ở |
+| --- | --- | --- |
+| `level_1` … `level_5` | `scripts/level_6_controller.gd` | Node con `PartyController` |
+| `level_6` … `level_8` | `scripts/level_6_controller.gd` | Node gốc |
+| `level_4` | `scripts/chest_ambush_controller.gd` | Node gốc (đàn dơi phục kích, xem mục Level 4 Bat Ambush) |
+
+Tên `level_6_controller.gd` là lịch sử: script này giờ là controller đội hình dùng chung cho mọi màn (Serelyn, chuyển nhân vật, camera, `CharacterHUD`). Nó tự nhận ra mình gắn ở gốc hay ở node con qua việc có tìm thấy `Asura` cạnh mình hay không.
 
 ### Reusable Gameplay Scenes
 
@@ -84,7 +88,9 @@ Levels hold no death/restart logic, no character movement logic, and no global s
 | `traps/fire_trap.tscn` | `scripts/fire_trap.gd` |
 | `traps/thorn.tscn` | `scripts/thorn_trap.gd` |
 | `traps/pendulum_trap.tscn` | `scripts/pendulum_trap.gd` |
-| `door.tscn` | `scripts/door.gd` |
+| `door.tscn` | `scripts/door.gd` (cửa tự mở) |
+| `rock_door.tscn` | `scripts/door.gd` (cửa đá, đặt `required_key_id` để cần chìa) |
+| `save_point.tscn` | `scripts/save_point.gd` |
 | `killzone.tscn` | `scripts/killzone.gd` |
 | `torch.tscn` | Animation + `PointLight2D` in the scene, no script |
 | `effects/landing_dust.tscn` | `scripts/landing_dust.gd` |
@@ -97,17 +103,23 @@ Levels hold no death/restart logic, no character movement logic, and no global s
 | `platforms/hanging_steel_crate.tscn` | `scripts/hanging_steel_crate.gd` + `scripts/cuttable_rope.gd` |
 | `effects/character_transform_effect.tscn` | `scripts/character_transform_effect.gd` |
 | `ui/character_hud.tscn` | `scripts/ui/character_hud.gd` |
+| `ui/key_hud.tscn` | `scripts/ui/key_hud.gd` (`class_name KeyHUD`, group `key_hud`) |
+| `ui/pause_menu.tscn` | `scripts/ui/pause_menu.gd` |
+| `star_hud.tscn` | `scripts/ui/star_hud.gd` |
+| `items/crystal_key.tscn` | `scripts/items/crystal_key.gd` (`class_name CrystalKey`) |
+| `decor/decor-crystal.tscn`, `decor/decor-big-crystal.tscn` | `scripts/decor_crystal.gd`, `scripts/decor_big_crystal.gd` (`@export key_id`) |
+| `enemies/spitter_slime.tscn`, `enemies/spitter_slime_bullet.tscn` | `scripts/spitter_slime.gd`, `scripts/spitter_slime_bullet.gd` |
+| `characters/serelyn_arrow.tscn` | `scripts/actors/serelyn_arrow.gd` (`class_name SerelynArrow`) |
+| `effects/hit_effect.tscn`, `effects/serelyn_arrow_muzzle.tscn`, `effects/serelyn_arrow_impact.tscn` | `scripts/hit_effect.gd` (chạy animation `hit` một lần rồi tự xoá) |
 | `platform.tscn`, `tile_map_32.tscn` | No script |
 
 A reusable scene that needs to change global state calls an autoload or emits a signal; it never changes the scene itself.
 
 ### Scripts
 
-Scripts live under `res://scripts/`, with `actors/` and `ui/` subgroups; the smaller gameplay scripts are currently flat in `scripts/`.
+Scripts live under `res://scripts/`, with `actors/`, `items/` and `ui/` subgroups; the smaller gameplay scripts are currently flat in `scripts/`.
 
-Files currently not referenced by any scene: `scripts/level_1_controller.gd` and `scripts/level_2_controller.gd` (both only `extends Node2D`), and `nodes/traps/gai.tscn` (the old thorn scene, still wired to `fire_trap.gd`, superseded by `traps/thorn.tscn`).
-
-`scripts/level_4_controller.gd` là level controller duy nhất đang được dùng thật.
+Files currently not referenced by any level: `scripts/level_1_controller.gd` and `scripts/level_2_controller.gd` (both only `extends Node2D`), and `nodes/traps/gai.tscn` (the old thorn scene, still wired to `fire_trap.gd`, superseded by `traps/thorn.tscn`). `scripts/actors/asura_controller.gd.orig` là bản sao lưu, không được nạp.
 
 `scripts/save_game.gd` không gắn vào scene nào: nó là tiện ích static, chỉ
 `GameState` gọi tới — xem mục Save File.
@@ -116,7 +128,11 @@ Files currently not referenced by any scene: `scripts/level_1_controller.gd` and
 
 `assets/` holds passive data only — textures, sounds, music, fonts. No gameplay scripts.
 
-Sounds actually referenced by scenes: `running.mp3` and `sword_attack.mp3` (Asura), `fireball_whoosh.mp3` (fire trap), `coin.wav` (legacy coin), `game_over.mp3` (preloaded by `GameState`). The remaining files in `assets/sounds/` are unreferenced.
+Hầu hết file trong `assets/sounds/` đã được scene hoặc `preload` dùng tới. Tính theo đường dẫn, các file chưa nơi nào tham chiếu là: `abdalrahman_bm-8-bit-grass-footsteps-2-408574.mp3`, `hurt.wav`, `jump.wav`, `running.mp3`, `serelyn_slide_air.wav`.
+
+Sprite UI kiểu pixel nằm ở `assets/sprites/ui/` và được bọc thành `StyleBoxTexture` trong `nodes/ui/styles/` — xem mục HUD.
+
+Các sprite cũ được giữ lại nhưng không còn scene nào dùng: `assets/sprites/save-flag.png` (thay bằng `save_point.png`), `assets/sprites/enemies/spitter-slime-bullet.png` (thay bằng `spitter_slime_bullet_sheet.png`).
 
 ## Main Flows
 
@@ -237,23 +253,45 @@ Hitbox là `CircleShape2D` bán kính 26 trong khi gai vươn tới 30px, tức 
 
 ### Door / Level Transition
 
-`door.gd` uses two Area2Ds:
+`door.gd` uses two Area2Ds and is shared by `door.tscn` and `rock_door.tscn`:
 
-- `OpenArea`: entering it plays the `open` animation.
+- `OpenArea`: entering it plays the `open` animation (cửa thường).
 - `PassArea`: entering it once the door is open changes the scene after a 0.3s delay.
 
-`next_scene_path` is an `@export`, configured per level instance.
+`next_scene_path` is an `@export`, configured per level instance:
 
-- `level_1` points to `res://nodes/scenes/level_2.tscn`.
-- `level_2` points to `res://nodes/scenes/level_3.tscn`.
-- `level_3` points to `res://nodes/scenes/level_4.tscn`. Rương của màn này trao kỹ năng `spin_jump_attack`.
-- `level_4` points back to `res://nodes/scenes/level_3.tscn` (chưa có màn 5).
-- An empty `next_scene_path` means the door does not change scenes.
+| Màn | Cửa | Đi tới |
+| --- | --- | --- |
+| `level_1` … `level_5` | `door.tscn` | màn kế tiếp (`level_2` … `level_6`) |
+| `level_6` | `rock_door.tscn`, `required_key_id = "crystal_key"` | `level_7` |
+| `level_7` | `door.tscn` | `level_8` |
+| `level_8` | `door.tscn` | (trống: màn cuối) |
+
+An empty `next_scene_path` means the door does not change scenes.
 
 Qua được `PassArea` lúc cửa đã mở cũng là lúc màn được tính là hoàn thành:
 `_go_to_next_scene()` gọi `GameState.complete_level()` **trước** khi đổi scene, vì
 `GameState` nhận diện màn qua `_get_current_scene_path()` và đường dẫn đó chỉ còn
 đúng ở thời điểm này. Cửa cuối chưa trỏ đi đâu vẫn tính là hoàn thành rồi mới dừng.
+
+**Cửa cần chìa** (`required_key_id` khác rỗng) chạy theo luồng khác:
+
+```text
+OpenArea.body_entered (player) -> chỉ nhớ người chơi, KHÔNG tự mở
+_process -> hiện chữ "C" nhấp nhô trên cửa nếu người chơi đứng gần và GameState.has_key()
+_unhandled_input (attack = C)
+  -> set_input_as_handled() để nhân vật không vung kiếm / bắn tên
+  -> add_to_group("cutscene_lock"), player.set_controlled(false)
+  -> KeyHUD.release_key(); CrystalKey bay từ ô HUD vào ổ khoá (key_slot_offset)
+  -> GameState.use_key(), tiếng "tap", cửa loé sáng
+  -> play("open") + tiếng move_boulder (tắt loop trên bản sao stream)
+  -> hết animation: trả điều khiển, bỏ khỏi cutscene_lock
+_process (cửa đã mở)
+  -> chỉ chuyển màn khi người chơi ở PassArea, đang di chuyển (|velocity.x| > 1)
+     và cách tâm cửa <= DOOR_CENTER_TOLERANCE (6px)
+```
+
+Đứng yên sẵn giữa cửa lúc cửa mở xong thì chưa chuyển màn; phải đi hoặc lướt. Hồi sinh sau khi đã tra chìa thì `_ready()` dựng cửa ở khung mở cuối cùng. `level_6_controller.gd` không cho đổi nhân vật (A) khi group `cutscene_lock` còn node.
 
 ### Skills
 
@@ -366,9 +404,65 @@ save cũ dựng game lên.
 save; gọi với một màn cụ thể (nút Restart và màn hình chọn màn đang dùng) thì
 không đụng tới file.
 
+### Save Point / Checkpoint
+
+`save_point.tscn` (`Area2D`, layer 0, mask 2) là điểm hồi sinh trong màn, dùng ở level 3–8.
+
+```text
+body_entered (player)
+  -> GameState.activate_checkpoint(global_position + spawn_offset)
+  -> cờ phấp phới một lần (khung 1..3) rồi đứng yên ở khung 4
+  -> Glow loé lên GLOW_BURST_ENERGY rồi dịu về GLOW_ENERGY, Sparks bắn tia lửa
+_ready: GameState.is_checkpoint_active() -> khung 4 + đèn sáng sẵn, không loé lại
+```
+
+`assets/sprites/save_point.png` là sprite sheet 5 khung 64x64: khung 0 chưa kích hoạt (cờ màu trầm, ngọc tắt), khung 1–3 phấp phới dịu dần, khung 4 đã kích hoạt. Cờ dùng bảng màu tóc Asura, chữ thập đỏ đậm viền vàng ở giữa. Save point không còn hạ `modulate`; độ tối của trạng thái chưa kích hoạt nằm sẵn trong màu vẽ.
+
+### Crystal Key (Level 6)
+
+Chìa khoá theo màn được lưu trong `GameState` giống sao và rương: `_level_keys` là `scene_path -> { key_id: KeyState }` với `KeyState.HELD` / `KeyState.USED`, phát signal `keys_changed`. API: `collect_key()`, `use_key()`, `has_key()` (đang cầm), `is_key_collected()`, `is_key_used()`. `clear_level_progress()` xoá cả chìa.
+
+```text
+decor-big-crystal (key_id = "crystal_key") bị chém / bắn vỡ
+  -> GameState.collect_key()            # ghi nhận ngay, chết giữa chừng vẫn giữ chìa
+  -> CrystalKey sinh ở current_scene, trồi lên có hào quang (play_reveal)
+  -> hào quang tắt dần trên đường bay về ô KeyHUD (fly_to, đích tính lại mỗi frame)
+  -> KeyHUD.receive_key(): ô nảy lên + tiếng power_up
+rock_door: xem mục Door
+```
+
+- `CrystalKey` tự chạy chuỗi hiệu ứng trên chính nó vì pha lê `queue_free()` ngay sau animation vỡ.
+- `glowing = false` tắt hào quang (quầng sáng, tia sáng, hạt, `PointLight2D`). Chìa trên HUD và chìa bay vào cửa đều không phát sáng; chỉ lúc vừa rơi ra mới sáng.
+- Toạ độ thế giới ↔ màn hình đổi qua `get_viewport().get_canvas_transform()`; scale được chia cho zoom camera (`world_scale_for_hud()`) để chìa không giật kích thước khi chạm ô HUD.
+- Hồi sinh sau khi đã lấy chìa: pha lê có `key_id` tự `queue_free()` trong `_ready()`, `KeyHUD` hiện ô ngay nếu `has_key()`.
+
+### HUD Và Phong Cách Pixel
+
+Góc trái trên: nút menu `PauseMenu/MenuButton` (12,12)–(48,48), ô chìa `KeyHUD/Slot` ngay dưới (12,56)–(48,92), cụm chân dung `CharacterHUD/Portraits` từ x=56. `StarHUD` ở góc phải trên.
+
+Khung UI không dùng `StyleBoxFlat` bo góc nữa mà dùng `StyleBoxTexture` 9-slice vẽ pixel (mỗi pixel nghệ thuật = 2x2 pixel màn hình):
+
+| Resource | Texture | Dùng cho |
+| --- | --- | --- |
+| `nodes/ui/styles/frame_gold.tres` | `assets/sprites/ui/frame_gold.png` | Nút menu (thường), khung chân dung nhân vật đang điều khiển |
+| `nodes/ui/styles/frame_stone.tres` | `frame_stone.png` | Chân dung nhân vật còn lại, ô chìa khoá |
+| `nodes/ui/styles/menu_button_hover.tres` / `menu_button_pressed.tres` | `frame_gold_hover.png` / `frame_gold_pressed.png` | Nút menu khi rê chuột / nhấn |
+| `nodes/ui/styles/frame_mini_gold.tres` | `frame_mini_gold.png` | Badge đếm giờ đổi nhân vật |
+| `nodes/ui/styles/button_focus.tres` | `frame_gold_outline.png` | Nút trong bảng pause khi đang được chọn |
+
+`pause_menu.tscn` dùng cùng texture trong các `StyleBoxTexture` nội bộ (khung bảng, khung chân dung, badge phím). Chân dung chỉ lấy phần đầu nhân vật (Asura `Rect2(16, 0, 32, 32)`, Serelyn `Rect2(32, 32, 32, 32)`, giống `CharacterHUD`) phóng 2x vào ô 64x64. Bảng rộng cố định 440px; mỗi hàng kỹ năng là icon 32x32 không khung (`StyleBox_skill_icon` là `StyleBoxEmpty` lề 4px) + cột chữ gồm dòng `Text/Top` (tên bên trái, badge phím dồn phải) và `Text/Desc` tự xuống dòng. Ba nút nằm trong `VBox/Buttons`, dùng `frame_stone.tres` khi thường, `button_focus.tres` (`frame_gold_outline.png`, viền vàng lõi trong suốt) khi focus, `menu_button_hover/pressed.tres` khi rê chuột / nhấn. Icon menu là `assets/sprites/ui/icon_menu.png`. `CharacterHUD._set_card()` đổi giữa `frame_gold.tres` và `frame_stone.tres` thay vì đổi màu viền.
+
+### Projectile Effects
+
+**Đạn SpitterSlime** (`spitter_slime_bullet.tscn`): sprite sheet `assets/sprites/enemies/spitter_slime_bullet_sheet.png`, hàng trên `fly` 4 khung (giọt độc co giãn, xoay theo `velocity.angle()`), hàng dưới `pop` 5 khung (vỡ toé). Vệt đuôi là `CPUParticles2D` `Trail` (toạ độ thế giới) thay cho vòng tròn vẽ bằng `_draw()`. Đèn `Glow` phập phồng khi bay, tắt dần lúc vỡ. Va chạm, quỹ đạo và khói độc không đổi.
+
+**Mũi tên Serelyn** (`serelyn_arrow.tscn`): giữ nguyên sprite gốc `Serelyn-arrow.png`; hiệu ứng nằm ở node con `Sprite2D/Fx` (`serelyn_arrow_fx.png`, 3 khung: vệt sáng sau đuôi + đốm lấp lánh trước mũi, vẽ phía sau mũi tên). `launch()` sinh `effects/serelyn_arrow_muzzle.tscn` tại điểm bắn; mỗi lần ray trúng bất cứ gì sinh `effects/serelyn_arrow_impact.tscn` (trúng enemy vẫn có thêm `hit_effect.tscn` như cũ). `GreenGlow` ~2.2 có nhấp nháy.
+
+**Chặn bắn xuyên tường:** điểm sinh tên nằm trước thân Serelyn 30px. `serelyn_controller.gd._clamp_shot_origin()` bắn ray địa hình (mask 1) từ thân ra điểm đó; có tường thì kéo điểm bắn về cách mặt tường 1px. Hàm này được dùng cho cả điểm bắn thật lẫn điểm ngắm (`_get_targeting_origin`), nên áp sát tường thì tên cắm vào tường và không tự ngắm được mục tiêu bên kia.
+
 ### Level 4 Bat Ambush
 
-`TreasureChest` phát signal `opened` đúng lúc người chơi mở rương và không quan tâm ai nghe. `scripts/level_4_controller.gd` (gắn ở node gốc `Level4`) nối vào signal đó:
+`TreasureChest` phát signal `opened` đúng lúc người chơi mở rương và không quan tâm ai nghe. `scripts/chest_ambush_controller.gd` (gắn ở node gốc `Level4`, dùng được cho mọi màn có `ChestList/TreasureChest` và `BatList`) nối vào signal đó:
 
 ```text
 _ready
@@ -403,9 +497,19 @@ The project does not use `CanvasModulate`. Darkness is faked by lowering each ob
 | `pendulum_trap.tscn` root | 0.6 |
 | `platforms/pushable_*_crate.tscn` root | 0.6 |
 
-Light sources: a `PointLight2D` under `Asura` in each level, one under the fire trap's `AnimatedSprite2D`, and one under the torch root.
+Light sources: a `PointLight2D` under `Asura` in each level, one under the fire trap's `AnimatedSprite2D`, and one under the torch root. Các nguồn sáng thêm sau:
 
-New gameplay sprites must lower their `modulate` in line with the table above; otherwise they stay at full brightness and appear unaffected by the lights.
+| Node | Ghi chú |
+| --- | --- |
+| `save_point.tscn/Glow` | Vàng ấm, chỉ bật khi đã kích hoạt, 0.75 (loé 1.8 lúc chạm) |
+| `decor-*-crystal.tscn/Glow` | Xanh, nhấp nháy bằng `AnimationPlayer` |
+| `items/crystal_key.tscn/Light` | Chỉ sáng khi `glowing` (lúc vừa rơi khỏi pha lê) |
+| `spitter_slime_bullet.tscn/Glow` | Xanh lá, phập phồng quanh 1.0 |
+| `serelyn_arrow.tscn/GreenGlow` | Xanh lá, ~2.2 có nhấp nháy |
+
+`rock_door.tscn/AnimatedSprite2D` đặt `light_mask = 0` nên không bị đèn tác động.
+
+New gameplay sprites must lower their `modulate` in line with the table above; otherwise they stay at full brightness and appear unaffected by the lights. Ngoại lệ: sprite nào đã vẽ sẵn tông tối cho trạng thái "tắt" (như `save_point.png` khung 0) thì để `modulate` trắng.
 
 ### Music
 
@@ -421,7 +525,11 @@ New gameplay sprites must lower their `modulate` in line with the table above; o
 | `thorn.tscn` `Hazard` | 0 | 2 |
 | `thorn.tscn` `TriggerArea` | 0 | 2 |
 | `pendulum_trap.tscn` `Pivot/Ball` | 0 | 2 |
-| `door.tscn` `OpenArea` / `PassArea` | 0 | 3 |
+| `door.tscn`, `rock_door.tscn` `OpenArea` / `PassArea` | 0 | 3 |
+| `save_point.tscn` | 0 | 2 |
+| `decor/decor-big-crystal.tscn` | 1 + 3 | 0 |
+| `decor/decor-big-crystal.tscn` `SlipSensor` | 0 | 2 |
+| `enemies/spitter_slime_bullet.tscn` | 3 | 0 |
 | `killzone.tscn` | 0 | 2 |
 | `items/coin.tscn` | 0 | 2 |
 | `platforms/pushable_steel_crate.tscn` | 1 | 1 |
@@ -437,7 +545,11 @@ Layer meanings:
 | 2 | Player |
 | 3 | Enemies và vật chém vỡ được (`AttackHitbox` chỉ mask lớp này) |
 | 4 | Dây có thể bị tên của Serelyn bắn đứt |
+| 5 | Vùng trúng tên mở rộng của enemy (`SerelynArrow.ARROW_AREA_MASK`), không ảnh hưởng va chạm thân |
 
+Ray của `SerelynArrow` quét layer 1, 3, 4 (`HIT_MASK`) cộng area layer 5. Ray chặn bắn xuyên tường của Serelyn và ray địa hình của đạn SpitterSlime chỉ quét layer 1.
+
+Group dùng trong code: `player`, `enemy`, `breakable`, `dialogue_actors`, `star_hud`, `pause_menu`, `key_hud` (để tìm `KeyHUD`), `cutscene_lock` (có node thì không cho đổi nhân vật). Chỉ `player` được khai báo trong `project.godot`.
 Conventions:
 
 - Player scenes sit on layer 2 and belong to the `player` group.
@@ -452,6 +564,6 @@ Conventions:
 - A level only places objects and configures instances.
 - The player only manages its own input, movement, animation and death state.
 - A trap only detects collisions and reports to the game state.
-- A door only handles opening and scene transitions.
+- A door only handles opening (kể cả tra chìa) and scene transitions.
 - `GameState` only manages global state, the game over overlay and restarting.
 - The assets folder only holds visual/audio/font data.

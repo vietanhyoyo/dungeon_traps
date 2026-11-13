@@ -18,8 +18,9 @@ Sau hội thoại, `scripts/level_6_controller.gd` nhận phím A để chuyển
 và Serelyn. Nhân vật được chọn xuất hiện tại vị trí nhân vật hiện tại, căn theo
 đáy capsule. Camera và `PointLight2D` đi theo nhân vật mới; nhân vật còn lại bị
 ẩn và tắt va chạm. Mỗi lần chuyển có vòng sáng màu riêng và khóa A đến khi hiệu
-ứng kết thúc. `ui/character_hud.tscn` hiển thị portrait cắt từ ảnh idle và làm
-sáng viền của nhân vật đang được điều khiển.
+ứng kết thúc. `ui/character_hud.tscn` hiển thị portrait cắt từ ảnh idle; nhân
+vật đang được điều khiển có khung pixel vàng (`frame_gold.tres`), nhân vật còn
+lại có khung đá xám (`frame_stone.tres`) và mờ đi.
 
 Level 7 không đặt Serelyn làm NPC trong scene. Nếu dữ liệu lưu cho biết cô đã
 được kết nạp, controller tạo dạng nhân vật có thể điều khiển tại vị trí Asura
@@ -41,7 +42,7 @@ Nhấn C để phát `attack` trên mặt đất hoặc `jump_attack` khi đang 
 Trong `jump_attack`, điều khiển trái/phải giống lúc nhảy thường: Serelyn di
 chuyển và quay mặt theo hướng đang bấm, rồi dừng ngang khi thả nút. Khi animation
 kết thúc, cô bắn `characters/serelyn_arrow.tscn` theo hướng đang nhìn. Tên bay
-ngang, có đèn xanh lá và kiểm tra va chạm với địa hình cũng như enemy.
+900 px/giây, có đèn xanh lá và kiểm tra va chạm với địa hình cũng như enemy.
 
 ## Ngắm Và Bắn Tên
 
@@ -59,10 +60,52 @@ mục tiêu cao hơn 15 độ dùng `attack_high2`. Vị trí sinh tên được
 khớp với tay và dây cung trong hai animation này. Nếu enemy thấp hơn quá 8 px,
 cô dùng `attack_low` và hạ thấp vị trí sinh tên.
 
-Tên làm vỡ thùng gỗ thuộc group `breakable`. Thùng sắt chặn tên nhưng không bị
-phá. Khi trúng enemy trong camera, tên tạo cùng `effects/hit_effect.tscn` với
-đòn chém của Asura rồi gọi `die()` của enemy. Phím A bị khóa khi đang hội thoại,
-tạm dừng hoặc game over.
+Tên làm vỡ thùng gỗ và pha lê thuộc group `breakable`. Thùng sắt chặn tên nhưng
+không bị phá. Khi trúng enemy trong camera, tên tạo cùng `effects/hit_effect.tscn`
+với đòn chém của Asura rồi gọi `take_damage(1)` nếu enemy có hàm này, ngược lại
+gọi `die()`. Phím A bị khóa khi đang hội thoại, tạm dừng, game over hoặc khi đang
+có cảnh tra chìa vào cửa (group `cutscene_lock`).
+
+### Chặn Bắn Xuyên Tường
+
+Vị trí sinh tên nằm trước thân Serelyn 30 px (`ARROW_SPAWN_OFFSET.x`, cùng giá
+trị cho các tư thế `HIGH_` / `LOW_`). Khi cô áp sát tường, điểm này đã nằm ở phía
+bên kia tường. Vì cả tia ngắm lẫn đường bay của tên đều bắt đầu từ điểm sinh, tên
+từng xuyên qua tường và trúng enemy phía sau.
+
+`_clamp_shot_origin(origin)` sửa lỗi này: bắn một ray địa hình
+(`SHOT_BLOCKING_MASK = 1`) từ `Vector2(global_position.x, origin.y)` (thân
+Serelyn, cùng độ cao với điểm sinh) tới `origin`. Nếu trúng địa hình, điểm sinh
+được kéo về cách mặt tường `SHOT_WALL_MARGIN` (1 px) về phía Serelyn. Hàm được
+gọi ở ba chỗ:
+
+| Chỗ gọi | Tác dụng |
+| --- | --- |
+| Lúc nhấn C (`attack_origin`) | Chọn mục tiêu và animation từ điểm đã kéo về |
+| `_get_targeting_origin()` | Tia ngắm theo từng tư thế cũng không xuyên tường |
+| `_on_animation_finished()` | Tên được tạo sát mặt tường, ray đầu tiên trúng tường ngay |
+
+Kết quả: áp sát tường thì tên cắm vào tường (có hiệu ứng toé sáng), và
+Serelyn không tự ngắm được mục tiêu bên kia tường nên bắn thẳng. Pha lê và thùng
+cũng nằm trên layer 1, nên đứng sát chúng thì tên vẫn trúng và làm vỡ như bình
+thường.
+
+### Hiệu Ứng Mũi Tên
+
+Hình mũi tên giữ nguyên `assets/sprites/serelyn/Serelyn-arrow.png`; hiệu ứng nằm
+ở các lớp riêng:
+
+- `Sprite2D/Fx` (`serelyn_arrow_fx.png`, 3 khung 64x64, 18 khung/giây, vẽ phía
+  sau mũi tên): vệt sáng xanh sau đuôi và đốm lấp lánh trước chóp mũi.
+- `GreenGlow`: `PointLight2D` ở đầu mũi tên, khoảng 2.2 có nhấp nháy nhẹ.
+- `launch()` sinh `effects/serelyn_arrow_muzzle.tscn` (loé sáng 4 khung) tại điểm
+  bắn, xoay theo hướng bắn.
+- Mỗi khi ray trúng bất cứ thứ gì, tên sinh `effects/serelyn_arrow_impact.tscn`
+  (sao 8 cánh toé ra rồi tan, 5 khung). Trúng enemy thì vẫn có thêm
+  `hit_effect.tscn` như trên.
+
+Hai hiệu ứng được gắn vào `current_scene` nên không bị xoá cùng mũi tên. Animation
+của nhân vật Serelyn không thay đổi.
 
 ## Chịu Đòn, Chết Và Kỹ Năng Chung
 

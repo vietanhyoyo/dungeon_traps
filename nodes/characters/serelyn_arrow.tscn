@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://clmj0nks18c67" path="res://scripts/actors/serelyn_arrow.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://e826h2i3btyw" path="res://assets/sprites/serelyn/Serelyn-arrow.png" id="2_arrow"]
+[ext_resource type="Texture2D" path="res://assets/sprites/serelyn/serelyn_arrow_fx.png" id="3_fx"]
 
 [sub_resource type="Gradient" id="Gradient_arrow_glow"]
 offsets = PackedFloat32Array(0, 0.25, 1)
@@ -21,10 +22,16 @@ script = ExtResource("1_script")
 texture_filter = 1
 texture = ExtResource("2_arrow")
 
+[node name="Fx" type="Sprite2D" parent="Sprite2D"]
+show_behind_parent = true
+texture_filter = 1
+texture = ExtResource("3_fx")
+hframes = 3
+
 [node name="GreenGlow" type="PointLight2D" parent="." unique_id=1664280239]
 position = Vector2(15, 0)
 color = Color(0.25, 1, 0.3, 1)
-energy = 4.94
+energy = 2.2
 shadow_enabled = true
 texture = SubResource("GradientTexture2D_arrow_glow")
 texture_scale = 0.76

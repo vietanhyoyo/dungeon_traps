@@ -23,6 +23,10 @@ const ARROW_SCENE := preload("res://nodes/characters/serelyn_arrow.tscn")
 # Tâm texture mũi tên đặt sao cho thân tên nối tiếp đúng dây cung ở frame cuối
 # của animation attack: đầu tên nằm ở khoảng x=59, y=58 trong ô sprite 96x96.
 const ARROW_SPAWN_OFFSET := Vector2(30.0, 13.0)
+## Địa hình chặn tên giữa thân Serelyn và điểm tạo tên (xem _clamp_shot_origin).
+const SHOT_BLOCKING_MASK := 1
+## Điểm bắn bị kéo về cách mặt tường bấy nhiêu px, để tên chạm tường ở frame đầu.
+const SHOT_WALL_MARGIN := 1.0
 # Ở các animation attack_high, dây cung và tay kéo cung nằm cao hơn khoảng 15 px
 # so với đòn thường, nên mũi tên cũng cần xuất hiện ở vị trí cao hơn để không lệch khỏi cung.
 const HIGH_ARROW_SPAWN_OFFSET := Vector2(30.0, -2.0)
@@ -176,7 +180,9 @@ func _physics_process(delta: float) -> void:
 	if is_controlled and not is_attacking and Input.is_action_just_pressed("attack"):
 		is_attacking = true
 		var facing := -1.0 if sprite.flip_h else 1.0
-		var attack_origin := global_position + Vector2(ARROW_SPAWN_OFFSET.x * facing, ARROW_SPAWN_OFFSET.y)
+		var attack_origin := _clamp_shot_origin(
+			global_position + Vector2(ARROW_SPAWN_OFFSET.x * facing, ARROW_SPAWN_OFFSET.y)
+		)
 		var target_info := _find_arrow_target(attack_origin, facing, is_on_floor())
 		_attack_target = target_info.get("target") as Node2D
 		_attack_aim_local = target_info.get("local_point", Vector2.ZERO)
@@ -306,7 +312,9 @@ func _on_animation_finished() -> void:
 	if is_controlled and not is_dead and not is_hurt:
 		var facing := -1.0 if sprite.flip_h else 1.0
 		var spawn_offset := _get_arrow_spawn_offset()
-		var origin := global_position + Vector2(spawn_offset.x * facing, spawn_offset.y)
+		var origin := _clamp_shot_origin(
+			global_position + Vector2(spawn_offset.x * facing, spawn_offset.y)
+		)
 		var arrow: SerelynArrow = ARROW_SCENE.instantiate()
 		get_tree().current_scene.add_child(arrow)
 		arrow.launch(origin, _get_arrow_direction(origin, facing))
@@ -457,7 +465,23 @@ func _get_targeting_origin(aim_point: Vector2, facing: float) -> Vector2:
 		offset = HIGH_ARROW_SPAWN_OFFSET
 	elif vertical_offset > HORIZONTAL_ATTACK_VERTICAL_TOLERANCE:
 		offset = LOW_ARROW_SPAWN_OFFSET
-	return global_position + Vector2(offset.x * facing, offset.y)
+	return _clamp_shot_origin(global_position + Vector2(offset.x * facing, offset.y))
+
+
+## Điểm tạo tên nằm trước thân Serelyn ARROW_SPAWN_OFFSET.x px. Áp sát tường thì
+## điểm đó đã ở bên kia tường, nên tên (và tia ngắm) xuyên qua được. Kéo điểm
+## bắn lùi về sát mặt tường: tên cắm vào tường ngay, không ngắm xuyên tường.
+func _clamp_shot_origin(origin: Vector2) -> Vector2:
+	var from := Vector2(global_position.x, origin.y)
+	if from.is_equal_approx(origin):
+		return origin
+	var query := PhysicsRayQueryParameters2D.create(from, origin)
+	query.collision_mask = SHOT_BLOCKING_MASK
+	var hit := get_world_2d().direct_space_state.intersect_ray(query)
+	if hit.is_empty():
+		return origin
+	var hit_position: Vector2 = hit["position"]
+	return hit_position + (from - origin).normalized() * SHOT_WALL_MARGIN
 
 
 func _is_inside_camera(target: Node2D) -> bool:
