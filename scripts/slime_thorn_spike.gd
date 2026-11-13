@@ -17,8 +17,8 @@ class_name SlimeThornSpike
 ## ngang màn hình (360px ở zoom 1.6) một chút. Để dài hơn là gai bay ngang qua cả
 ## hang rồi đâm vào người chơi từ ngoài khung hình.
 const LIFETIME := 2.5
-const POP_DURATION := 0.12
-const POP_SCALE := Vector2(1.7, 1.7)
+## Quầng sáng mờ dần trong lúc animation "pop" (4 khung, 24 khung/giây) chạy.
+const HALO_FADE_DURATION := 0.15
 ## Bit 1 = lớp va chạm của tile map, dùng để biết gai cắm vào tường.
 const TERRAIN_MASK := 1
 const DEFEAT_SOUND := preload("res://assets/sounds/freesound_community-poof-80161.mp3")
@@ -32,7 +32,9 @@ const HIT_EFFECT_SCENE := preload("res://nodes/effects/hit_effect.tscn")
 var is_dead := false
 var _age := 0.0
 
-@onready var sprite: Sprite2D = $Sprite2D
+@onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
+@onready var halo: Sprite2D = $Halo
+@onready var trail: CPUParticles2D = $Trail
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var killzone: Area2D = $Killzone
 
@@ -45,6 +47,8 @@ func launch(from: Vector2, initial_velocity: Vector2) -> void:
 	# Sprite vẽ mũi gai chĩa sang phải, nên xoay cả node theo hướng bay là đủ.
 	# Hitbox là hình tròn nên xoay theo cũng không đổi hình dạng va chạm.
 	rotation = initial_velocity.angle()
+	# Hạt vệt đuôi dùng toạ độ thế giới: xoá hạt sinh ra ở vị trí trước launch().
+	trail.restart()
 
 
 func _physics_process(delta: float) -> void:
@@ -117,10 +121,12 @@ func _pop() -> void:
 	collision_shape.set_deferred("disabled", true)
 	killzone.set_deferred("monitoring", false)
 
-	var pop_tween := create_tween().set_parallel(true)
-	pop_tween.tween_property(sprite, "scale", POP_SCALE, POP_DURATION)
-	pop_tween.tween_property(sprite, "modulate:a", 0.0, POP_DURATION)
-	await pop_tween.finished
+	# Gai băng vỡ thành các mảnh văng ra; vệt đuôi ngừng sinh hạt mới.
+	trail.emitting = false
+	sprite.play(&"pop")
+	var halo_tween := create_tween()
+	halo_tween.tween_property(halo, "modulate:a", 0.0, HALO_FADE_DURATION)
+	await sprite.animation_finished
 
 	queue_free()
 

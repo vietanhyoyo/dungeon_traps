@@ -8,7 +8,6 @@
 [ext_resource type="Texture2D" uid="uid://mt13ehvoet3d" path="res://assets/sprites/shinn_asura/Shinn-Asura-jump.png" id="5_i2l0f"]
 [ext_resource type="Texture2D" uid="uid://cs2bc2x1aajya" path="res://assets/sprites/shinn_asura/Shinn-Asura-wall-slide.png" id="5_wall_slide"]
 [ext_resource type="Texture2D" uid="uid://doeukudxrqnqn" path="res://assets/sprites/shinn_asura/Shinn-Asura-death.png" id="6_death"]
-[ext_resource type="Texture2D" uid="uid://bvsfcqyddstks" path="res://assets/sprites/shinn_asura/Shinn-Asura-jump-attack.png" id="7_341xe"]
 [ext_resource type="AudioStream" uid="uid://ccnfq8brrrccs" path="res://assets/sounds/eaglaxle-generic-footstep-4-530778.mp3" id="7_running"]
 [ext_resource type="Texture2D" uid="uid://dqt66prc0kuan" path="res://assets/sprites/shinn_asura/Shinn-Asura-slide.png" id="8_1bcgc"]
 [ext_resource type="Texture2D" uid="uid://b62b27guhyjs6" path="res://assets/sprites/shinn_asura/Shinn-Asura-jump-attack2.png" id="8_32pva"]
@@ -16,6 +15,7 @@
 [ext_resource type="Texture2D" uid="uid://dhkqrhyf67gra" path="res://assets/sprites/shinn_asura/Shinn-Asura-slide-attack.png" id="9_dhu25"]
 [ext_resource type="AudioStream" uid="uid://cmq1qt6vxrb5r" path="res://assets/sounds/slide.wav" id="10_slide"]
 [ext_resource type="AudioStream" uid="uid://bc5h6c8vmux1j" path="res://assets/sounds/wall_slide.wav" id="11_wall_slide_sound"]
+[ext_resource type="Texture2D" uid="uid://dlvh70igofaqu" path="res://assets/sprites/shinn_asura/Shinn-Asura-jump-attack-smooth.png" id="ja_smooth"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_w1tus"]
 atlas = ExtResource("2_u1ow0")
@@ -105,17 +105,25 @@ region = Rect2(256, 0, 64, 64)
 atlas = ExtResource("5_cv6pu")
 region = Rect2(0, 0, 64, 64)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_q60cs"]
-atlas = ExtResource("7_341xe")
+[sub_resource type="AtlasTexture" id="AtlasTexture_ja_smooth_0"]
+atlas = ExtResource("ja_smooth")
 region = Rect2(0, 0, 110, 94)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ilkss"]
-atlas = ExtResource("7_341xe")
+[sub_resource type="AtlasTexture" id="AtlasTexture_ja_smooth_1"]
+atlas = ExtResource("ja_smooth")
 region = Rect2(110, 0, 110, 94)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_e4ivm"]
-atlas = ExtResource("7_341xe")
+[sub_resource type="AtlasTexture" id="AtlasTexture_ja_smooth_2"]
+atlas = ExtResource("ja_smooth")
 region = Rect2(220, 0, 110, 94)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ja_smooth_3"]
+atlas = ExtResource("ja_smooth")
+region = Rect2(330, 0, 110, 94)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ja_smooth_4"]
+atlas = ExtResource("ja_smooth")
+region = Rect2(440, 0, 110, 94)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_edhg0"]
 atlas = ExtResource("8_32pva")
@@ -321,18 +329,24 @@ animations = [{
 "speed": 6.0
 }, {
 "frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_q60cs")
+"duration": 1.2,
+"texture": SubResource("AtlasTexture_ja_smooth_0")
+}, {
+"duration": 0.7,
+"texture": SubResource("AtlasTexture_ja_smooth_1")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_ilkss")
+"texture": SubResource("AtlasTexture_ja_smooth_2")
 }, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_e4ivm")
+"duration": 0.9,
+"texture": SubResource("AtlasTexture_ja_smooth_3")
+}, {
+"duration": 0.8,
+"texture": SubResource("AtlasTexture_ja_smooth_4")
 }],
 "loop": 0,
 "name": &"jump_attack",
-"speed": 10.0
+"speed": 16.0
 }, {
 "frames": [{
 "duration": 1.0,

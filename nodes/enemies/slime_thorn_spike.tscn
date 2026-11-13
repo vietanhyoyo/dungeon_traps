@@ -1,8 +1,89 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/slime_thorn_spike.gd" id="1_spike"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/slime-thorn-spike.png" id="2_spike"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/slime_thorn_spike_sheet.png" id="2_sheet"]
 [ext_resource type="PackedScene" uid="uid://dhq0pa6na6p7k" path="res://nodes/killzone.tscn" id="3_killzone"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fly_0"]
+atlas = ExtResource("2_sheet")
+region = Rect2(0, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fly_1"]
+atlas = ExtResource("2_sheet")
+region = Rect2(24, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fly_2"]
+atlas = ExtResource("2_sheet")
+region = Rect2(48, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pop_0"]
+atlas = ExtResource("2_sheet")
+region = Rect2(0, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pop_1"]
+atlas = ExtResource("2_sheet")
+region = Rect2(24, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pop_2"]
+atlas = ExtResource("2_sheet")
+region = Rect2(48, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pop_3"]
+atlas = ExtResource("2_sheet")
+region = Rect2(72, 24, 24, 24)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_spike"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fly_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fly_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fly_2")
+}],
+"loop": true,
+"name": &"fly",
+"speed": 14.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pop_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pop_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pop_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pop_3")
+}],
+"loop": false,
+"name": &"pop",
+"speed": 24.0
+}]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_add"]
+blend_mode = 1
+
+[sub_resource type="Gradient" id="Gradient_halo"]
+offsets = PackedFloat32Array(0, 0.45, 1)
+colors = PackedColorArray(0.69, 0.94, 0.99, 0.5, 0.024, 0.48, 0.76, 0.28, 0.004, 0.34, 0.68, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_halo"]
+gradient = SubResource("Gradient_halo")
+width = 28
+height = 28
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="Gradient" id="Gradient_trail"]
+offsets = PackedFloat32Array(0, 0.35, 1)
+colors = PackedColorArray(0.69, 0.94, 0.99, 1, 0.024, 0.48, 0.76, 0.9, 0.004, 0.34, 0.68, 0)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_hit"]
 radius = 10.0
@@ -16,8 +97,30 @@ collision_layer = 4
 collision_mask = 0
 script = ExtResource("1_spike")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("2_spike")
+[node name="Halo" type="Sprite2D" parent="."]
+material = SubResource("CanvasItemMaterial_add")
+texture = SubResource("GradientTexture2D_halo")
+
+[node name="Trail" type="CPUParticles2D" parent="."]
+position = Vector2(-6, 0)
+amount = 10
+lifetime = 0.28
+local_coords = false
+emission_shape = 1
+emission_sphere_radius = 1.5
+spread = 180.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 2.0
+initial_velocity_max = 8.0
+scale_amount_min = 1.0
+scale_amount_max = 2.0
+color_ramp = SubResource("Gradient_trail")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_spike")
+animation = &"fly"
+autoplay = "fly"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_hit")

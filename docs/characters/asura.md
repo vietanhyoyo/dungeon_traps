@@ -26,7 +26,7 @@ trên không, Asura dùng `jump_attack`, hoặc `jump_attack2` sau khi mở kỹ
 ## Spin Jump Attack
 
 Rương trong `level_3` trao kỹ năng `spin_jump_attack`. Khi chưa mở kỹ năng, đòn
-đánh trên không là `jump_attack` (3 khung, `JumpShape` 52x78). Khi đã mở,
+đánh trên không là `jump_attack` (5 khung, `JumpShape` 52x78). Khi đã mở,
 `get_jump_attack_anim()` chọn `jump_attack2` (4 khung, 110x110), còn
 `get_attack_shape()` ánh xạ đòn này sang `SpinShape` (84x96 tại `(14, -3)`).
 Hitbox vươn ra sau lưng lẫn phía trước, theo đường kiếm quét trọn một vòng.
@@ -36,9 +36,28 @@ lại khi chạm đất, cùng lúc với `air_slide_used` và `wall_jump_used`.
 không hồi lượt lộn. Khi chưa mở kỹ năng, `jump_attack` cũ vẫn có thể dùng liên
 tiếp giữa không trung.
 
-`jump_attack2` chạy ở tốc độ animation `16.0` (một vòng lộn mất 0,25 giây), so
-với `10.0` của `jump_attack`. Asura đứng yên theo phương ngang trong lúc tấn
-công, nên animation ngắn hơn giúp nhân vật không bị treo lâu giữa không trung.
+`jump_attack2` chạy ở tốc độ animation `16.0` (một vòng lộn mất 0,25 giây).
+`jump_attack` chạy ở `14.0` với độ dài khung không đều, tổng khoảng 0,33 giây.
+Asura đứng yên theo phương ngang trong lúc tấn công, nên animation ngắn giúp
+nhân vật không bị treo lâu giữa không trung.
+
+### Khung Của `jump_attack`
+
+Sprite sheet `Shinn-Asura-jump-attack-smooth.png` (5 khung 110x94) dựng từ
+`Shinn-Asura-jump-attack.png` gốc. Hình nhân vật giữ nguyên, chỉ vệt chém được
+cắt hoặc làm thưa:
+
+| Khung | Nội dung | `duration` |
+| --- | --- | --- |
+| 0 | Giơ kiếm lấy đà (khung gốc 0) | 1.2 |
+| 1 | Mới: vệt chém quét từ đỉnh tới mũi kiếm, đuôi mảnh dần | 0.7 |
+| 2 | Vệt chém trọn vòng (khung gốc 1) | 1.0 |
+| 3 | Vệt chém mờ (khung gốc 2) | 0.9 |
+| 4 | Mới: vệt chém tan thành nét đứt mảnh | 0.8 |
+
+`update_attack_hitbox()` bật `JumpShape` từ khung 1, tức khoảng 0,086 giây sau
+khi bấm (trước đây 0,1 giây), trùng với lúc kiếm bắt đầu vung. File gốc 3 khung
+vẫn được giữ lại.
 
 ## Wall Double Jump
 
