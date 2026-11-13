@@ -1,16 +1,44 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/spitter_slime_bullet.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://dhbp5dgko86ny" path="res://assets/sprites/enemies/spitter-slime-bullet.png" id="2_sprite"]
 [ext_resource type="PackedScene" uid="uid://dhq0pa6na6p7k" path="res://nodes/killzone.tscn" id="3_killzone"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/spitter_slime_bullet_sheet.png" id="4_sheet"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fly_0"]
-atlas = ExtResource("2_sprite")
+atlas = ExtResource("4_sheet")
 region = Rect2(0, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fly_1"]
-atlas = ExtResource("2_sprite")
+atlas = ExtResource("4_sheet")
 region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fly_2"]
+atlas = ExtResource("4_sheet")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fly_3"]
+atlas = ExtResource("4_sheet")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pop_0"]
+atlas = ExtResource("4_sheet")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pop_1"]
+atlas = ExtResource("4_sheet")
+region = Rect2(32, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pop_2"]
+atlas = ExtResource("4_sheet")
+region = Rect2(64, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pop_3"]
+atlas = ExtResource("4_sheet")
+region = Rect2(96, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pop_4"]
+atlas = ExtResource("4_sheet")
+region = Rect2(128, 32, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_bullet"]
 animations = [{
@@ -20,11 +48,41 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_fly_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fly_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fly_3")
 }],
-"loop": 1,
+"loop": true,
 "name": &"fly",
 "speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pop_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pop_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pop_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pop_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pop_4")
+}],
+"loop": false,
+"name": &"pop",
+"speed": 20.0
 }]
+
+[sub_resource type="Gradient" id="Gradient_trail"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0.66, 0.94, 0.38, 1, 0.36, 0.78, 0.54, 0.9, 0.04, 0.4, 0.2, 0)
 
 [sub_resource type="Gradient" id="Gradient_glow"]
 offsets = PackedFloat32Array(0, 0.25, 1)
@@ -48,8 +106,22 @@ collision_layer = 4
 collision_mask = 0
 script = ExtResource("1_script")
 
+[node name="Trail" type="CPUParticles2D" parent="."]
+amount = 14
+lifetime = 0.35
+local_coords = false
+emission_shape = 1
+emission_sphere_radius = 2.5
+direction = Vector2(0, 1)
+spread = 25.0
+gravity = Vector2(0, 260)
+initial_velocity_min = 4.0
+initial_velocity_max = 14.0
+scale_amount_min = 1.0
+scale_amount_max = 2.0
+color_ramp = SubResource("Gradient_trail")
+
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-self_modulate = Color(1.1, 1.2, 1.1, 1)
 sprite_frames = SubResource("SpriteFrames_bullet")
 animation = &"fly"
 autoplay = "fly"

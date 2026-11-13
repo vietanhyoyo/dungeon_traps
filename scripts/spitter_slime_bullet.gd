@@ -4,15 +4,10 @@ const TOXIC_SMOKE_SCENE := preload("res://nodes/effects/spitter_slime_smoke.tscn
 const GRAVITY := 620.0
 const LIFETIME := 4.0
 const TERRAIN_MASK := 1
-const POP_DURATION := 0.16
-const TRAIL_SPACING := 9.0
-const TRAIL_RADII := [4.0, 3.0, 2.0]
-const TRAIL_COLORS := [
-	Color(0.25, 1.0, 0.35, 0.78),
-	Color(0.25, 1.0, 0.35, 0.52),
-	Color(0.25, 1.0, 0.35, 0.3),
-]
-const MAX_TRAIL_HISTORY := 24
+## Đèn phập phồng nhẹ khi bay; tắt dần lúc vỡ.
+const GLOW_ENERGY := 1.0
+const GLOW_PULSE := 0.18
+const GLOW_FADE_DURATION := 0.25
 const DEFEAT_SOUND := preload("res://assets/sounds/freesound_community-poof-80161.mp3")
 const DEFEAT_SOUND_OFFSET := 0.5
 const HIT_EFFECT_SCENE := preload("res://nodes/effects/hit_effect.tscn")
@@ -22,19 +17,20 @@ const SOUND_ATTENUATION := 1.4
 var is_dead := false
 var _age := 0.0
 var _slash_protection_time_left := 0.0
-var _trail_positions: Array[Vector2] = []
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var killzone: Area2D = $Killzone
 @onready var glow: PointLight2D = $Glow
+@onready var trail: CPUParticles2D = $Trail
 
 
 func launch(from: Vector2, initial_velocity: Vector2) -> void:
 	global_position = from
 	velocity = initial_velocity
-	_trail_positions.clear()
-	_trail_positions.append(from)
+	_face_velocity()
+	# Hạt vệt đuôi dùng toạ độ thế giới: xoá hạt sinh ra ở vị trí trước launch().
+	trail.restart()
 
 
 func _physics_process(delta: float) -> void:
@@ -48,11 +44,12 @@ func _physics_process(delta: float) -> void:
 		return
 
 	velocity.y += GRAVITY * delta
+	_face_velocity()
+	glow.energy = GLOW_ENERGY + GLOW_PULSE * sin(_age * 18.0)
 	var motion := velocity * delta
 	var terrain_hit := _terrain_hit(motion)
 	if terrain_hit.is_empty():
 		global_position += motion
-		_record_trail_position()
 		return
 
 	var terrain_normal: Vector2 = terrain_hit["normal"]
@@ -69,38 +66,10 @@ func _terrain_hit(motion: Vector2) -> Dictionary:
 	return get_world_2d().direct_space_state.intersect_ray(query)
 
 
-func _record_trail_position() -> void:
-	_trail_positions.push_front(global_position)
-	if _trail_positions.size() > MAX_TRAIL_HISTORY:
-		_trail_positions.pop_back()
-	queue_redraw()
-
-
-func _draw() -> void:
-	if is_dead or _trail_positions.is_empty():
-		return
-
-	var trail_index := 0
-	var distance_traveled := 0.0
-	var required_distance := TRAIL_SPACING
-	var newer_position := global_position
-	for older_position in _trail_positions:
-		var segment_length := newer_position.distance_to(older_position)
-		if segment_length > 0.001:
-			while trail_index < TRAIL_RADII.size() and distance_traveled + segment_length >= required_distance:
-				var segment_offset := required_distance - distance_traveled
-				var trail_position := newer_position.lerp(older_position, segment_offset / segment_length)
-				draw_circle(
-					trail_position - global_position,
-					TRAIL_RADII[trail_index],
-					TRAIL_COLORS[trail_index]
-				)
-				trail_index += 1
-				required_distance += TRAIL_SPACING
-			distance_traveled += segment_length
-		newer_position = older_position
-		if trail_index >= TRAIL_RADII.size():
-			break
+## Giọt độc vẽ hướng sang phải: xoay theo vận tốc để đầu luôn đi trước.
+func _face_velocity() -> void:
+	if velocity.length_squared() > 1.0:
+		animated_sprite.rotation = velocity.angle()
 
 
 func _spawn_toxic_smoke() -> void:
@@ -149,18 +118,18 @@ func _pop(emit_toxic_smoke := false) -> void:
 		return
 
 	is_dead = true
-	_trail_positions.clear()
-	queue_redraw()
+	trail.emitting = false
 	if emit_toxic_smoke:
 		_spawn_toxic_smoke()
 	collision_shape.set_deferred("disabled", true)
 	killzone.set_deferred("monitoring", false)
 
-	var pop_tween := create_tween().set_parallel(true)
-	pop_tween.tween_property(animated_sprite, "scale", Vector2(1.8, 1.8), POP_DURATION)
-	pop_tween.tween_property(animated_sprite, "modulate:a", 0.0, POP_DURATION)
-	pop_tween.tween_property(glow, "energy", 0.0, POP_DURATION)
-	await pop_tween.finished
+	# Giọt độc vỡ toé ra thành các giọt nhỏ (animation không xoay theo hướng bay).
+	animated_sprite.rotation = 0.0
+	animated_sprite.play(&"pop")
+	var glow_tween := create_tween()
+	glow_tween.tween_property(glow, "energy", 0.0, GLOW_FADE_DURATION)
+	await animated_sprite.animation_finished
 	queue_free()
 
 
