@@ -1,0 +1,182 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/gentle_bat.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/gentle-bat-sleep.png" id="2_sleep"]
+[ext_resource type="Texture2D" uid="uid://bx2pxupy0clu4" path="res://assets/sprites/enemies/bat-death.png" id="3_death"]
+[ext_resource type="Texture2D" path="res://assets/sprites/effects/sleep-zzz.png" id="4_zzz"]
+
+[sub_resource type="Shader" id="Shader_hit_flash"]
+code = "shader_type canvas_item;
+
+uniform float flash_amount : hint_range(0.0, 1.0) = 0.0;
+uniform vec4 flash_color : source_color = vec4(1.0, 0.96, 0.78, 1.0);
+
+void fragment() {
+	vec4 sprite_color = texture(TEXTURE, UV);
+	sprite_color.rgb = mix(sprite_color.rgb, flash_color.rgb, flash_amount);
+	COLOR = sprite_color * COLOR;
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hit_flash"]
+resource_local_to_scene = true
+shader = SubResource("Shader_hit_flash")
+shader_parameter/flash_amount = 0.0
+shader_parameter/flash_color = Color(1, 0.96, 0.78, 1)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death_0"]
+atlas = ExtResource("3_death")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death_1"]
+atlas = ExtResource("3_death")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death_2"]
+atlas = ExtResource("3_death")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death_3"]
+atlas = ExtResource("3_death")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death_4"]
+atlas = ExtResource("3_death")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death_5"]
+atlas = ExtResource("3_death")
+region = Rect2(320, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_death_6"]
+atlas = ExtResource("3_death")
+region = Rect2(384, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_gentle_bat"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_death_6")
+}],
+"loop": false,
+"name": &"death",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_sleep")
+}],
+"loop": true,
+"name": &"sleep",
+"speed": 1.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_zzz_0"]
+atlas = ExtResource("4_zzz")
+region = Rect2(0, 0, 32, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_zzz_1"]
+atlas = ExtResource("4_zzz")
+region = Rect2(32, 0, 32, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_zzz_2"]
+atlas = ExtResource("4_zzz")
+region = Rect2(64, 0, 32, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_zzz_3"]
+atlas = ExtResource("4_zzz")
+region = Rect2(96, 0, 32, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_zzz_4"]
+atlas = ExtResource("4_zzz")
+region = Rect2(128, 0, 32, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_zzz_5"]
+atlas = ExtResource("4_zzz")
+region = Rect2(160, 0, 32, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_zzz_6"]
+atlas = ExtResource("4_zzz")
+region = Rect2(192, 0, 32, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_zzz_7"]
+atlas = ExtResource("4_zzz")
+region = Rect2(224, 0, 32, 40)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_zzz"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_zzz_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_zzz_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_zzz_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_zzz_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_zzz_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_zzz_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_zzz_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_zzz_7")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(24, 30)
+
+[node name="GentleBat" type="CharacterBody2D" groups=["enemy"]]
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("1_script")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+self_modulate = Color(1.6, 1.6, 1.6, 1)
+material = SubResource("ShaderMaterial_hit_flash")
+position = Vector2(0, 19)
+sprite_frames = SubResource("SpriteFrames_gentle_bat")
+animation = &"sleep"
+autoplay = "sleep"
+
+[node name="Zzz" type="AnimatedSprite2D" parent="."]
+z_index = 5
+self_modulate = Color(1.4, 1.4, 1.4, 1)
+position = Vector2(18, 10)
+sprite_frames = SubResource("SpriteFrames_zzz")
+autoplay = "default"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+position = Vector2(-1, 19)
+shape = SubResource("RectangleShape2D_body")

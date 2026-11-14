@@ -22,7 +22,8 @@
 [ext_resource type="PackedScene" path="res://nodes/decor/decor-grass.tscn" id="21_7atvw"]
 [ext_resource type="PackedScene" uid="uid://dhhgace1srtk8" path="res://nodes/traps/iron_spike_trap.tscn" id="22_7atvw"]
 [ext_resource type="PackedScene" uid="uid://ccnlpdr5ab8c5" path="res://nodes/traps/spike_pit_trap.tscn" id="22_hs26l"]
-[ext_resource type="PackedScene" path="res://nodes/decor/decor-crystal.tscn" id="22_tyfrk"]
+[ext_resource type="PackedScene" uid="uid://bmuubi5ljubla" path="res://nodes/decor/decor-crystal.tscn" id="22_tyfrk"]
+[ext_resource type="PackedScene" path="res://nodes/enemies/gentle_bat.tscn" id="90_gentle_bat"]
 [ext_resource type="Script" uid="uid://b0wfmn0iuxfrh" path="res://scripts/level_6_controller.gd" id="party_controller"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_8pcmo"]
@@ -839,3 +840,8 @@ position = Vector2(3426, 1464)
 [node name="SpikePitTrap" parent="." unique_id=485002641 instance=ExtResource("22_hs26l")]
 z_index = 2
 position = Vector2(2240, 1504)
+
+[node name="GentleBatList" type="Node" parent="." unique_id=1043169028]
+
+[node name="GentleBat1" parent="GentleBatList" unique_id=1239965733 instance=ExtResource("90_gentle_bat")]
+position = Vector2(720, 64)

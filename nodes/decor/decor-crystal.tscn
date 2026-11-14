@@ -2,26 +2,51 @@
 
 [ext_resource type="Texture2D" uid="uid://dboepyltqhrap" path="res://assets/sprites/decor/decor-crystal.png" id="1_crystal"]
 [ext_resource type="Script" uid="uid://bxnga6bbmlgk4" path="res://scripts/decor_crystal.gd" id="2_script"]
+[ext_resource type="Texture2D" path="res://assets/sprites/decor/decor-crystal-break.png" id="3_break"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_crystal_broken_0"]
-atlas = ExtResource("1_crystal")
-region = Rect2(64, 0, 64, 64)
+atlas = ExtResource("3_break")
+region = Rect2(0, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_crystal_broken_1"]
-atlas = ExtResource("1_crystal")
-region = Rect2(128, 0, 64, 64)
+atlas = ExtResource("3_break")
+region = Rect2(96, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_crystal_broken_2"]
-atlas = ExtResource("1_crystal")
-region = Rect2(192, 0, 64, 64)
+atlas = ExtResource("3_break")
+region = Rect2(192, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_crystal_broken_3"]
-atlas = ExtResource("1_crystal")
-region = Rect2(256, 0, 64, 64)
+atlas = ExtResource("3_break")
+region = Rect2(288, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_crystal_broken_4"]
-atlas = ExtResource("1_crystal")
-region = Rect2(320, 0, 64, 64)
+atlas = ExtResource("3_break")
+region = Rect2(384, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_crystal_broken_5"]
+atlas = ExtResource("3_break")
+region = Rect2(480, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_crystal_broken_6"]
+atlas = ExtResource("3_break")
+region = Rect2(576, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_crystal_broken_7"]
+atlas = ExtResource("3_break")
+region = Rect2(672, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_crystal_broken_8"]
+atlas = ExtResource("3_break")
+region = Rect2(768, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_crystal_broken_9"]
+atlas = ExtResource("3_break")
+region = Rect2(864, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_crystal_broken_10"]
+atlas = ExtResource("3_break")
+region = Rect2(960, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_crystal_idle_0"]
 atlas = ExtResource("1_crystal")
@@ -44,10 +69,28 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_crystal_broken_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_crystal_broken_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_crystal_broken_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_crystal_broken_7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_crystal_broken_8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_crystal_broken_9")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_crystal_broken_10")
 }],
-"loop": 0,
+"loop": false,
 "name": &"broken",
-"speed": 14.0
+"speed": 16.0
 }, {
 "frames": [{
 "duration": 1.0,

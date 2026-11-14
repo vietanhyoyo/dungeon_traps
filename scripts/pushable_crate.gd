@@ -34,6 +34,9 @@ const HITTABLE_LAYER := 3
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var fire_sensor := get_node_or_null("FireSensor") as Area2D
+## Scene nào có "BreakSprite" (AnimatedSprite2D, animation "break") thì vỡ bằng
+## animation vẽ sẵn; không có thì dùng mảnh vỡ cắt từ ảnh hộp như cũ.
+@onready var break_sprite := get_node_or_null("BreakSprite") as AnimatedSprite2D
 
 # Hướng bị đẩy trong frame vừa rồi, reset sau mỗi bước physics.
 var _push_direction := 0.0
@@ -106,7 +109,12 @@ func break_apart() -> void:
 	sprite.visible = false
 	_play_break_sound()
 
-	await _play_debris()
+	if break_sprite:
+		break_sprite.visible = true
+		break_sprite.play(&"break")
+		await break_sprite.animation_finished
+	else:
+		await _play_debris()
 	queue_free()
 
 

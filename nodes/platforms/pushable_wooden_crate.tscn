@@ -2,6 +2,92 @@
 
 [ext_resource type="Script" path="res://scripts/pushable_crate.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://drxca7l5urcy2" path="res://assets/sprites/platforms/pushable-wooden-crate.png" id="2_texture"]
+[ext_resource type="Texture2D" path="res://assets/sprites/platforms/wooden-crate-break.png" id="3_break"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_break_0"]
+atlas = ExtResource("3_break")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_break_1"]
+atlas = ExtResource("3_break")
+region = Rect2(96, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_break_2"]
+atlas = ExtResource("3_break")
+region = Rect2(192, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_break_3"]
+atlas = ExtResource("3_break")
+region = Rect2(288, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_break_4"]
+atlas = ExtResource("3_break")
+region = Rect2(384, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_break_5"]
+atlas = ExtResource("3_break")
+region = Rect2(480, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_break_6"]
+atlas = ExtResource("3_break")
+region = Rect2(576, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_break_7"]
+atlas = ExtResource("3_break")
+region = Rect2(672, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_break_8"]
+atlas = ExtResource("3_break")
+region = Rect2(768, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_break_9"]
+atlas = ExtResource("3_break")
+region = Rect2(864, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_break_10"]
+atlas = ExtResource("3_break")
+region = Rect2(960, 0, 96, 96)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_break"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_break_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_break_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_break_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_break_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_break_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_break_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_break_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_break_7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_break_8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_break_9")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_break_10")
+}],
+"loop": false,
+"name": &"break",
+"speed": 16.0
+}]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
 size = Vector2(32, 32)
@@ -16,3 +102,9 @@ texture = ExtResource("2_texture")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_body")
+
+[node name="BreakSprite" type="AnimatedSprite2D" parent="."]
+visible = false
+z_index = 1
+sprite_frames = SubResource("SpriteFrames_break")
+animation = &"break"

@@ -75,6 +75,8 @@ const ATTACK3_ACTIVE_FRAME := 3
 @onready var wall_slide_detector: Area2D = $WallSlideDetector
 @onready var dust_scene = preload("res://nodes/effects/landing_dust.tscn")
 @onready var hit_effect_scene = preload("res://nodes/effects/hit_effect.tscn")
+## Hiệu ứng trúng đòn mạnh: to hơn, có vệt chém chéo và sóng xung kích hai vòng.
+@onready var heavy_hit_effect_scene = preload("res://nodes/effects/hit2_effect.tscn")
 
 var is_attacking = false
 var attack_active_steps = 0
@@ -630,16 +632,29 @@ func hit_enemy(body: Node) -> void:
 	hit_enemies.append(body)
 	spawn_hit_effect(body)
 	if body.has_method("take_damage"):
-		var damage := ATTACK3_DAMAGE if animated_sprite.animation == "attack3" else ATTACK_DAMAGE
-		body.take_damage(damage)
+		body.take_damage(get_current_attack_damage())
 	elif body.has_method("die"):
 		body.die()
+
+
+## Đòn gây sát thương lớn (từ ATTACK3_DAMAGE trở lên) dùng hiệu ứng hit2.
+func is_heavy_hit() -> bool:
+	return get_current_attack_damage() >= ATTACK3_DAMAGE
+
+
+func get_current_attack_damage() -> int:
+	return ATTACK3_DAMAGE if animated_sprite.animation == "attack3" else ATTACK_DAMAGE
 
 
 func spawn_hit_effect(body: Node2D) -> void:
 	# Gắn vào cha của nhân vật chứ không vào mục tiêu: quái và hộp bị queue_free
 	# ngay sau đòn chém, hiệu ứng làm con của chúng sẽ biến mất giữa chừng.
-	var effect: AnimatedSprite2D = hit_effect_scene.instantiate()
+	var heavy := is_heavy_hit()
+	var scene: PackedScene = heavy_hit_effect_scene if heavy else hit_effect_scene
+	var effect: AnimatedSprite2D = scene.instantiate()
+	# Vệt chém của hit2 vẽ cho đòn vung sang phải; quay trái thì lật lại.
+	if heavy:
+		effect.flip_h = animated_sprite.flip_h
 	get_parent().add_child(effect)
 	effect.global_position = body.global_position
 

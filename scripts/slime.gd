@@ -9,7 +9,7 @@ const DAMAGE_ATTACK_DELAY := 1.0
 const MAX_DAMAGE_ATTACK_DELAY := 1.5
 const DEFEAT_SOUND := preload("res://assets/sounds/freesound_community-poof-80161.mp3")
 const DEFEAT_SOUND_OFFSET := 0.5
-const TONGUE_WARNING_FRAME := 7
+const TONGUE_WARNING_FRAME := 9
 
 signal defeated
 
@@ -39,8 +39,8 @@ signal defeated
 ## Các xúc tua sẽ chết theo slime này. Chọn node trong scene từ Inspector.
 @export var dependent_tentacles: Array[NodePath] = []
 
-const TONGUE_HIT_START_FRAME := 10
-const TONGUE_HIT_END_FRAME := 10
+const TONGUE_HIT_START_FRAME := 13
+const TONGUE_HIT_END_FRAME := 13
 
 var direction = 1
 var is_dead := false

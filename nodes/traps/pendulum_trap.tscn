@@ -1,28 +1,106 @@
 [gd_scene format=3]
 
-[ext_resource type="Texture2D" uid="uid://bd4i626ooirn5" path="res://assets/sprites/traps/doom-ball.png" id="1_ball"]
+[ext_resource type="Texture2D" path="res://assets/sprites/traps/pendulum_ball.png" id="1_ball"]
 [ext_resource type="Script" path="res://scripts/pendulum_trap.gd" id="2_script"]
+[ext_resource type="Texture2D" path="res://assets/sprites/traps/pendulum_chain_links.png" id="3_links"]
+[ext_resource type="Texture2D" path="res://assets/sprites/traps/pendulum_anchor.png" id="4_anchor"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ball"]
 radius = 26.0
 
 [node name="PendulumTrap" type="Node2D"]
-modulate = Color(0.6, 0.6, 0.6, 1)
+modulate = Color(0.75, 0.75, 0.75, 1)
 z_index = 4
 scale = Vector2(1.5, 1.5)
 script = ExtResource("2_script")
 
 [node name="Pivot" type="Node2D" parent="."]
+position = Vector2(0, 9)
 
-[node name="Sprite2D" type="Sprite2D" parent="Pivot"]
-position = Vector2(0, 80)
+[node name="Trail" type="Node2D" parent="Pivot"]
+
+[node name="Ghost0" type="Sprite2D" parent="Pivot/Trail"]
+modulate = Color(0.75, 0.78, 1, 0)
+position = Vector2(0, 120)
 texture = ExtResource("1_ball")
+offset = Vector2(0, -2)
+
+[node name="Ghost1" type="Sprite2D" parent="Pivot/Trail"]
+modulate = Color(0.75, 0.78, 1, 0)
+position = Vector2(0, 120)
+texture = ExtResource("1_ball")
+offset = Vector2(0, -2)
+
+[node name="Ghost2" type="Sprite2D" parent="Pivot/Trail"]
+modulate = Color(0.75, 0.78, 1, 0)
+position = Vector2(0, 120)
+texture = ExtResource("1_ball")
+offset = Vector2(0, -2)
+
+[node name="Chain" type="Node2D" parent="Pivot"]
+
+[node name="Link0" type="Sprite2D" parent="Pivot/Chain"]
+position = Vector2(0, 6)
+texture = ExtResource("3_links")
+region_enabled = true
+region_rect = Rect2(0, 0, 12, 18)
+
+[node name="Link1" type="Sprite2D" parent="Pivot/Chain"]
+position = Vector2(0, 18)
+texture = ExtResource("3_links")
+region_enabled = true
+region_rect = Rect2(12, 0, 12, 18)
+
+[node name="Link2" type="Sprite2D" parent="Pivot/Chain"]
+position = Vector2(0, 30)
+texture = ExtResource("3_links")
+region_enabled = true
+region_rect = Rect2(0, 0, 12, 18)
+
+[node name="Link3" type="Sprite2D" parent="Pivot/Chain"]
+position = Vector2(0, 42)
+texture = ExtResource("3_links")
+region_enabled = true
+region_rect = Rect2(12, 0, 12, 18)
+
+[node name="Link4" type="Sprite2D" parent="Pivot/Chain"]
+position = Vector2(0, 54)
+texture = ExtResource("3_links")
+region_enabled = true
+region_rect = Rect2(0, 0, 12, 18)
+
+[node name="Link5" type="Sprite2D" parent="Pivot/Chain"]
+position = Vector2(0, 66)
+texture = ExtResource("3_links")
+region_enabled = true
+region_rect = Rect2(12, 0, 12, 18)
+
+[node name="Link6" type="Sprite2D" parent="Pivot/Chain"]
+position = Vector2(0, 78)
+texture = ExtResource("3_links")
+region_enabled = true
+region_rect = Rect2(0, 0, 12, 18)
+
+[node name="Link7" type="Sprite2D" parent="Pivot/Chain"]
+position = Vector2(0, 90)
+texture = ExtResource("3_links")
+region_enabled = true
+region_rect = Rect2(12, 0, 12, 18)
+
+[node name="BallSprite" type="Sprite2D" parent="Pivot"]
+position = Vector2(0, 120)
+texture = ExtResource("1_ball")
+offset = Vector2(0, -2)
 
 [node name="Ball" type="Area2D" parent="Pivot"]
-position = Vector2(0, 127)
+position = Vector2(0, 120)
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Pivot/Ball"]
 shape = SubResource("CircleShape2D_ball")
+
+[node name="Anchor" type="Sprite2D" parent="."]
+position = Vector2(0, 7)
+texture = ExtResource("4_anchor")
