@@ -7,6 +7,7 @@ extends RefCounted
 
 const WALL_DOUBLE_JUMP := "wall_double_jump"
 const SPIN_JUMP_ATTACK := "spin_jump_attack"
+const CHARGED_ARROW := "charged_arrow"
 
 ## skills.png là một dải icon 32x32 xếp ngang, icon_index tính từ 0.
 const ICON_SHEET := preload("res://assets/sprites/skills/skills.png")
@@ -25,6 +26,13 @@ const CATALOG := {
 		"key": "C in air",
 		"icon_index": 3,
 	},
+	CHARGED_ARROW: {
+		"name": "Charged Arrow",
+		"description": "Serelyn: hold C to charge the bow, release to fire a glowing green arrow that deals 8 damage.",
+		"key": "Hold C",
+		# Ô thứ 6 trong skills.png (mũi tên xanh).
+		"icon_index": 5,
+	},
 }
 
 
@@ -37,7 +45,12 @@ static func make_icon(skill_id: String) -> AtlasTexture:
 	if info.is_empty():
 		return null
 
+	var region := Rect2(int(info["icon_index"]) * ICON_SIZE, 0, ICON_SIZE, ICON_SIZE)
+	# Kỹ năng chưa có icon vẽ sẵn trong sheet thì không tạo ô trống trong suốt.
+	if region.end.x > ICON_SHEET.get_width():
+		return null
+
 	var icon := AtlasTexture.new()
 	icon.atlas = ICON_SHEET
-	icon.region = Rect2(int(info["icon_index"]) * ICON_SIZE, 0, ICON_SIZE, ICON_SIZE)
+	icon.region = region
 	return icon

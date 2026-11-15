@@ -21,7 +21,8 @@ func _on_body_entered(body: Node2D) -> void:
 	collected = true
 	# Phát tiếng trước khi cập nhật GameState/HUD để âm thanh bám sát thời điểm chạm star.
 	pickup_sound.play()
-	monitoring = false
+	# Đang ở trong body_entered: Area2D cấm đổi monitoring trực tiếp.
+	set_deferred("monitoring", false)
 	collision_shape.set_deferred("disabled", true)
 	GameState.collect_star(_star_id())
 	get_tree().call_group(&"star_hud", &"add_star")

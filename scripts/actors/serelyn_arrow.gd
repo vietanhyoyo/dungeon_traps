@@ -15,6 +15,16 @@ const SHIMMER_FPS := 18.0
 const GLOW_ENERGY := 2.2
 const GLOW_PULSE := 0.4
 
+## Sát thương mỗi phát. Mũi tên gồng (serelyn_charged_arrow.tscn) đặt 8.
+@export var damage := ATTACK_DAMAGE
+## Hiệu ứng trúng mục tiêu. Để trống thì dùng hit_effect thường.
+@export var hit_effect_scene: PackedScene
+## Nhuộm màu hiệu ứng bắn ra / toé sáng (mặc định giữ màu xanh gốc).
+@export var effect_modulate := Color.WHITE
+## Slime ăn tên (Devi Slime, eats_arrows) có nuốt được mũi tên này không.
+## Mũi tên gồng tắt đi để luôn gây sát thương.
+@export var can_be_eaten := true
+
 var direction := Vector2.RIGHT
 var age := 0.0
 
@@ -53,12 +63,12 @@ func _physics_process(delta: float) -> void:
 		if enemy != null:
 			if _is_inside_camera(enemy):
 				var arrow_was_eaten := false
-				if enemy.has_method("eat_arrow"):
+				if can_be_eaten and enemy.has_method("eat_arrow"):
 					arrow_was_eaten = enemy.eat_arrow()
 				if not arrow_was_eaten:
 					_spawn_hit_effect()
 					if enemy.has_method("take_damage"):
-						enemy.take_damage(ATTACK_DAMAGE)
+						enemy.take_damage(damage)
 					else:
 						enemy.die()
 		elif target != null and target.is_in_group(&"breakable") \
@@ -131,7 +141,8 @@ func _is_inside_camera(target: Node2D) -> bool:
 
 func _spawn_hit_effect() -> void:
 	# Hiệu ứng là con của scene màn chơi để không bị xoá cùng slime sau khi die().
-	var effect: AnimatedSprite2D = HIT_EFFECT_SCENE.instantiate()
+	var scene := hit_effect_scene if hit_effect_scene != null else HIT_EFFECT_SCENE
+	var effect := scene.instantiate() as Node2D
 	get_tree().current_scene.add_child(effect)
 	effect.global_position = global_position
 
@@ -145,3 +156,4 @@ func _spawn_effect(scene: PackedScene, at: Vector2, angle: float) -> void:
 	current_scene.add_child(effect)
 	effect.global_position = at
 	effect.rotation = angle
+	effect.modulate *= effect_modulate

@@ -32,9 +32,34 @@ const SHOT_WALL_MARGIN := 1.0
 const HIGH_ARROW_SPAWN_OFFSET := Vector2(30.0, -2.0)
 # attack_low kéo cung thấp hơn đòn thường, nên điểm sinh tên cũng hạ xuống theo.
 const LOW_ARROW_SPAWN_OFFSET := Vector2(30.0, 19.0)
-# Bỏ qua sai lệch nhỏ giữa điểm ngắm và điểm sinh tên để giữ tư thế bắn ngang.
-const HORIZONTAL_ATTACK_VERTICAL_TOLERANCE := 8.0
-const HIGH2_ARROW_ANGLE_THRESHOLD := deg_to_rad(15.0)
+## Kỹ năng Charged Arrow: giữ C đủ lâu thì bắn mũi tên xanh sát thương lớn.
+const CHARGED_ARROW_SCENE := preload("res://nodes/characters/serelyn_charged_arrow.tscn")
+## Giữ C bấy nhiêu giây thì tên được gồng đầy. Nhả sớm hơn là bắn tên thường.
+const CHARGE_TIME := 0.4
+## Ánh sáng ở mũi tên lúc gồng, tăng dần tới mức này khi đầy.
+const CHARGE_GLOW_MAX_ENERGY := 1.6
+## Khung "đã kéo căng dây" trong các animation ngắm (attack, attack_high,
+## attack_high2, attack_low). Giữ C thì dừng ở khung này, nhả C thì chạy tiếp.
+const AIM_HOLD_FRAME := 1
+## Vị trí mũi tên ở AIM_HOLD_FRAME, tính từ tâm khung 96x96 khi nhìn sang phải.
+## Vòng sáng gồng tên đặt đúng ở đây nên bám theo từng tư thế ngắm.
+const AIM_TIP_OFFSETS := {
+	&"attack": Vector2(38.0, 10.0),
+	&"attack_high": Vector2(37.0, -3.0),
+	&"attack_high2": Vector2(23.0, -15.0),
+	&"attack_low": Vector2(36.0, 21.0),
+}
+## Trong lúc gồng, cứ bấy nhiêu giây lại ngắm lại mục tiêu để đổi tư thế cho khớp.
+const CHARGE_AIM_REFRESH := 0.15
+## Góc mũi tên vẽ trong khung kéo dây của từng animation ngắm (radian, âm là
+## chếch lên), đo từ Serelyn-attack.png. Dùng để chọn tư thế khớp góc bay thật.
+## Thứ tự cũng là thứ tự ưu tiên khi hai tư thế khớp như nhau.
+const AIM_POSE_ANGLES := {
+	&"attack": 0.0,
+	&"attack_high": deg_to_rad(-18.0),
+	&"attack_low": deg_to_rad(21.0),
+	&"attack_high2": deg_to_rad(-42.0),
+}
 const MAX_UPWARD_ARROW_ANGLE := deg_to_rad(60.0)
 const MAX_DOWNWARD_ARROW_ANGLE := deg_to_rad(15.0)
 const TALK_LINES := [
@@ -62,6 +87,12 @@ const TALK_LINES := [
 @onready var body_collision: CollisionShape2D = $CollisionShape2D
 @onready var wall_slide_detector: Area2D = $WallSlideDetector
 @onready var dust_scene = preload("res://nodes/effects/landing_dust.tscn")
+@onready var charge_glow: PointLight2D = $ChargeGlow
+## Tiếng kéo dây cung + năng lượng dâng lên lúc bắt đầu giữ C.
+@onready var charge_draw_sound: AudioStreamPlayer2D = $ChargeDrawSound
+## Tiếng chuông pha lê khi gồng đầy.
+@onready var charge_ready_sound: AudioStreamPlayer2D = $ChargeReadySound
+@onready var charge_orb: AnimatedSprite2D = $ChargeOrb
 
 var nearby_player: Node2D
 var dialogue_open := false
@@ -77,6 +108,12 @@ var is_attacking := false
 var _attack_target: Node2D
 var _attack_aim_local := Vector2.ZERO
 var attack_animation: StringName = &"attack"
+var is_charging := false
+var charge_time := 0.0
+var charge_ready := false
+var _charge_aim_timer := 0.0
+## Phát bắn đang chạy là tên gồng (nhả C sau khi đã gồng đầy).
+var _shot_is_charged := false
 var slide_direction := 1.0
 var slide_time_left := 0.0
 var wall_jump_used := false
@@ -99,6 +136,9 @@ func _ready() -> void:
 	if _has_dialogue_ui():
 		add_to_group(&"dialogue_actors")
 	sprite.animation_finished.connect(_on_animation_finished)
+	charge_glow.visible = false
+	charge_orb.visible = false
+	sprite.frame_changed.connect(_on_sprite_frame_changed)
 	talk_area.body_entered.connect(_on_body_entered)
 	talk_area.body_exited.connect(_on_body_exited)
 	if dialogue_layer != null:
@@ -177,34 +217,18 @@ func _physics_process(delta: float) -> void:
 		last_fall_speed = velocity.y
 
 	var direction := Input.get_axis("move_left", "move_right") if is_controlled else 0.0
-	if is_controlled and not is_attacking and Input.is_action_just_pressed("attack"):
-		is_attacking = true
-		var facing := -1.0 if sprite.flip_h else 1.0
-		var attack_origin := _clamp_shot_origin(
-			global_position + Vector2(ARROW_SPAWN_OFFSET.x * facing, ARROW_SPAWN_OFFSET.y)
-		)
-		var target_info := _find_arrow_target(attack_origin, facing, is_on_floor())
-		_attack_target = target_info.get("target") as Node2D
-		_attack_aim_local = target_info.get("local_point", Vector2.ZERO)
-		if is_on_floor():
-			var target := _attack_target
-			if target == null:
-				attack_animation = &"attack"
-			else:
-				var aim_point := target.to_global(_attack_aim_local)
-				var vertical_offset := aim_point.y - attack_origin.y
-				if absf(vertical_offset) <= HORIZONTAL_ATTACK_VERTICAL_TOLERANCE:
-					attack_animation = &"attack"
-				elif vertical_offset < 0.0:
-					var target_angle := _get_arrow_target_angle(attack_origin, aim_point)
-					attack_animation = &"attack_high2" \
-						if absf(target_angle) > HIGH2_ARROW_ANGLE_THRESHOLD else &"attack_high"
-				else:
-					attack_animation = &"attack_low"
+	if is_controlled and not is_attacking and not is_charging \
+			and Input.is_action_just_pressed("attack"):
+		# Có kỹ năng Charged Arrow và đang đứng trên sàn: bấm C vẫn vào tư thế
+		# ngắm như thường nhưng dừng ở lúc kéo căng dây cho tới khi nhả C.
+		if is_on_floor() and GameState.has_skill(Skills.CHARGED_ARROW):
+			_start_charge()
 		else:
-			attack_animation = &"jump_attack"
-		sprite.position = normal_sprite_position
-		sprite.play(attack_animation)
+			_start_attack()
+
+	if is_charging:
+		_process_charge(delta, direction)
+		return
 
 	if is_attacking:
 		_preserving_transform_momentum = false
@@ -255,6 +279,8 @@ func _physics_process(delta: float) -> void:
 	wall_sliding = _is_wall_sliding(direction)
 	if wall_sliding:
 		velocity.y = minf(velocity.y, WALL_SLIDE_SPEED)
+	# Đang nhảy lên mà chạm tường thì vẫn là jump_up, chỉ trượt tường khi đã rơi xuống.
+	wall_sliding = wall_sliding and velocity.y >= 0.0
 	_sync_wall_slide_sound(wall_sliding)
 	# Giống Asura: chỉ đẩy thùng khi đang đứng trên sàn và tì vào mặt bên.
 	# Đang nhảy, lướt hoặc tấn công thì không đẩy.
@@ -271,6 +297,178 @@ func _physics_process(delta: float) -> void:
 	_sync_running_sound(animation_direction)
 
 
+func _start_attack() -> void:
+	is_attacking = true
+	_shot_is_charged = false
+	_choose_attack_pose()
+	sprite.position = normal_sprite_position
+	sprite.play(attack_animation)
+
+
+## Tìm mục tiêu và chọn animation ngắm (ngang, chếch lên, dốc lên, chếch xuống).
+func _choose_attack_pose() -> void:
+	var facing := -1.0 if sprite.flip_h else 1.0
+	var attack_origin := _clamp_shot_origin(
+		global_position + Vector2(ARROW_SPAWN_OFFSET.x * facing, ARROW_SPAWN_OFFSET.y)
+	)
+	var target_info := _find_arrow_target(attack_origin, facing, is_on_floor())
+	_attack_target = target_info.get("target") as Node2D
+	_attack_aim_local = target_info.get("local_point", Vector2.ZERO)
+	if not is_on_floor():
+		attack_animation = &"jump_attack"
+		return
+	attack_animation = &"attack"
+	var target := _attack_target
+	if target == null:
+		return
+
+	# 1) Bắn thẳng ngang mà trúng được thì luôn chọn tư thế ngang, và ngắm đúng
+	#    điểm trúng trên đường ngang để mũi tên bay thẳng.
+	var horizontal_hit := _horizontal_hit_point(target, attack_origin, facing)
+	if not horizontal_hit.is_empty():
+		_attack_aim_local = target.to_local(horizontal_hit["point"])
+		return
+
+	# 2) Không thì thử từng tư thế, mỗi tư thế bắn từ đúng điểm sinh tên của nó,
+	#    và chọn tư thế có góc cung vẽ trong animation gần góc bay thật nhất.
+	var best_cost := INF
+	for pose: StringName in AIM_POSE_ANGLES:
+		var origin := _clamp_shot_origin(global_position + Vector2(
+			_get_arrow_spawn_offset(pose).x * facing, _get_arrow_spawn_offset(pose).y
+		))
+		for point in _get_target_points(target):
+			if not _can_shoot_point(target, origin, point, facing):
+				continue
+			var cost := absf(_get_arrow_target_angle(origin, point) - AIM_POSE_ANGLES[pose])
+			if cost < best_cost:
+				best_cost = cost
+				attack_animation = pose
+				_attack_aim_local = target.to_local(point)
+
+
+## Điểm trúng target nếu bắn thẳng ngang từ origin, rỗng nếu trượt/bị chặn.
+func _horizontal_hit_point(target: Node2D, origin: Vector2, facing: float) -> Dictionary:
+	var reach := SerelynArrow.SPEED * SerelynArrow.LIFETIME
+	var hit := SerelynArrow.raycast_path(
+		get_world_2d().direct_space_state, origin, origin + Vector2(facing * reach, 0.0)
+	)
+	if hit.is_empty() or SerelynArrow.shootable_target_for_collider(hit.get("collider")) != target:
+		return {}
+	return {"point": hit["position"]}
+
+
+## Tên bay từ origin tới point có trúng target không (đúng hướng, trong giới hạn
+## góc và tầm bay, không bị tường chặn).
+func _can_shoot_point(target: Node2D, origin: Vector2, point: Vector2, facing: float) -> bool:
+	var offset := point - origin
+	if offset.x * facing <= 0.0:
+		return false
+	var angle := _get_arrow_target_angle(origin, point)
+	if angle < -MAX_UPWARD_ARROW_ANGLE or angle > MAX_DOWNWARD_ARROW_ANGLE:
+		return false
+	if offset.length() > SerelynArrow.SPEED * SerelynArrow.LIFETIME:
+		return false
+	var hit := SerelynArrow.raycast_path(get_world_2d().direct_space_state, origin, point)
+	return SerelynArrow.shootable_target_for_collider(hit.get("collider")) == target
+
+
+## Bắt đầu gồng: vào đúng animation ngắm như bắn thường, sprite sẽ dừng ở
+## AIM_HOLD_FRAME (xem _on_sprite_frame_changed) và vòng sáng xanh hiện ở mũi tên.
+func _start_charge() -> void:
+	is_charging = true
+	charge_time = 0.0
+	charge_ready = false
+	_charge_aim_timer = CHARGE_AIM_REFRESH
+	running_sound.stop()
+	wall_slide_sound.stop()
+	_preserving_transform_momentum = false
+	_choose_attack_pose()
+	sprite.position = normal_sprite_position
+	sprite.play(attack_animation)
+	charge_orb.speed_scale = 1.0
+	charge_orb.play(&"grow")
+	charge_draw_sound.play()
+	charge_orb.visible = true
+	charge_glow.visible = true
+	_update_charge_effect()
+
+
+func _on_sprite_frame_changed() -> void:
+	if is_charging and AIM_TIP_OFFSETS.has(sprite.animation) \
+			and sprite.frame >= AIM_HOLD_FRAME:
+		sprite.pause()
+		sprite.frame = AIM_HOLD_FRAME
+
+
+## Đứng yên giữ dây cung. Vẫn quay trái/phải được, và tư thế ngắm tự đổi theo
+## vị trí mục tiêu (lên/xuống) trong lúc gồng.
+func _process_charge(delta: float, direction: float) -> void:
+	velocity.x = 0.0
+	var turned := direction != 0.0 and (direction < 0.0) != sprite.flip_h
+	if direction != 0.0:
+		sprite.flip_h = direction < 0.0
+	move_and_slide()
+	was_on_floor = is_on_floor()
+
+	_charge_aim_timer -= delta
+	if turned or _charge_aim_timer <= 0.0:
+		_charge_aim_timer = CHARGE_AIM_REFRESH
+		_refresh_charge_pose()
+
+	charge_time += delta
+	if not charge_ready and charge_time >= CHARGE_TIME:
+		charge_ready = true
+		charge_orb.play(&"full")
+		charge_ready_sound.play()
+	_update_charge_effect()
+
+	if Input.is_action_pressed("attack"):
+		return
+
+	# Nhả C: chạy nốt animation ngắm hiện tại (buông dây), mũi tên bay ra ở
+	# _on_animation_finished giống bắn thường, chỉ khác loại tên.
+	_shot_is_charged = charge_ready
+	_cancel_charge()
+	is_attacking = true
+	sprite.play(attack_animation)
+
+
+func _refresh_charge_pose() -> void:
+	var previous := attack_animation
+	_choose_attack_pose()
+	if attack_animation == previous:
+		return
+	# Đã kéo căng dây rồi thì đổi thẳng sang khung giữ dây của tư thế mới.
+	var drawn := sprite.frame >= AIM_HOLD_FRAME or not sprite.is_playing()
+	sprite.play(attack_animation)
+	if drawn:
+		sprite.pause()
+		sprite.frame = AIM_HOLD_FRAME
+
+
+func _cancel_charge() -> void:
+	is_charging = false
+	charge_time = 0.0
+	charge_ready = false
+	charge_glow.energy = 0.0
+	charge_glow.visible = false
+	charge_orb.stop()
+	charge_orb.visible = false
+	# Nhả C sớm hoặc bị ngắt giữa chừng thì tắt luôn tiếng kéo dây.
+	charge_draw_sound.stop()
+
+
+func _update_charge_effect() -> void:
+	var facing := -1.0 if sprite.flip_h else 1.0
+	var tip: Vector2 = AIM_TIP_OFFSETS.get(attack_animation, AIM_TIP_OFFSETS[&"attack"])
+	var tip_position := sprite.position + Vector2(tip.x * facing, tip.y)
+	charge_orb.position = tip_position
+	charge_glow.position = tip_position
+	var progress := clampf(charge_time / CHARGE_TIME, 0.0, 1.0)
+	var pulse := 0.25 * sin(charge_time * 28.0) if charge_ready else 0.0
+	charge_glow.energy = CHARGE_GLOW_MAX_ENERGY * progress + pulse
+
+
 func set_controlled(value: bool, preserve_momentum := false) -> void:
 	is_controlled = value
 	if value:
@@ -282,6 +480,7 @@ func set_controlled(value: bool, preserve_momentum := false) -> void:
 		running_sound.stop()
 		wall_slide_sound.stop()
 		is_attacking = false
+		_cancel_charge()
 		_attack_target = null
 		_attack_aim_local = Vector2.ZERO
 		wall_jump_used = false
@@ -315,19 +514,22 @@ func _on_animation_finished() -> void:
 		var origin := _clamp_shot_origin(
 			global_position + Vector2(spawn_offset.x * facing, spawn_offset.y)
 		)
-		var arrow: SerelynArrow = ARROW_SCENE.instantiate()
+		var arrow_scene := CHARGED_ARROW_SCENE if _shot_is_charged else ARROW_SCENE
+		var arrow: SerelynArrow = arrow_scene.instantiate()
 		get_tree().current_scene.add_child(arrow)
 		arrow.launch(origin, _get_arrow_direction(origin, facing))
+		bow_shot_sound.pitch_scale = 0.75 if _shot_is_charged else 1.0
 		bow_shot_sound.play()
+	_shot_is_charged = false
 	_attack_target = null
 	_attack_aim_local = Vector2.ZERO
 	_update_animation(0.0)
 
 
-func _get_arrow_spawn_offset() -> Vector2:
-	if attack_animation == &"attack_high" or attack_animation == &"attack_high2":
+func _get_arrow_spawn_offset(pose: StringName = attack_animation) -> Vector2:
+	if pose == &"attack_high" or pose == &"attack_high2":
 		return HIGH_ARROW_SPAWN_OFFSET
-	if attack_animation == &"attack_low":
+	if pose == &"attack_low":
 		return LOW_ARROW_SPAWN_OFFSET
 	return ARROW_SPAWN_OFFSET
 
@@ -418,21 +620,17 @@ func _is_arrow_target(target: Node) -> bool:
 
 
 func _find_shootable_point(target: Node2D, origin: Vector2, facing: float, use_animation_origin: bool) -> Dictionary:
+	# Đứng trên sàn thì Serelyn có nhiều tư thế, mỗi tư thế bắn từ một điểm khác
+	# nhau: chỉ cần một tư thế bắn trúng là target hợp lệ.
+	var origins: Array[Vector2] = [origin]
+	if use_animation_origin:
+		origins.clear()
+		for offset in [ARROW_SPAWN_OFFSET, HIGH_ARROW_SPAWN_OFFSET, LOW_ARROW_SPAWN_OFFSET]:
+			origins.append(_clamp_shot_origin(global_position + Vector2(offset.x * facing, offset.y)))
 	for aim_point in _get_target_points(target):
-		var shot_origin := _get_targeting_origin(aim_point, facing) if use_animation_origin else origin
-		var offset := aim_point - shot_origin
-		if offset.x * facing <= 0.0:
-			continue
-		var angle := _get_arrow_target_angle(shot_origin, aim_point)
-		if angle < -MAX_UPWARD_ARROW_ANGLE or angle > MAX_DOWNWARD_ARROW_ANGLE:
-			continue
-		if offset.length() > SerelynArrow.SPEED * SerelynArrow.LIFETIME:
-			continue
-		var hit := SerelynArrow.raycast_path(
-			get_world_2d().direct_space_state, shot_origin, aim_point
-		)
-		if SerelynArrow.shootable_target_for_collider(hit.get("collider")) == target:
-			return {"point": aim_point}
+		for shot_origin in origins:
+			if _can_shoot_point(target, shot_origin, aim_point, facing):
+				return {"point": aim_point}
 	return {}
 
 
@@ -455,17 +653,6 @@ func _get_target_points(target: Node2D) -> Array[Vector2]:
 		]:
 			points.append(shape_node.to_global(rect.position + rect.size * fraction))
 	return points
-
-
-func _get_targeting_origin(aim_point: Vector2, facing: float) -> Vector2:
-	var offset := ARROW_SPAWN_OFFSET
-	var default_origin_y := global_position.y + ARROW_SPAWN_OFFSET.y
-	var vertical_offset := aim_point.y - default_origin_y
-	if vertical_offset < -HORIZONTAL_ATTACK_VERTICAL_TOLERANCE:
-		offset = HIGH_ARROW_SPAWN_OFFSET
-	elif vertical_offset > HORIZONTAL_ATTACK_VERTICAL_TOLERANCE:
-		offset = LOW_ARROW_SPAWN_OFFSET
-	return _clamp_shot_origin(global_position + Vector2(offset.x * facing, offset.y))
 
 
 ## Điểm tạo tên nằm trước thân Serelyn ARROW_SPAWN_OFFSET.x px. Áp sát tường thì
@@ -505,7 +692,7 @@ func _set_running(value: bool) -> void:
 
 
 func _is_wall_sliding(direction: float) -> bool:
-	return not is_on_floor() and is_on_wall() and velocity.y >= 0.0 \
+	return not is_on_floor() and is_on_wall() \
 		and direction * get_wall_normal().x < -0.5 \
 		and wall_slide_detector.has_overlapping_bodies()
 

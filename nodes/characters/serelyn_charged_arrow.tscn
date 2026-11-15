@@ -1,0 +1,42 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://clmj0nks18c67" path="res://scripts/actors/serelyn_arrow.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/sprites/serelyn/Serelyn-charged-arrow.png" id="2_arrow"]
+[ext_resource type="Texture2D" path="res://assets/sprites/serelyn/serelyn_arrow_fx.png" id="3_fx"]
+[ext_resource type="PackedScene" path="res://nodes/effects/hit2_effect.tscn" id="4_hit2"]
+
+[sub_resource type="Gradient" id="Gradient_charged_glow"]
+offsets = PackedFloat32Array(0, 0.25, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.55, 0.55, 0.55, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_charged_glow"]
+gradient = SubResource("Gradient_charged_glow")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[node name="SerelynChargedArrow" type="Node2D"]
+z_index = 6
+script = ExtResource("1_script")
+damage = 8
+hit_effect_scene = ExtResource("4_hit2")
+can_be_eaten = false
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+scale = Vector2(1.25, 1.25)
+texture = ExtResource("2_arrow")
+
+[node name="Fx" type="Sprite2D" parent="Sprite2D"]
+show_behind_parent = true
+texture_filter = 1
+texture = ExtResource("3_fx")
+hframes = 3
+
+[node name="GreenGlow" type="PointLight2D" parent="."]
+position = Vector2(15, 0)
+color = Color(0.25, 1, 0.3, 1)
+energy = 3.0
+shadow_enabled = true
+texture = SubResource("GradientTexture2D_charged_glow")
+texture_scale = 1.2

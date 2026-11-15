@@ -288,6 +288,8 @@ func _physics_process(delta: float) -> void:
 	var wall_sliding := is_wall_sliding(direction)
 	if wall_sliding:
 		velocity.y = minf(velocity.y, WALL_SLIDE_SPEED)
+	# Đang nhảy lên mà chạm tường thì vẫn là jump_up, chỉ trượt tường khi đã rơi xuống.
+	wall_sliding = wall_sliding and velocity.y >= 0.0
 	_sync_wall_slide_sound(wall_sliding)
 
 	# Đứng dưới đất mà tì vào mặt bên của hộp thì đẩy hộp đi theo. Nhảy lên đâm
@@ -325,7 +327,7 @@ func _physics_process(delta: float) -> void:
 
 
 func is_wall_sliding(direction: float) -> bool:
-	return not is_on_floor() and is_on_wall() and velocity.y >= 0.0 \
+	return not is_on_floor() and is_on_wall() \
 		and direction * get_wall_normal().x < -0.5 \
 		and wall_slide_detector.has_overlapping_bodies()
 

@@ -99,7 +99,8 @@ func _show_already_opened() -> void:
 
 func _lock() -> void:
 	is_open = true
-	monitoring = false
+	# Hay bị gọi ngay trong body_entered, lúc đó Area2D cấm đổi monitoring trực tiếp.
+	set_deferred("monitoring", false)
 	collision_shape.set_deferred("disabled", true)
 
 

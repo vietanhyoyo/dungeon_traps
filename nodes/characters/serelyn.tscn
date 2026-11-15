@@ -17,6 +17,9 @@
 [ext_resource type="AudioStream" uid="uid://16upyix3vg3" path="res://assets/sounds/serelyn_slide_ground.wav" id="13_ground_slide"]
 [ext_resource type="AudioStream" uid="uid://bf56tjk6ib1d7" path="res://assets/sounds/mixkit-short-wind-swoosh-1461.wav" id="14_air_slide"]
 [ext_resource type="AudioStream" uid="uid://bc5h6c8vmux1j" path="res://assets/sounds/wall_slide.wav" id="16_wall_slide_sound"]
+[ext_resource type="Texture2D" path="res://assets/sprites/serelyn/serelyn_charge_orb.png" id="17_charge_orb"]
+[ext_resource type="AudioStream" path="res://assets/sounds/serelyn_charge_ready.wav" id="18_charge_ready"]
+[ext_resource type="AudioStream" path="res://assets/sounds/serelyn_charge_draw.wav" id="19_charge_draw"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_s2pmx"]
 atlas = ExtResource("2_gnoaf")
@@ -189,6 +192,85 @@ region = Rect2(192, 0, 96, 96)
 [sub_resource type="AtlasTexture" id="AtlasTexture_p6lv8"]
 atlas = ExtResource("10_6j8w8")
 region = Rect2(288, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_orb_0"]
+atlas = ExtResource("17_charge_orb")
+region = Rect2(0, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_orb_1"]
+atlas = ExtResource("17_charge_orb")
+region = Rect2(24, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_orb_2"]
+atlas = ExtResource("17_charge_orb")
+region = Rect2(48, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_orb_3"]
+atlas = ExtResource("17_charge_orb")
+region = Rect2(72, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_orb_4"]
+atlas = ExtResource("17_charge_orb")
+region = Rect2(96, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_orb_5"]
+atlas = ExtResource("17_charge_orb")
+region = Rect2(120, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_orb_6"]
+atlas = ExtResource("17_charge_orb")
+region = Rect2(144, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_orb_7"]
+atlas = ExtResource("17_charge_orb")
+region = Rect2(168, 0, 24, 24)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_charge_orb"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_orb_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_orb_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_orb_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_orb_3")
+}],
+"loop": false,
+"name": &"grow",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_orb_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_orb_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_orb_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_orb_7")
+}],
+"loop": true,
+"name": &"full",
+"speed": 12.0
+}]
+
+[sub_resource type="Gradient" id="Gradient_charge_glow"]
+offsets = PackedFloat32Array(0, 0.25, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.55, 0.55, 0.55, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_charge_glow"]
+gradient = SubResource("Gradient_charge_glow")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_serelyn"]
 animations = [{
@@ -473,3 +555,31 @@ stream = ExtResource("16_wall_slide_sound")
 volume_db = -3.0
 attenuation = 0.0
 bus = &"SFX"
+
+[node name="ChargeGlow" type="PointLight2D" parent="."]
+visible = false
+position = Vector2(40, 10)
+color = Color(0.25, 1, 0.3, 1)
+energy = 0.0
+shadow_enabled = true
+texture = SubResource("GradientTexture2D_charge_glow")
+texture_scale = 0.9
+
+[node name="ChargeDrawSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("19_charge_draw")
+volume_db = -8.0
+bus = &"SFX"
+
+[node name="ChargeReadySound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("18_charge_ready")
+volume_db = -4.0
+bus = &"SFX"
+
+[node name="ChargeOrb" type="AnimatedSprite2D" parent="."]
+visible = false
+z_index = 1
+texture_filter = 1
+modulate = Color(1.8, 1.8, 1.8, 1)
+position = Vector2(38, 10)
+sprite_frames = SubResource("SpriteFrames_charge_orb")
+animation = &"grow"
