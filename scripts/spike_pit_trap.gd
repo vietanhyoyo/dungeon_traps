@@ -2,19 +2,17 @@ extends Node2D
 
 const PIT_DEPTH := 128.0
 const PIT_WIDTH := 64.0
-const PIT_LANDING_TIMEOUT_FRAMES := 180
-const PIT_SETTLE_DELAY := 0.2
-const SPIKE_CLOSE_DURATION := 2.0
 # Cho phép player chạm mép tường một chút vẫn tính là bị kẹp.
 const CRUSH_TOLERANCE := 2.0
 
 @export var tile_map_path: NodePath = ^"../TileMap32"
+## Thời gian hai tường gai trượt từ trong vách ra khép kín miệng hố. Tường bắt
+## đầu khép ngay khi bẫy kích hoạt, cùng lúc với sàn giả sụp xuống.
+@export_range(0.1, 10.0, 0.1, "or_greater") var spike_close_duration := 2.0
 
 @onready var ground_collision: CollisionShape2D = $FakeGround/CollisionShape2D
 @onready var trigger_area: Area2D = $FakeGround/TriggerArea
 @onready var ground_sprite: Sprite2D = $FakeGround/GroundSprite
-@onready var pit_bottom: StaticBody2D = $PitBottom
-@onready var pit_bottom_collision: CollisionShape2D = $PitBottom/CollisionShape2D
 @onready var left_wall: Area2D = $LeftWall
 @onready var right_wall: Area2D = $RightWall
 @onready var left_wall_solid_collision: CollisionShape2D = $LeftWall/SolidWall/CollisionShape2D
@@ -62,27 +60,14 @@ func _activate_for_player(player: CharacterBody2D) -> void:
 	_trapped_player = player
 	left_wall.show()
 	right_wall.show()
-	left_wall_solid_collision.set_deferred("disabled", false)
-	right_wall_solid_collision.set_deferred("disabled", false)
 	trigger_area.set_deferred("monitoring", false)
 	ground_collision.set_deferred("disabled", true)
 	call_deferred("_clear_floor_tiles")
 
-	await _drop_fake_ground()
-	if not is_instance_valid(self) or not is_inside_tree():
-		return
-
-	var landed_on_bottom := await _wait_for_player_to_land()
-	if not is_instance_valid(self) or not is_inside_tree():
-		return
-	if landed_on_bottom:
-		var scene_tree := get_tree()
-		if scene_tree == null:
-			return
-		await scene_tree.create_timer(PIT_SETTLE_DELAY).timeout
-		if not is_instance_valid(self) or not is_inside_tree():
-			return
-	await _close_spike_walls()
+	# Tường gai khép ngay lập tức, không đợi player rơi chạm đáy: player chỉ còn
+	# khoảng thời gian tường trượt tới miệng hố để thoát ra.
+	_drop_fake_ground()
+	_close_spike_walls()
 
 
 func _clear_floor_tiles() -> void:
@@ -112,23 +97,6 @@ func _drop_fake_ground() -> void:
 	ground_sprite.hide()
 
 
-func _wait_for_player_to_land() -> bool:
-	var player := _trapped_player
-	if not is_instance_valid(player) or not is_inside_tree():
-		return false
-	for _frame in range(PIT_LANDING_TIMEOUT_FRAMES):
-		if not is_instance_valid(player) or not is_inside_tree():
-			return false
-		if player.is_on_floor():
-			if _is_standing_on_pit_bottom(player):
-				return true
-			return false
-		await get_tree().physics_frame
-		if not is_inside_tree():
-			return false
-	return false
-
-
 func _close_spike_walls() -> void:
 	if not is_inside_tree():
 		return
@@ -143,8 +111,8 @@ func _close_spike_walls() -> void:
 	tween.set_parallel(true)
 	tween.set_trans(Tween.TRANS_SINE)
 	tween.set_ease(Tween.EASE_IN_OUT)
-	tween.tween_property(left_wall, "position:x", -12.0, SPIKE_CLOSE_DURATION)
-	tween.tween_property(right_wall, "position:x", 12.0, SPIKE_CLOSE_DURATION)
+	tween.tween_property(left_wall, "position:x", -12.0, spike_close_duration)
+	tween.tween_property(right_wall, "position:x", 12.0, spike_close_duration)
 	await tween.finished
 	if not is_inside_tree():
 		return
@@ -180,18 +148,6 @@ func _get_player_body_center(player: CharacterBody2D) -> Vector2:
 	if collision_shape != null and not collision_shape.disabled:
 		center_global = collision_shape.global_position
 	return to_local(center_global)
-
-
-func _is_standing_on_pit_bottom(player: CharacterBody2D) -> bool:
-	if not is_instance_valid(player) or not player.is_in_group(&"player") or not player.is_on_floor():
-		return false
-	for index in range(player.get_slide_collision_count()):
-		var collision := player.get_slide_collision(index)
-		if collision.get_collider() != pit_bottom or collision.get_normal().y >= -0.5:
-			continue
-		if collision.get_collider_shape() == pit_bottom_collision:
-			return true
-	return false
 
 
 func _are_both_walls_touching_player(body: Node2D) -> bool:

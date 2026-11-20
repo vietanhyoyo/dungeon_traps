@@ -56,7 +56,7 @@ flowchart TD
 
 ### Level Scenes
 
-`nodes/scenes/level_1.tscn` … `nodes/scenes/level_8.tscn` (root `Level1` … `Level8`).
+`nodes/scenes/level_1.tscn` … `nodes/scenes/level_9.tscn` (root `Level1` … `Level9`).
 
 A level contains:
 
@@ -74,7 +74,7 @@ Controller của màn:
 | Màn | Script | Gắn ở |
 | --- | --- | --- |
 | `level_1` … `level_5` | `scripts/level_6_controller.gd` | Node con `PartyController` |
-| `level_6` … `level_8` | `scripts/level_6_controller.gd` | Node gốc |
+| `level_6` … `level_9` | `scripts/level_6_controller.gd` | Node gốc |
 | `level_4` | `scripts/chest_ambush_controller.gd` | Node gốc (đàn dơi phục kích, xem mục Level 4 Bat Ambush) |
 
 Tên `level_6_controller.gd` là lịch sử: script này giờ là controller đội hình dùng chung cho mọi màn (Serelyn, chuyển nhân vật, camera, `CharacterHUD`). Nó tự nhận ra mình gắn ở gốc hay ở node con qua việc có tìm thấy `Asura` cạnh mình hay không.
@@ -265,7 +265,8 @@ Hitbox là `CircleShape2D` bán kính 26 trong khi gai vươn tới 30px, tức 
 | `level_1` … `level_5` | `door.tscn` | màn kế tiếp (`level_2` … `level_6`) |
 | `level_6` | `rock_door.tscn`, `required_key_id = "crystal_key"` | `level_7` |
 | `level_7` | `door.tscn` | `level_8` |
-| `level_8` | `door.tscn` | (trống: màn cuối) |
+| `level_8` | `rock_door.tscn`, `required_key_id = "crystal_key"` | `level_9` |
+| `level_9` | `rock_door.tscn`, `required_key_id = "crystal_key"` | (trống: màn cuối) |
 
 An empty `next_scene_path` means the door does not change scenes.
 

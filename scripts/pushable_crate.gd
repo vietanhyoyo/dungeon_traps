@@ -23,6 +23,11 @@ const PUSH_NORMAL_MIN := 0.7
 # Layer 3 là lớp vật có thể bị tấn công; AttackHitbox và mũi tên của Serelyn
 # đều mask lớp này.
 const HITTABLE_LAYER := 3
+# Layer của nhân vật điều khiển (Asura, Serelyn).
+const PLAYER_LAYER := 2
+# Khoảng hở giữa đáy hộp và đầu nhân vật khi hộp đè lên. Phải lớn hơn
+# safe_margin của nhân vật (0.08) để nhân vật đi ngang không bị hộp cản.
+const PLAYER_GAP := 0.5
 
 ## Tốc độ hộp trượt ngang lúc bị đẩy.
 @export var push_speed := 120.0
@@ -41,9 +46,15 @@ const HITTABLE_LAYER := 3
 # Hướng bị đẩy trong frame vừa rồi, reset sau mỗi bước physics.
 var _push_direction := 0.0
 var _is_broken := false
+# Shape query dùng để dò nhân vật bên dưới, tạo một lần rồi dùng lại.
+var _player_query: PhysicsShapeQueryParameters2D
 
 
 func _ready() -> void:
+	_player_query = PhysicsShapeQueryParameters2D.new()
+	_player_query.shape = collision_shape.shape
+	_player_query.collision_mask = 1 << (PLAYER_LAYER - 1)
+
 	if breakable:
 		# Đứng trên layer 3 thì đòn cận chiến và mũi tên mới quét trúng hộp.
 		set_collision_layer_value(HITTABLE_LAYER, true)
@@ -65,12 +76,51 @@ func _physics_process(delta: float) -> void:
 	# ngay chứ không trôi tiếp.
 	var direction := _push_direction
 	_push_direction = 0.0
+
+	if _stop_above_player(delta):
+		# Đang nằm trên đầu nhân vật thì đứng yên hẳn, không gọi move_and_slide():
+		# bước gỡ chồng lấn trong đó sẽ để hộp phía trên ép hộp này lún xuyên qua
+		# nhân vật.
+		velocity = Vector2.ZERO
+		return
+
 	velocity.x = direction * push_speed
 	move_and_slide()
 
 	# Hộp đang bị đẩy mà tì vào hộp khác thì đẩy luôn hộp đó.
 	if direction != 0.0:
 		push_touching(self, direction)
+
+
+## Hộp rơi trúng nhân vật thì dừng lại nằm trên đầu, nhân vật bước ra thì hộp
+## rơi tiếp.
+##
+## Hộp không va chạm vật lý với nhân vật (mask không có layer 2) mà tự dò bằng
+## shape cast. Nếu để hai CharacterBody2D chạm nhau thì hộp, nhất là cả chồng
+## hộp, lún vào đầu nhân vật; nhân vật tự đẩy mình ra khỏi chỗ lún nên bị ép
+## vào tường hoặc lún xuống sàn và kẹt cứng. Ở đây hộp luôn dừng cách đầu
+## nhân vật PLAYER_GAP nên hai bên không bao giờ chồng lên nhau.
+##
+## Trả về true khi hộp đang nằm trên đầu nhân vật.
+func _stop_above_player(delta: float) -> bool:
+	var fall := velocity.y * delta
+	if fall <= 0.0:
+		return false
+
+	# Dò xa thêm PLAYER_GAP để hộp đang nằm sát đầu vẫn thấy nhân vật bên dưới.
+	var cast_length := fall + PLAYER_GAP
+	_player_query.transform = collision_shape.global_transform
+	_player_query.motion = Vector2(0.0, cast_length)
+	var result := get_world_2d().direct_space_state.cast_motion(_player_query)
+	var safe_distance := result[0] * cast_length
+	if safe_distance >= cast_length:
+		return false
+
+	# Rơi tới sát đầu nhân vật (chừa PLAYER_GAP) rồi dừng.
+	var drop := safe_distance - PLAYER_GAP
+	if drop > 0.0:
+		move_and_collide(Vector2(0.0, drop))
+	return true
 
 
 ## Đẩy mọi hộp mà body vừa tì vào mặt bên theo hướng direction. Gọi ngay sau
