@@ -39,3 +39,5 @@ Thumbs.db
 # bình thường git không thấy; dòng này chỉ để chắc chắn không lọt vào repo nếu
 # có ai copy file ra đây để xem.
 save_game.json
+
+*.env
