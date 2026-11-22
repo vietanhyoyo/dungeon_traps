@@ -3,6 +3,8 @@
 [ext_resource type="Texture2D" uid="uid://c5jngpa3w1ppg" path="res://assets/sprites/traps/trap-map-1.png" id="1_texture"]
 [ext_resource type="Script" uid="uid://b8rtwwmslbxvx" path="res://scripts/spike_pit_trap.gd" id="2_script"]
 [ext_resource type="AudioStream" path="res://assets/sounds/spike_pit_activate.wav" id="3_activation_sound"]
+[ext_resource type="AudioStream" uid="uid://7j8tiaxo8d48" path="res://assets/sounds/move_boulder.ogg" id="4_grind_sound"]
+[ext_resource type="AudioStream" uid="uid://cbm78b8xkokdu" path="res://assets/sounds/boulder_drop.ogg" id="5_slam_sound"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ground"]
 atlas = ExtResource("1_texture")
@@ -39,6 +41,22 @@ script = ExtResource("2_script")
 [node name="ActivationSound" type="AudioStreamPlayer2D" parent="." unique_id=1469823017]
 stream = ExtResource("3_activation_sound")
 volume_db = -10.0
+max_distance = 700.0
+attenuation = 1.2
+bus = &"SFX"
+
+[node name="GrindSound" type="AudioStreamPlayer2D" parent="." unique_id=1782305514]
+stream = ExtResource("4_grind_sound")
+volume_db = -14.0
+pitch_scale = 0.75
+max_distance = 700.0
+attenuation = 1.2
+bus = &"SFX"
+
+[node name="SlamSound" type="AudioStreamPlayer2D" parent="." unique_id=1093650271]
+stream = ExtResource("5_slam_sound")
+volume_db = -6.0
+pitch_scale = 0.85
 max_distance = 700.0
 attenuation = 1.2
 bus = &"SFX"

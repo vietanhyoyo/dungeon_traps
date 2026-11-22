@@ -235,7 +235,7 @@ centered = false
 script = ExtResource("21_background_fit")
 
 [node name="Asura" parent="." unique_id=1809393430 instance=ExtResource("1_asura")]
-position = Vector2(3469, 1594)
+position = Vector2(332, 504)
 
 [node name="Camera2D" parent="Asura" unique_id=1065377516 instance=ExtResource("2_camera")]
 limit_left = 0
@@ -667,10 +667,10 @@ position = Vector2(2215, 1464)
 position = Vector2(2229, 1464)
 
 [node name="IronSpikeTrap15" parent="IronSpikeList" unique_id=1811482780 instance=ExtResource("35_asa7y")]
-position = Vector2(3444, 1368)
+position = Vector2(3325, 1208)
 
 [node name="IronSpikeTrap17" parent="IronSpikeList" unique_id=858105954 instance=ExtResource("35_asa7y")]
-position = Vector2(3458, 1368)
+position = Vector2(3348, 1208)
 
 [node name="IronSpikeTrap21" parent="IronSpikeList" unique_id=19619212 instance=ExtResource("35_asa7y")]
 position = Vector2(3818, 1176)
@@ -778,6 +778,12 @@ position = Vector2(4302, 876)
 
 [node name="WoodenCrate30" parent="CrateList" unique_id=1650536670 instance=ExtResource("37_3dxep")]
 position = Vector2(4270, 876)
+
+[node name="WoodenCrate32" parent="CrateList" unique_id=987288222 instance=ExtResource("37_3dxep")]
+position = Vector2(3503, 1360)
+
+[node name="WoodenCrate33" parent="CrateList" unique_id=120691298 instance=ExtResource("37_3dxep")]
+position = Vector2(3503, 1327)
 
 [node name="WoodenCrate31" parent="CrateList" unique_id=1190453239 instance=ExtResource("37_3dxep")]
 position = Vector2(4302, 843)

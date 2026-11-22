@@ -12,6 +12,10 @@ const RETURN_TOLERANCE := 4.0
 ## Thời gian bat hiện ra khi được đánh thức khỏi trạng thái ngủ đông.
 const APPEAR_DURATION := 0.35
 const APPEAR_START_SCALE := Vector2(0.3, 0.3)
+## Khi bay về mà bị tường chặn, quãng đường rút ngắn được dưới mức này trong
+## RETURN_STUCK_TIME giây thì coi như kẹt và lấy chỗ hiện tại làm điểm tuần tra mới.
+const RETURN_STUCK_PROGRESS := 2.0
+const RETURN_STUCK_TIME := 1.0
 
 ## Nhịp rít khi đang đuổi theo player. Mỗi tiếng lệch nhau một chút để cả đàn
 ## không kêu đều như máy - dơi thật kêu thành từng chuỗi không đều nhau.
@@ -53,6 +57,8 @@ var _elapsed := 0.0
 var _start_position := Vector2.ZERO
 ## Đếm ngược tới tiếng rít kế tiếp, chỉ chạy khi đang lao theo player.
 var _screech_countdown := 0.0
+var _return_stuck_time := 0.0
+var _return_best_distance := INF
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
@@ -91,17 +97,26 @@ func _physics_process(delta: float) -> void:
 			_process_patrol(delta)
 
 
+# Mọi kiểu di chuyển đều đi qua move_and_collide/move_and_slide (va chạm với
+# tường ở layer 1 theo collision_mask) nên bat không còn bay xuyên tường.
 func _process_patrol(delta: float) -> void:
 	_elapsed += delta
-	position.x += direction * flight_speed * delta
-	position.y = _start_position.y + sin(_elapsed * bob_speed) * bob_height
+	var desired := Vector2(
+		position.x + direction * flight_speed * delta,
+		_start_position.y + sin(_elapsed * bob_speed) * bob_height
+	)
 
-	if position.x >= _start_position.x + patrol_distance:
-		position.x = _start_position.x + patrol_distance
+	if desired.x >= _start_position.x + patrol_distance:
+		desired.x = _start_position.x + patrol_distance
 		direction = -1
-	elif position.x <= _start_position.x - patrol_distance:
-		position.x = _start_position.x - patrol_distance
+	elif desired.x <= _start_position.x - patrol_distance:
+		desired.x = _start_position.x - patrol_distance
 		direction = 1
+
+	var collision := move_and_collide(desired - position)
+	# Đụng tường bên hông thì quay đầu bay ngược lại, giống chạm mép vùng tuần tra.
+	if collision and absf(collision.get_normal().x) > 0.5:
+		direction = 1 if collision.get_normal().x > 0.0 else -1
 
 	_face_direction(direction)
 
@@ -110,7 +125,7 @@ func _process_patrol(delta: float) -> void:
 func _process_dive(delta: float) -> void:
 	if not is_instance_valid(_target):
 		_target = null
-		_state = State.RETURN
+		_enter_return()
 		return
 
 	_screech_countdown -= delta
@@ -119,21 +134,48 @@ func _process_dive(delta: float) -> void:
 
 	var to_target := _target.global_position - global_position
 	if to_target.length() > 0.1:
-		global_position += to_target.normalized() * dive_speed * delta
+		# move_and_slide trượt dọc theo tường thay vì xuyên qua.
+		velocity = to_target.normalized() * dive_speed
+		move_and_slide()
 		_face_direction(int(signf(to_target.x)))
 
 
 # Mất dấu player thì bay ngược về đúng vị trí tuần tra rồi mới bay qua lại tiếp.
 func _process_return(delta: float) -> void:
 	var to_start := _start_position - position
-	if to_start.length() <= RETURN_TOLERANCE:
-		position = _start_position
-		_elapsed = 0.0
-		_state = State.PATROL
+	var distance := to_start.length()
+	if distance <= RETURN_TOLERANCE:
+		move_and_collide(to_start)
+		_enter_patrol()
 		return
 
-	position += to_start.normalized() * return_speed * delta
+	# Có tường chắn giữa đường về thì bat có thể kẹt mãi. Theo dõi tiến độ, kẹt
+	# lâu quá thì tuần tra luôn tại chỗ thay vì cứ cắm đầu vào tường.
+	if distance < _return_best_distance - RETURN_STUCK_PROGRESS:
+		_return_best_distance = distance
+		_return_stuck_time = 0.0
+	else:
+		_return_stuck_time += delta
+		if _return_stuck_time >= RETURN_STUCK_TIME:
+			_start_position = position
+			_enter_patrol()
+			return
+
+	velocity = to_start.normalized() * return_speed
+	move_and_slide()
 	_face_direction(int(signf(to_start.x)))
+
+
+func _enter_patrol() -> void:
+	velocity = Vector2.ZERO
+	_elapsed = 0.0
+	_state = State.PATROL
+
+
+func _enter_return() -> void:
+	_return_best_distance = INF
+	_return_stuck_time = 0.0
+	_state = State.RETURN
 
 
 func _face_direction(facing: int) -> void:
@@ -162,7 +204,7 @@ func _on_detection_body_exited(body: Node2D) -> void:
 
 	_target = null
 	if not is_dead:
-		_state = State.RETURN
+		_enter_return()
 
 
 func _apply_detection_radius() -> void:

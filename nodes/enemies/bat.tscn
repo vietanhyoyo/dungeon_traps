@@ -124,7 +124,8 @@ radius = 120.0
 
 [node name="Bat" type="CharacterBody2D" unique_id=2018107730 groups=["enemy"]]
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
+motion_mode = 1
 script = ExtResource("1_bat")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=464429811]
