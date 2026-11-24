@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://l1dhtqji1d6x"]
 
-[ext_resource type="Texture2D" uid="uid://d28tluf6jm21n" path="res://assets/sprites/background5.png" id="2_8pcmo"]
+[ext_resource type="Texture2D" uid="uid://d28tluf6jm21n" path="res://assets/sprites/backgrounds/background5.png" id="2_8pcmo"]
 [ext_resource type="PackedScene" uid="uid://cwgqa60xyqnyj" path="res://nodes/characters/asura.tscn" id="2_flbgy"]
 [ext_resource type="PackedScene" uid="uid://c4jvx4glbgl2" path="res://nodes/door.tscn" id="3_8pcmo"]
 [ext_resource type="PackedScene" path="res://nodes/tile_map_32.tscn" id="3_m4axl"]

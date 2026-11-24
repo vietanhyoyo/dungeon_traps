@@ -1,0 +1,17 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://nodes/save_point.tscn" id="1_checkpoint"]
+[ext_resource type="Texture2D" path="res://assets/sprites/goblin/spirit_beacon.png" id="2_beacon"]
+
+[node name="GoblinSavePoint" instance=ExtResource("1_checkpoint")]
+
+[node name="Glow" parent="." index="0"]
+position = Vector2(-3, -52)
+color = Color(0.62, 1.0, 0.66, 1)
+
+[node name="FlagSprite" parent="." index="1"]
+texture = ExtResource("2_beacon")
+
+[node name="Sparks" parent="." index="2"]
+position = Vector2(-3, -52)
+modulate = Color(0.63, 1.0, 0.68, 1)

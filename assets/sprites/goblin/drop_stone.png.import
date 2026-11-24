@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://8osth2vx03rl"
-path="res://.godot/imported/bg-1-layer-3.png-070e2587325dc3a51940f0a7a62e2798.ctex"
+uid="uid://dodbg7amvmhsl"
+path="res://.godot/imported/drop_stone.png-9ef7ec8e058b79769a40cebe850ad36e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/bg-1-layer-3.png"
-dest_files=["res://.godot/imported/bg-1-layer-3.png-070e2587325dc3a51940f0a7a62e2798.ctex"]
+source_file="res://assets/sprites/goblin/drop_stone.png"
+dest_files=["res://.godot/imported/drop_stone.png-9ef7ec8e058b79769a40cebe850ad36e.ctex"]
 
 [params]
 

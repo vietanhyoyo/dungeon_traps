@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" path="res://nodes/tile_map_32.tscn" id="4_lj6jb"]
 [ext_resource type="Texture2D" uid="uid://bcxnn1f6qiuev" path="res://assets/sprites/mapp32.png" id="5_fo1y2"]
 [ext_resource type="PackedScene" path="res://nodes/torch.tscn" id="6_ouagl"]
-[ext_resource type="Texture2D" uid="uid://d28tluf6jm21n" path="res://assets/sprites/background5.png" id="7_gnkbd"]
+[ext_resource type="Texture2D" uid="uid://d28tluf6jm21n" path="res://assets/sprites/backgrounds/background5.png" id="7_gnkbd"]
 [ext_resource type="PackedScene" uid="uid://c4jvx4glbgl2" path="res://nodes/door.tscn" id="8_ghy0c"]
 [ext_resource type="PackedScene" uid="uid://dscr153320p4r" path="res://nodes/traps/fire_trap.tscn" id="9_p4xfq"]
 [ext_resource type="PackedScene" uid="uid://ddq2qqo23k2o0" path="res://nodes/traps/thorn.tscn" id="10_fu5xh"]

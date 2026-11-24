@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dycf3v8rcuox"
-path="res://.godot/imported/background-level6.png-4ba9984f81810e212869ae17aa6879df.ctex"
+uid="uid://d4dk4yjio1x7i"
+path="res://.godot/imported/spirit_beacon.png-3c55c04be318ddc8877f46a599b33031.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/background-level6.png"
-dest_files=["res://.godot/imported/background-level6.png-4ba9984f81810e212869ae17aa6879df.ctex"]
+source_file="res://assets/sprites/goblin/spirit_beacon.png"
+dest_files=["res://.godot/imported/spirit_beacon.png-3c55c04be318ddc8877f46a599b33031.ctex"]
 
 [params]
 

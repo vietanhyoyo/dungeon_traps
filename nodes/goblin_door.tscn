@@ -1,0 +1,46 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://nodes/door.tscn" id="1_door"]
+[ext_resource type="Texture2D" path="res://assets/sprites/goblin/tusk_gate.png" id="2_gate"]
+
+[sub_resource type="AtlasTexture" id="GateFrame0"]
+atlas = ExtResource("2_gate")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="GateFrame1"]
+atlas = ExtResource("2_gate")
+region = Rect2(96, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="GateFrame2"]
+atlas = ExtResource("2_gate")
+region = Rect2(192, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="GateFrame3"]
+atlas = ExtResource("2_gate")
+region = Rect2(288, 0, 96, 96)
+
+[sub_resource type="SpriteFrames" id="GateFrames"]
+animations = [{
+"frames": [{"duration": 1.0, "texture": SubResource("GateFrame0")}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [
+{"duration": 1.0, "texture": SubResource("GateFrame0")},
+{"duration": 1.0, "texture": SubResource("GateFrame1")},
+{"duration": 1.0, "texture": SubResource("GateFrame2")},
+{"duration": 1.0, "texture": SubResource("GateFrame3")}
+],
+"loop": false,
+"name": &"open",
+"speed": 7.0
+}]
+
+[node name="GoblinDoor" instance=ExtResource("1_door")]
+
+[node name="AnimatedSprite2D" parent="." index="0"]
+sprite_frames = SubResource("GateFrames")
+animation = &"default"
+frame = 0
+frame_progress = 0.0

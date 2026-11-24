@@ -1,0 +1,56 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/goblin_guard.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/goblin_brute.png" id="2"]
+[ext_resource type="PackedScene" path="res://nodes/killzone.tscn" id="3"]
+
+[sub_resource type="RectangleShape2D" id="Body"]
+size = Vector2(25, 44)
+
+[sub_resource type="RectangleShape2D" id="Reach"]
+size = Vector2(82, 21)
+
+[sub_resource type="RectangleShape2D" id="Strike"]
+size = Vector2(41, 21)
+
+[node name="GoblinBrute" type="CharacterBody2D" groups=["enemy"]]
+collision_layer = 4
+collision_mask = 1
+script = ExtResource("1")
+speed = 27.0
+max_health = 14
+windup_time = 0.62
+recovery_time = 0.86
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, -29)
+texture = ExtResource("2")
+hframes = 6
+flip_h = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -22)
+shape = SubResource("Body")
+
+[node name="Footing" type="RayCast2D" parent="."]
+position = Vector2(14.5, -5)
+target_position = Vector2(0, 12)
+collision_mask = 1
+hit_from_inside = true
+
+[node name="Detection" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Detection"]
+position = Vector2(0, -19)
+shape = SubResource("Reach")
+
+[node name="Killzone" parent="." instance=ExtResource("3")]
+position = Vector2(18.5, -19)
+collision_layer = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Killzone"]
+shape = SubResource("Strike")
+disabled = true

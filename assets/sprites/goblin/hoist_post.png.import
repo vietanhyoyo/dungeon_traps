@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://derdkdi54vr4a"
-path="res://.godot/imported/bg-1-layer-1.png-81f0897f0793146e72c14a9360a603f8.ctex"
+uid="uid://ch3vp18aa562f"
+path="res://.godot/imported/hoist_post.png-474dced872b6fc571d0b67d063161ce9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/bg-1-layer-1.png"
-dest_files=["res://.godot/imported/bg-1-layer-1.png-81f0897f0793146e72c14a9360a603f8.ctex"]
+source_file="res://assets/sprites/goblin/hoist_post.png"
+dest_files=["res://.godot/imported/hoist_post.png-474dced872b6fc571d0b67d063161ce9.ctex"]
 
 [params]
 
