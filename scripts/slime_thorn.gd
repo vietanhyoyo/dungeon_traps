@@ -18,9 +18,7 @@ class_name SlimeThorn
 ## đổi mạng sống và chỗ treo cũng không bị ràng buộc phải chừa đủ độ cao.
 
 const SPIKE_SCENE := preload("res://nodes/enemies/slime_thorn_spike.tscn")
-const HIT_FLASH_COUNT := 3
 const HIT_FLASH_ON_DURATION := 0.04
-const HIT_FLASH_OFF_DURATION := 0.035
 const DEFEAT_SOUND := preload("res://assets/sounds/freesound_community-poof-80161.mp3")
 const DEFEAT_SOUND_OFFSET := 0.5
 
@@ -222,8 +220,7 @@ func _on_detection_body_exited(body: Node2D) -> void:
 		_target = null
 
 
-# Bị nhân vật chém trúng: chớp trắng vài nhịp rồi chạy animation chết - cái thân
-# rụng khỏi trần, chảy thành giọt rồi tan.
+# Chớp sáng khi trúng đòn, rồi lớp băng nứt và vỡ khỏi trần.
 func die() -> void:
 	if is_dead:
 		return
@@ -268,13 +265,9 @@ func _play_hit_flash() -> void:
 		return
 
 	var flash_material := animated_sprite.material as ShaderMaterial
-	for flash_index in HIT_FLASH_COUNT:
-		flash_material.set_shader_parameter("flash_amount", 1.0)
-		await get_tree().create_timer(HIT_FLASH_ON_DURATION, false).timeout
-		flash_material.set_shader_parameter("flash_amount", 0.0)
-
-		if flash_index < HIT_FLASH_COUNT - 1:
-			await get_tree().create_timer(HIT_FLASH_OFF_DURATION, false).timeout
+	flash_material.set_shader_parameter("flash_amount", 0.8)
+	await get_tree().create_timer(HIT_FLASH_ON_DURATION, false).timeout
+	flash_material.set_shader_parameter("flash_amount", 0.0)
 
 
 func _draw() -> void:

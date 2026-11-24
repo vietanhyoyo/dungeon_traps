@@ -1,0 +1,197 @@
+[gd_scene format=3 uid="uid://b3ttwx33b1mu4"]
+
+[ext_resource type="Script" uid="uid://br2thoy1o1alr" path="res://scripts/poison_drip_trap.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cjlw1s1s2u7e2" path="res://assets/sprites/traps/poison-drip-source.png" id="2_source"]
+[ext_resource type="PackedScene" uid="uid://dhq0pa6na6p7k" path="res://nodes/killzone.tscn" id="3_killzone"]
+[ext_resource type="Texture2D" path="res://assets/sprites/traps/poison-drip.png" id="4_sheet"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_swell_0"]
+atlas = ExtResource("4_sheet")
+region = Rect2(0, 0, 16, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_swell_1"]
+atlas = ExtResource("4_sheet")
+region = Rect2(16, 0, 16, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_swell_2"]
+atlas = ExtResource("4_sheet")
+region = Rect2(32, 0, 16, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_swell_3"]
+atlas = ExtResource("4_sheet")
+region = Rect2(48, 0, 16, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_swell_4"]
+atlas = ExtResource("4_sheet")
+region = Rect2(64, 0, 16, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_swell_5"]
+atlas = ExtResource("4_sheet")
+region = Rect2(80, 0, 16, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_swell_6"]
+atlas = ExtResource("4_sheet")
+region = Rect2(96, 0, 16, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_swell_7"]
+atlas = ExtResource("4_sheet")
+region = Rect2(112, 0, 16, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_swell_8"]
+atlas = ExtResource("4_sheet")
+region = Rect2(128, 0, 16, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_swell_9"]
+atlas = ExtResource("4_sheet")
+region = Rect2(144, 0, 16, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_swell_10"]
+atlas = ExtResource("4_sheet")
+region = Rect2(160, 0, 16, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_swell_11"]
+atlas = ExtResource("4_sheet")
+region = Rect2(176, 0, 16, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fly_0"]
+atlas = ExtResource("4_sheet")
+region = Rect2(192, 0, 16, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fly_1"]
+atlas = ExtResource("4_sheet")
+region = Rect2(208, 0, 16, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fly_2"]
+atlas = ExtResource("4_sheet")
+region = Rect2(224, 0, 16, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fly_3"]
+atlas = ExtResource("4_sheet")
+region = Rect2(240, 0, 16, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pop_0"]
+atlas = ExtResource("4_sheet")
+region = Rect2(256, 0, 16, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pop_1"]
+atlas = ExtResource("4_sheet")
+region = Rect2(272, 0, 16, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pop_2"]
+atlas = ExtResource("4_sheet")
+region = Rect2(288, 0, 16, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pop_3"]
+atlas = ExtResource("4_sheet")
+region = Rect2(304, 0, 16, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pop_4"]
+atlas = ExtResource("4_sheet")
+region = Rect2(320, 0, 16, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pop_5"]
+atlas = ExtResource("4_sheet")
+region = Rect2(336, 0, 16, 24)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_drop"]
+animations = [{"frames": [{"duration": 1.0, "texture": SubResource("AtlasTexture_fly_0")}, {"duration": 1.0, "texture": SubResource("AtlasTexture_fly_1")}, {"duration": 1.0, "texture": SubResource("AtlasTexture_fly_2")}, {"duration": 1.0, "texture": SubResource("AtlasTexture_fly_3")}], "loop": false, "name": &"fly", "speed": 24.0}, {"frames": [{"duration": 1.0, "texture": SubResource("AtlasTexture_pop_0")}, {"duration": 1.0, "texture": SubResource("AtlasTexture_pop_1")}, {"duration": 1.0, "texture": SubResource("AtlasTexture_pop_2")}, {"duration": 1.0, "texture": SubResource("AtlasTexture_pop_3")}, {"duration": 1.0, "texture": SubResource("AtlasTexture_pop_4")}, {"duration": 1.0, "texture": SubResource("AtlasTexture_pop_5")}], "loop": false, "name": &"pop", "speed": 28.0}]
+
+[sub_resource type="Gradient" id="Gradient_glow"]
+offsets = PackedFloat32Array(0, 0.25, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.55, 0.55, 0.55, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_glow"]
+gradient = SubResource("Gradient_glow")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_source_idle_0"]
+atlas = ExtResource("2_source")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_source_idle_1"]
+atlas = ExtResource("2_source")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_source_idle_2"]
+atlas = ExtResource("2_source")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_source_release_0"]
+atlas = ExtResource("2_source")
+region = Rect2(112, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_source_release_1"]
+atlas = ExtResource("2_source")
+region = Rect2(128, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_source_release_2"]
+atlas = ExtResource("2_source")
+region = Rect2(144, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_source"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_source_idle_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_source_idle_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_source_idle_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_source_idle_2")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_source_release_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_source_release_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_source_release_2")
+}],
+"loop": 0,
+"name": &"release",
+"speed": 12.0
+}, {"frames": [{"duration": 1.0, "texture": SubResource("AtlasTexture_swell_0")}, {"duration": 1.0, "texture": SubResource("AtlasTexture_swell_1")}, {"duration": 1.0, "texture": SubResource("AtlasTexture_swell_2")}, {"duration": 1.0, "texture": SubResource("AtlasTexture_swell_3")}, {"duration": 1.0, "texture": SubResource("AtlasTexture_swell_4")}, {"duration": 1.0, "texture": SubResource("AtlasTexture_swell_5")}, {"duration": 1.0, "texture": SubResource("AtlasTexture_swell_6")}, {"duration": 1.0, "texture": SubResource("AtlasTexture_swell_7")}, {"duration": 1.0, "texture": SubResource("AtlasTexture_swell_8")}, {"duration": 1.0, "texture": SubResource("AtlasTexture_swell_9")}, {"duration": 1.0, "texture": SubResource("AtlasTexture_swell_10")}, {"duration": 1.0, "texture": SubResource("AtlasTexture_swell_11")}], "loop": false, "name": &"swell", "speed": 18.0}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_killzone"]
+radius = 5.0
+
+[node name="PoisonDrip" type="Node2D" unique_id=1924053961]
+z_index = 6
+script = ExtResource("1_script")
+
+[node name="Drop" type="Node2D" parent="." unique_id=1453103140]
+position = Vector2(0, 11)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Drop" unique_id=1200857404]
+sprite_frames = SubResource("SpriteFrames_drop")
+animation = &"fly"
+
+[node name="Glow" type="PointLight2D" parent="Drop" unique_id=1477864907]
+color = Color(0.25, 1, 0.35, 1)
+texture = SubResource("GradientTexture2D_glow")
+texture_scale = 0.75
+
+[node name="Source" type="AnimatedSprite2D" parent="." unique_id=1182070067]
+centered = false
+position = Vector2(-8, 0)
+sprite_frames = SubResource("SpriteFrames_source")
+animation = &"idle"
+autoplay = "idle"
+
+[node name="Killzone" parent="." unique_id=471633006 instance=ExtResource("3_killzone")]
+position = Vector2(0, 11)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Killzone" unique_id=1193654821]
+shape = SubResource("CircleShape2D_killzone")
