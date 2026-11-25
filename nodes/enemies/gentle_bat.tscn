@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/gentle_bat.gd" id="1_script"]
 [ext_resource type="Texture2D" path="res://assets/sprites/enemies/gentle-bat-sleep.png" id="2_sleep"]
-[ext_resource type="Texture2D" uid="uid://bx2pxupy0clu4" path="res://assets/sprites/enemies/bat-death.png" id="3_death"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/gentle-bat-death.png" id="3_death"]
 [ext_resource type="Texture2D" path="res://assets/sprites/effects/sleep-zzz.png" id="4_zzz"]
 
 [sub_resource type="Shader" id="Shader_hit_flash"]
