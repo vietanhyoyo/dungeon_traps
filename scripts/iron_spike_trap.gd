@@ -5,6 +5,10 @@ extends Area2D
 @onready var trigger_area: Area2D = $TriggerArea
 @onready var appear_sound: AudioStreamPlayer2D = $AppearSound
 
+## Bật lên thì gai đã trồi sẵn ngay từ đầu màn: không chờ player bước vào
+## TriggerArea, không chạy animation "appear" và không phát tiếng.
+@export var start_active := false
+
 var _activated := false
 
 
@@ -15,6 +19,21 @@ func _ready() -> void:
 	animated_sprite.visible = false
 	damage_shape.disabled = true
 	monitoring = false
+
+	if start_active:
+		_show_spike_immediately()
+
+
+func _show_spike_immediately() -> void:
+	_activated = true
+	trigger_area.monitoring = false
+	animated_sprite.visible = true
+	animated_sprite.animation = &"appear"
+	animated_sprite.frame = animated_sprite.sprite_frames.get_frame_count(&"appear") - 1
+	# Gọi từ _ready (ngoài lúc xử lý vật lý) nên bật thẳng được; player chạm vào
+	# lúc nào thì body_entered báo lúc đó.
+	damage_shape.disabled = false
+	monitoring = true
 
 
 func _on_trigger_body_entered(body: Node2D) -> void:

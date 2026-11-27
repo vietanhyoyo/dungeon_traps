@@ -229,12 +229,15 @@ position = Vector2(92, -24)
 
 [node name="IronSpikeTrap" parent="IronSpikeList" unique_id=785335620 instance=ExtResource("13_yggu3")]
 position = Vector2(-81, -328)
+start_active = true
 
 [node name="IronSpikeTrap2" parent="IronSpikeList" unique_id=87185878 instance=ExtResource("13_yggu3")]
 position = Vector2(-62, -328)
+start_active = true
 
 [node name="IronSpikeTrap3" parent="IronSpikeList" unique_id=197837789 instance=ExtResource("13_yggu3")]
 position = Vector2(-44, -328)
+start_active = true
 
 [node name="IronSpikeTrap4" parent="IronSpikeList" unique_id=121638471 instance=ExtResource("13_yggu3")]
 position = Vector2(-51, -8)

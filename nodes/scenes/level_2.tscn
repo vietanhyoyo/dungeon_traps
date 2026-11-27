@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://c4jvx4glbgl2" path="res://nodes/door.tscn" id="3_r7por"]
 [ext_resource type="PackedScene" path="res://nodes/tile_map_32.tscn" id="3_w5vvd"]
 [ext_resource type="Texture2D" uid="uid://d28tluf6jm21n" path="res://assets/sprites/backgrounds/background5.png" id="4_60xir"]
-[ext_resource type="PackedScene" path="res://nodes/torch.tscn" id="6_o7dd0"]
+[ext_resource type="PackedScene" uid="uid://bx16n4demckja" path="res://nodes/torch.tscn" id="6_o7dd0"]
 [ext_resource type="PackedScene" uid="uid://ddq2qqo23k2o0" path="res://nodes/traps/thorn.tscn" id="8_4oyvd"]
 [ext_resource type="PackedScene" uid="uid://deqd3mnvbeh2d" path="res://nodes/camera.tscn" id="9_camera"]
 [ext_resource type="PackedScene" uid="uid://cg8mbcubeyje8" path="res://nodes/items/star.tscn" id="10_star"]
@@ -248,7 +248,7 @@ sources/1 = SubResource("TileSetAtlasSource_flnyc")
 script = ExtResource("party_controller")
 
 [node name="Asura" parent="." unique_id=1107660582 instance=ExtResource("1_r7por")]
-position = Vector2(1152, 106)
+position = Vector2(-133, -190)
 
 [node name="Camera2D" parent="Asura" unique_id=1738643562 instance=ExtResource("9_camera")]
 limit_bottom = 725
