@@ -25,7 +25,7 @@ const DEFEAT_SOUND_OFFSET := 0.5
 ## Tâm thân gai so với gốc node. Mỗi khung 64x64 vẽ phần dính trần ở ngay mép trên,
 ## nên khi đặt gốc node cách mép dưới của trần đúng một ô (32px) thì phần dính trần
 ## chạm trần và cái thân đầy gai rơi vào quanh gốc node.
-const BODY_CENTER := Vector2(0.0, 2.0)
+const BODY_CENTER := Vector2(0.0, -7.0)
 ## Gai xuất phát ở bán kính này quanh tâm thân, đủ xa để lúc mới sinh nó không
 ## nằm đè lên sprite con slime.
 const SPAWN_RADIUS := 15.0

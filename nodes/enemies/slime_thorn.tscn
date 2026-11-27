@@ -1,10 +1,10 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://d00hdc0nykp3t"]
 
-[ext_resource type="Script" path="res://scripts/slime_thorn.gd" id="1_thorn"]
+[ext_resource type="Script" uid="uid://c2ibu2ixr5iy3" path="res://scripts/slime_thorn.gd" id="1_thorn"]
 [ext_resource type="Texture2D" uid="uid://6eom6apy3ev2" path="res://assets/sprites/enemies/slime-thorn.png" id="2_thorn"]
-[ext_resource type="AudioStream" uid="uid://dulsj1kt84g0r" path="res://assets/sounds/denielcz-bamboo-whoosh-429156.mp3" id="4_shoot"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/slime-thorn-attack.png" id="5_attack"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/slime-thorn-death.png" id="6_death"]
+[ext_resource type="AudioStream" uid="uid://dulsj1kt84g0r" path="res://assets/sounds/freesound_community-poof-80161.mp3" id="4_shoot"]
+[ext_resource type="Texture2D" uid="uid://knjy4giib30j" path="res://assets/sprites/enemies/slime-thorn-attack.png" id="5_attack"]
+[ext_resource type="Texture2D" uid="uid://b64g1386e55oi" path="res://assets/sprites/enemies/slime-thorn-death.png" id="6_death"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 13.0
@@ -27,18 +27,6 @@ resource_local_to_scene = true
 shader = SubResource("Shader_hit_flash")
 shader_parameter/flash_amount = 0.0
 shader_parameter/flash_color = Color(1, 0.96, 0.78, 1)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_idle0"]
-atlas = ExtResource("2_thorn")
-region = Rect2(0, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_idle1"]
-atlas = ExtResource("2_thorn")
-region = Rect2(64, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_idle2"]
-atlas = ExtResource("2_thorn")
-region = Rect2(128, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_attack0"]
 atlas = ExtResource("5_attack")
@@ -156,6 +144,22 @@ region = Rect2(576, 192, 96, 96)
 atlas = ExtResource("6_death")
 region = Rect2(672, 192, 96, 96)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle0"]
+atlas = ExtResource("2_thorn")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle1"]
+atlas = ExtResource("2_thorn")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle2"]
+atlas = ExtResource("2_thorn")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle3"]
+atlas = ExtResource("2_thorn")
+region = Rect2(192, 0, 64, 64)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_thorn"]
 animations = [{
 "frames": [{
@@ -253,10 +257,10 @@ animations = [{
 }],
 "loop": 0,
 "name": &"death",
-"speed": 30.0
+"speed": 50.0
 }, {
 "frames": [{
-"duration": 2.0,
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_idle0")
 }, {
 "duration": 1.0,
@@ -264,6 +268,9 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_idle2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle3")
 }],
 "loop": 1,
 "name": &"idle",
@@ -274,35 +281,35 @@ animations = [{
 resource_local_to_scene = true
 radius = 220.0
 
-[node name="SlimeThorn" type="CharacterBody2D" groups=["enemy"]]
+[node name="SlimeThorn" type="CharacterBody2D" unique_id=1154506699 groups=["enemy"]]
 collision_layer = 4
 collision_mask = 0
 script = ExtResource("1_thorn")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, 2)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=388484672]
+position = Vector2(0, -7)
 shape = SubResource("CircleShape2D_body")
 
-[node name="Pivot" type="Node2D" parent="."]
+[node name="Pivot" type="Node2D" parent="." unique_id=1846703258]
 position = Vector2(0, -32)
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Pivot"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Pivot" unique_id=855617630]
 material = SubResource("ShaderMaterial_hit_flash")
 position = Vector2(0, 32)
 sprite_frames = SubResource("SpriteFrames_thorn")
-animation = &"idle"
+animation = &"death"
 autoplay = "idle"
 
-[node name="DetectionArea" type="Area2D" parent="."]
+[node name="DetectionArea" type="Area2D" parent="." unique_id=2098228700]
 collision_layer = 0
 collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea" unique_id=1396880680]
 visible = false
-position = Vector2(0, 2)
+position = Vector2(0, -7)
 shape = SubResource("CircleShape2D_detection")
 
-[node name="ShootSound" type="AudioStreamPlayer2D" parent="."]
+[node name="ShootSound" type="AudioStreamPlayer2D" parent="." unique_id=1123622211]
 stream = ExtResource("4_shoot")
 volume_db = -10.0
 pitch_scale = 1.15

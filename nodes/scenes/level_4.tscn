@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://cd230y5iqj4bd" path="res://nodes/save_point.tscn" id="3_7imj7"]
 [ext_resource type="PackedScene" path="res://nodes/tile_map_32.tscn" id="4_lj6jb"]
 [ext_resource type="Texture2D" uid="uid://bcxnn1f6qiuev" path="res://assets/sprites/mapp32.png" id="5_fo1y2"]
-[ext_resource type="PackedScene" path="res://nodes/torch.tscn" id="6_ouagl"]
+[ext_resource type="PackedScene" uid="uid://bx16n4demckja" path="res://nodes/torch.tscn" id="6_ouagl"]
 [ext_resource type="Texture2D" uid="uid://d28tluf6jm21n" path="res://assets/sprites/backgrounds/background5.png" id="7_gnkbd"]
 [ext_resource type="PackedScene" uid="uid://c4jvx4glbgl2" path="res://nodes/door.tscn" id="8_ghy0c"]
 [ext_resource type="PackedScene" uid="uid://dscr153320p4r" path="res://nodes/traps/fire_trap.tscn" id="9_p4xfq"]
@@ -26,6 +26,12 @@
 [ext_resource type="PackedScene" uid="uid://dhhgace1srtk8" path="res://nodes/traps/iron_spike_trap.tscn" id="24_p4xfq"]
 [ext_resource type="PackedScene" uid="uid://bmuubi5ljubla" path="res://nodes/decor/decor-crystal.tscn" id="25_ghiv5"]
 [ext_resource type="PackedScene" path="res://nodes/traps/arrow_rain_trap.tscn" id="26_arrow_rain"]
+[ext_resource type="PackedScene" path="res://nodes/decor/decor-buried-skull.tscn" id="decor_buried_skull"]
+[ext_resource type="PackedScene" path="res://nodes/decor/decor-fern.tscn" id="decor_fern"]
+[ext_resource type="PackedScene" path="res://nodes/decor/decor-moss-stones.tscn" id="decor_moss_stones"]
+[ext_resource type="PackedScene" path="res://nodes/decor/decor-planted-sword.tscn" id="decor_planted_sword"]
+[ext_resource type="PackedScene" path="res://nodes/decor/decor-ribs.tscn" id="decor_ribs"]
+[ext_resource type="PackedScene" path="res://nodes/decor/decor-slate.tscn" id="decor_slate"]
 [ext_resource type="Script" uid="uid://b0wfmn0iuxfrh" path="res://scripts/level_6_controller.gd" id="party_controller"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_8pcmo"]
@@ -854,6 +860,86 @@ position = Vector2(2880, -488)
 
 [node name="decor-crystal4" parent="DecorList" unique_id=2096894680 instance=ExtResource("25_ghiv5")]
 position = Vector2(2587, -584)
+
+[node name="decor-buried-skull" parent="DecorList" unique_id=104701166 instance=ExtResource("decor_buried_skull")]
+position = Vector2(226, -80)
+
+[node name="decor-buried-skull2" parent="DecorList" unique_id=1696827864 instance=ExtResource("decor_buried_skull")]
+position = Vector2(868, 48)
+flip_h = true
+
+[node name="decor-buried-skull3" parent="DecorList" unique_id=640886913 instance=ExtResource("decor_buried_skull")]
+position = Vector2(2180, -592)
+
+[node name="decor-buried-skull4" parent="DecorList" unique_id=1419099681 instance=ExtResource("decor_buried_skull")]
+position = Vector2(2976, -912)
+flip_h = true
+
+[node name="decor-fern" parent="DecorList" unique_id=1322580068 instance=ExtResource("decor_fern")]
+position = Vector2(555, -80)
+
+[node name="decor-fern2" parent="DecorList" unique_id=307074804 instance=ExtResource("decor_fern")]
+position = Vector2(1500, 112)
+flip_h = true
+
+[node name="decor-fern3" parent="DecorList" unique_id=856017279 instance=ExtResource("decor_fern")]
+position = Vector2(2544, -400)
+
+[node name="decor-fern4" parent="DecorList" unique_id=796298508 instance=ExtResource("decor_fern")]
+position = Vector2(686, -720)
+flip_h = true
+
+[node name="decor-moss-stones" parent="DecorList" unique_id=2012595572 instance=ExtResource("decor_moss_stones")]
+position = Vector2(1056, 48)
+
+[node name="decor-moss-stones2" parent="DecorList" unique_id=2127731663 instance=ExtResource("decor_moss_stones")]
+position = Vector2(1510, -208)
+flip_h = true
+
+[node name="decor-moss-stones3" parent="DecorList" unique_id=561820758 instance=ExtResource("decor_moss_stones")]
+position = Vector2(2340, -592)
+
+[node name="decor-moss-stones4" parent="DecorList" unique_id=1446043731 instance=ExtResource("decor_moss_stones")]
+position = Vector2(3224, -944)
+flip_h = true
+
+[node name="decor-slate" parent="DecorList" unique_id=1158207039 instance=ExtResource("decor_slate")]
+position = Vector2(370, -80)
+
+[node name="decor-slate2" parent="DecorList" unique_id=785633716 instance=ExtResource("decor_slate")]
+position = Vector2(1836, 176)
+flip_h = true
+
+[node name="decor-slate3" parent="DecorList" unique_id=662458728 instance=ExtResource("decor_slate")]
+position = Vector2(1370, -656)
+
+[node name="decor-slate4" parent="DecorList" unique_id=794117790 instance=ExtResource("decor_slate")]
+position = Vector2(3030, -912)
+flip_h = true
+
+[node name="decor-ribs" parent="DecorList" unique_id=324650282 instance=ExtResource("decor_ribs")]
+position = Vector2(174, -80)
+
+[node name="decor-ribs2" parent="DecorList" unique_id=713431917 instance=ExtResource("decor_ribs")]
+position = Vector2(1190, -176)
+flip_h = true
+
+[node name="decor-ribs3" parent="DecorList" unique_id=1603954587 instance=ExtResource("decor_ribs")]
+position = Vector2(2320, -912)
+
+[node name="decor-planted-sword" parent="DecorList" unique_id=1722527708 instance=ExtResource("decor_planted_sword")]
+position = Vector2(1140, 48)
+
+[node name="decor-planted-sword2" parent="DecorList" unique_id=701379765 instance=ExtResource("decor_planted_sword")]
+position = Vector2(1710, 176)
+flip_h = true
+
+[node name="decor-planted-sword3" parent="DecorList" unique_id=1298364934 instance=ExtResource("decor_planted_sword")]
+position = Vector2(1264, -912)
+
+[node name="decor-planted-sword4" parent="DecorList" unique_id=22999336 instance=ExtResource("decor_planted_sword")]
+position = Vector2(2840, -912)
+flip_h = true
 
 [node name="IronSpikeList" type="Node" parent="." unique_id=331276280]
 

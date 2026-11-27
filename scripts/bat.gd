@@ -5,8 +5,9 @@ class_name Bat
 const HIT_FLASH_COUNT := 3
 const HIT_FLASH_ON_DURATION := 0.04
 const HIT_FLASH_OFF_DURATION := 0.035
-const DEFEAT_SOUND := preload("res://assets/sounds/freesound_community-poof-80161.mp3")
-const DEFEAT_SOUND_OFFSET := 0.5
+const DEFEAT_SOUND := preload("res://assets/sounds/bat_death.wav")
+const DEFEAT_SOUND_PITCH_MIN := 0.92
+const DEFEAT_SOUND_PITCH_MAX := 1.1
 ## Sai số vị trí coi như bat đã bay về đúng chỗ tuần tra.
 const RETURN_TOLERANCE := 4.0
 ## Thời gian bat hiện ra khi được đánh thức khỏi trạng thái ngủ đông.
@@ -289,8 +290,9 @@ func _play_defeat_sound() -> void:
 	sound_player.global_position = global_position
 	get_tree().current_scene.add_child(sound_player)
 	sound_player.finished.connect(sound_player.queue_free)
-	# Bỏ qua khoảng nửa giây yên lặng ở đầu file để tiếng khớp với cú hạ gục.
-	sound_player.play(DEFEAT_SOUND_OFFSET)
+	# Lệch cao độ một chút để nhiều con chết liền nhau không nghe y hệt.
+	sound_player.pitch_scale = randf_range(DEFEAT_SOUND_PITCH_MIN, DEFEAT_SOUND_PITCH_MAX)
+	sound_player.play()
 
 
 func _play_hit_flash() -> void:
