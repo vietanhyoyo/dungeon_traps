@@ -26,6 +26,7 @@
 [ext_resource type="PackedScene" uid="uid://dhhgace1srtk8" path="res://nodes/traps/iron_spike_trap.tscn" id="24_p4xfq"]
 [ext_resource type="PackedScene" uid="uid://bmuubi5ljubla" path="res://nodes/decor/decor-crystal.tscn" id="25_ghiv5"]
 [ext_resource type="PackedScene" path="res://nodes/traps/arrow_rain_trap.tscn" id="26_arrow_rain"]
+[ext_resource type="PackedScene" uid="uid://d01kuafc0ieht" path="res://nodes/enemies/gentle_bat.tscn" id="34_f32g4"]
 [ext_resource type="PackedScene" path="res://nodes/decor/decor-buried-skull.tscn" id="decor_buried_skull"]
 [ext_resource type="PackedScene" path="res://nodes/decor/decor-fern.tscn" id="decor_fern"]
 [ext_resource type="PackedScene" path="res://nodes/decor/decor-moss-stones.tscn" id="decor_moss_stones"]
@@ -460,7 +461,7 @@ script = ExtResource("18_level4")
 script = ExtResource("party_controller")
 
 [node name="Asura" parent="." unique_id=1107660582 instance=ExtResource("1_dxylt")]
-position = Vector2(-135, -215)
+position = Vector2(-108, -205)
 
 [node name="Camera2D" parent="Asura" unique_id=1738643562 instance=ExtResource("2_aixuq")]
 limit_bottom = 725
@@ -750,7 +751,7 @@ patrol_distance = 487.0
 
 [node name="Bat7" parent="BatList" unique_id=311053411 instance=ExtResource("12_yotrr")]
 z_index = 5
-position = Vector2(2809, -532)
+position = Vector2(2757, -553)
 patrol_distance = 76.0
 
 [node name="Bat8" parent="BatList" unique_id=1798608116 instance=ExtResource("12_yotrr")]
@@ -856,7 +857,7 @@ position = Vector2(767, -8)
 position = Vector2(2770, -296)
 
 [node name="decor-crystal3" parent="DecorList" unique_id=1869665916 instance=ExtResource("25_ghiv5")]
-position = Vector2(2880, -488)
+position = Vector2(2501, -584)
 
 [node name="decor-crystal4" parent="DecorList" unique_id=2096894680 instance=ExtResource("25_ghiv5")]
 position = Vector2(2587, -584)
@@ -969,3 +970,8 @@ position = Vector2(2392, -904)
 
 [node name="IronSpikeTrap9" parent="IronSpikeList" unique_id=831349053 instance=ExtResource("24_p4xfq")]
 position = Vector2(2407, -904)
+
+[node name="GentleBatList" type="Node" parent="." unique_id=600573387]
+
+[node name="GentleBat1" parent="GentleBatList" unique_id=276850069 instance=ExtResource("34_f32g4")]
+position = Vector2(2595, -1152)

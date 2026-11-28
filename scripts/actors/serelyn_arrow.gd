@@ -75,6 +75,9 @@ func _physics_process(delta: float) -> void:
 				and target.has_method("break_apart"):
 			_spawn_hit_effect()
 			target.break_apart()
+		elif target != null and target.has_method("deflect_hit"):
+			# Xích chặn đường: tên chỉ toé lửa, không làm đứt được.
+			target.deflect_hit(global_position)
 		elif target != null and target.has_method("hit_by_arrow"):
 			target.hit_by_arrow()
 		queue_free()

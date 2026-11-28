@@ -1,0 +1,93 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://d36nulvkoj4w6" path="res://scripts/asura_chain_barrier.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://c5q2l0nnag0g2" path="res://assets/sprites/traps/chain_spark.png" id="2_spark"]
+[ext_resource type="AudioStream" uid="uid://cje68p767ndx8" path="res://assets/sounds/chain_clank.wav" id="3_clank"]
+[ext_resource type="AudioStream" uid="uid://b07y83p5omfcf" path="res://assets/sounds/chain_snap.wav" id="4_snap"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_spark0"]
+atlas = ExtResource("2_spark")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_spark1"]
+atlas = ExtResource("2_spark")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_spark2"]
+atlas = ExtResource("2_spark")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_spark3"]
+atlas = ExtResource("2_spark")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_spark4"]
+atlas = ExtResource("2_spark")
+region = Rect2(64, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_spark"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_spark0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_spark1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_spark2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_spark3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_spark4")
+}],
+"loop": false,
+"name": &"spark",
+"speed": 20.0
+}]
+
+[sub_resource type="Gradient" id="Gradient_sparks"]
+offsets = PackedFloat32Array(0, 0.45, 1)
+colors = PackedColorArray(1, 1, 0.85, 1, 1, 0.8, 0.46, 1, 0.94, 0.49, 0.34, 0)
+
+[node name="AsuraChainBarrier" type="StaticBody2D"]
+collision_layer = 5
+collision_mask = 0
+script = ExtResource("1_script")
+
+[node name="Spark" type="AnimatedSprite2D" parent="."]
+visible = false
+z_index = 2
+sprite_frames = SubResource("SpriteFrames_spark")
+animation = &"spark"
+
+[node name="SparkParticles" type="CPUParticles2D" parent="."]
+z_index = 2
+emitting = false
+amount = 8
+lifetime = 0.45
+one_shot = true
+explosiveness = 1.0
+spread = 180.0
+gravity = Vector2(0, 420)
+initial_velocity_min = 70.0
+initial_velocity_max = 170.0
+scale_amount_min = 1.0
+scale_amount_max = 2.0
+color_ramp = SubResource("Gradient_sparks")
+
+[node name="ClankSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_clank")
+volume_db = -4.0
+bus = &"SFX"
+
+[node name="SnapSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_snap")
+bus = &"SFX"
+
+[node name="RattleSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_clank")
+volume_db = -8.0
+bus = &"SFX"

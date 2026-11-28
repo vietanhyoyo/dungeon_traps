@@ -26,7 +26,7 @@
 [ext_resource type="PackedScene" uid="uid://cshcxibddghu1" path="res://nodes/traps/rolling_rock_ball.tscn" id="25_rolling_rock_ball"]
 [ext_resource type="PackedScene" uid="uid://cpmbitmavgkhg" path="res://nodes/enemies/spitter_slime.tscn" id="27_spitter_slime"]
 [ext_resource type="PackedScene" uid="uid://ddq2qqo23k2o0" path="res://nodes/traps/thorn.tscn" id="28_h833d"]
-[ext_resource type="PackedScene" path="res://nodes/enemies/slime_thorn.tscn" id="29_gnml5"]
+[ext_resource type="PackedScene" uid="uid://d00hdc0nykp3t" path="res://nodes/enemies/slime_thorn.tscn" id="29_gnml5"]
 [ext_resource type="PackedScene" uid="uid://cexdosup8j5bc" path="res://nodes/enemies/slime_gunner.tscn" id="31_od8sf"]
 [ext_resource type="PackedScene" uid="uid://114vfv2uvqgq" path="res://nodes/enemies/devi_slime.tscn" id="32_devi_slime"]
 [ext_resource type="PackedScene" uid="uid://toe3x6ld2pdi" path="res://nodes/traps/devi_slime_tentacle.tscn" id="34_b7ide"]
@@ -39,6 +39,7 @@
 [ext_resource type="PackedScene" uid="uid://ccnlpdr5ab8c5" path="res://nodes/traps/spike_pit_trap.tscn" id="40_5ryy6"]
 [ext_resource type="PackedScene" path="res://nodes/items/treasure_chest.tscn" id="41_treasure_chest"]
 [ext_resource type="PackedScene" path="res://nodes/ui/key_hud.tscn" id="42_key_hud"]
+[ext_resource type="PackedScene" path="res://nodes/traps/asura_chain_barrier.tscn" id="43_chain_barrier"]
 [ext_resource type="Texture2D" uid="uid://bdf5mkngf61vt" path="res://assets/sprites/tilemapbackground3.png" id="tilemap_background_3"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_8pcmo"]
@@ -235,7 +236,7 @@ centered = false
 script = ExtResource("21_background_fit")
 
 [node name="Asura" parent="." unique_id=1809393430 instance=ExtResource("1_asura")]
-position = Vector2(1870, 729)
+position = Vector2(4093, 960)
 
 [node name="Camera2D" parent="Asura" unique_id=1065377516 instance=ExtResource("2_camera")]
 limit_left = 0
@@ -871,6 +872,12 @@ position = Vector2(1786, 1611)
 
 [node name="ArrowRainTrap2" parent="ArrowRainTrapList" unique_id=973455815 instance=ExtResource("38_3dxep")]
 position = Vector2(3836, 1351)
+
+[node name="ChainBarrierList" type="Node2D" parent="." unique_id=1093384512]
+
+[node name="AsuraChainBarrier" parent="ChainBarrierList" unique_id=1734920517 instance=ExtResource("43_chain_barrier")]
+position = Vector2(4154, 847)
+length = 191.0
 
 [editable path="IronSpikeList/IronSpikeTrap21"]
 [editable path="IronSpikeList/IronSpikeTrap28"]

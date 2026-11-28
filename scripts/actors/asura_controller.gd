@@ -622,6 +622,14 @@ func update_attack_hitbox() -> void:
 func hit_enemy(body: Node) -> void:
 	if body in hit_enemies:
 		return
+	# Xích chặn đường (AsuraChainBarrier) chỉ Asura chém đứt được. Hiệu ứng chém
+	# đặt ở đúng mắt xích trúng đòn thay vì gốc node trên trần.
+	if body.is_in_group(&"asura_cuttable") and body.has_method("cut_by_asura"):
+		hit_enemies.append(body)
+		var facing := -1.0 if animated_sprite.flip_h else 1.0
+		var cut_point: Vector2 = body.cut_by_asura(global_position, facing)
+		spawn_hit_effect_at(cut_point)
+		return
 	# Vật phá được (hộp gỗ) cũng ăn đòn chém, nhưng không phải quái nên không die().
 	if body.is_in_group("breakable"):
 		hit_enemies.append(body)
@@ -649,6 +657,10 @@ func get_current_attack_damage() -> int:
 
 
 func spawn_hit_effect(body: Node2D) -> void:
+	spawn_hit_effect_at(body.global_position)
+
+
+func spawn_hit_effect_at(at: Vector2) -> void:
 	# Gắn vào cha của nhân vật chứ không vào mục tiêu: quái và hộp bị queue_free
 	# ngay sau đòn chém, hiệu ứng làm con của chúng sẽ biến mất giữa chừng.
 	var heavy := is_heavy_hit()
@@ -658,7 +670,7 @@ func spawn_hit_effect(body: Node2D) -> void:
 	if heavy:
 		effect.flip_h = animated_sprite.flip_h
 	get_parent().add_child(effect)
-	effect.global_position = body.global_position
+	effect.global_position = at
 
 
 func disable_attack_shapes() -> void:
